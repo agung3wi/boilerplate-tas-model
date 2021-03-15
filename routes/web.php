@@ -1,11 +1,7 @@
 <?php
 
-use App\Http\Controllers\CrudController;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
-use PHPMailer\PHPMailer\PHPMailer;
-use Aws\Ses\SesClient;
-use Aws\Ses\Exception\SesException;
+use Illuminate\Support\Facades\DB;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,6 +15,8 @@ use Aws\Ses\Exception\SesException;
 */
 
 Route::get('/', function () {
+    $columns = DB::getDoctrineColumn('m_product', 'uom_id')->getType()->getName();
+    dd($columns);
 });
 
 // Route::get('/{model}', [CrudController::class, 'index']);

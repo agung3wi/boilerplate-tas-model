@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Log;
 class Product extends Model
 {
     protected $table = 'm_product';
-    protected $fillable = ['product_code', 'product_name', 'description', 'uom_id'];
+    protected $fillable = [];
     const TABLE_NAME = "m_product";
     const ADD = true;
     const EDIT = true;
@@ -22,56 +22,97 @@ class Product extends Model
     const TIMESTAMP = true;
 
     const FIELDS = [
+        "product_code" => [
+            "validation_add" => "required|max:25|string|unique:m_product",
+            "validation_edit" => "required|max:25",
+            "searchable" => true,
+            "sortable" => true,
+            "filter" => false,
+            "filter_operation" => "",
+            "default" => "",
+            "add" => true,
+            "edit" => true,
+            "get" => true,
+            "find" => true
+        ],
         "product_name" => [
-            "validation_add" => "required|min:10|max",
+            "validation_add" => "required",
             "validation_edit" => "required",
             "searchable" => true,
             "sortable" => true,
             "filter" => false,
+            "filter_operation" => "",
             "default" => "",
             "add" => true,
             "edit" => true,
-            "get" => true,
-            "find" => true
-        ],
-        "product_code" => [
-            "validation_add" => "required|unique:m_product",
-            "validation_edit" => "",
-            "searchable" => true,
-            "sortable" => true,
-            "filter" => false,
-            "default" => "",
-            "add" => true,
-            "edit" => false,
             "get" => true,
             "find" => true
         ],
         "description" => [
+            "validation_add" => "required",
+            "validation_edit" => "required",
             "searchable" => true,
             "sortable" => true,
             "filter" => false,
-            "default" => "",
-            "add" => true,
-            "edit" => true,
-            "get" => false,
-            "find" => true
-        ],
-        "uom_id" => [
-            "searchable" => false,
-            "sortable" => true,
-            "filter" => true,
-            "filter_op" => "=",
+            "filter_operation" => "",
             "default" => "",
             "add" => true,
             "edit" => true,
             "get" => true,
-            "find" => true,
-            "relation" => [
-                "table" => "m_uom",
-                "field_reference" => "id",
-                "selectable" => ["uom_name"]
-            ]
-        ]
+            "find" => true
+        ],
+        "uom_id" => [
+            "validation_add" => "required",
+            "validation_edit" => "required",
+            "searchable" => true,
+            "sortable" => true,
+            "filter" => false,
+            "filter_operation" => "",
+            "default" => "",
+            "add" => true,
+            "edit" => true,
+            "get" => true,
+            "find" => true
+        ],
+        "created_at" => [
+            "validation_add" => "required",
+            "validation_edit" => "required",
+            "searchable" => true,
+            "sortable" => true,
+            "filter" => false,
+            "filter_operation" => "",
+            "default" => "",
+            "add" => true,
+            "edit" => true,
+            "get" => true,
+            "find" => true
+        ],
+        "updated_at" => [
+            "validation_add" => "required",
+            "validation_edit" => "required",
+            "searchable" => true,
+            "sortable" => true,
+            "filter" => false,
+            "filter_operation" => "",
+            "default" => "",
+            "add" => true,
+            "edit" => true,
+            "get" => true,
+            "find" => true
+        ],
+        "version" => [
+            "validation_add" => "required",
+            "validation_edit" => "required",
+            "searchable" => true,
+            "sortable" => true,
+            "filter" => false,
+            "filter_operation" => "",
+            "default" => "",
+            "add" => true,
+            "edit" => true,
+            "get" => true,
+            "find" => true
+        ],
     ];
 
     public static function beforeInsert($input)
@@ -79,19 +120,16 @@ class Product extends Model
         return $input;
     }
 
-    public static function afterInsert($object)
+    public static function afterInsert($object, $input)
     {
-        Log::debug(json_encode($object));
     }
 
     public static function beforeUpdate($input)
     {
-        $input["product_name"] = strtoupper($input["product_name"]);
         return $input;
     }
 
-    public static function afterUpdate($object)
+    public static function afterUpdate($object, $input)
     {
-        Log::debug(json_encode($object));
     }
 }

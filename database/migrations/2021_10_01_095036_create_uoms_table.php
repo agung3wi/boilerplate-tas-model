@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AlterVendorEmailNullable extends Migration
+class CreateUomsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,13 @@ class AlterVendorEmailNullable extends Migration
      */
     public function up()
     {
-        //
+        Schema::create('m_uom', function (Blueprint $table) {
+            $table->id();
+            $table->string("uom_code", 100)->unique();
+            $table->string("uom_name", 200);
+            $table->timestamps();
+        });
+
     }
 
     /**
@@ -23,6 +29,6 @@ class AlterVendorEmailNullable extends Migration
      */
     public function down()
     {
-        //
+        Schema::dropIfExists('uoms');
     }
 }

@@ -17,6 +17,7 @@ class CreateTasksTable extends Migration
             $table->id();
             $table->string('task_code', 100)->unique();
             $table->string('task_name', 200);
+            $table->string('task_group', 200)->nullable();
             $table->text('description');
             $table->timestamps();
         });

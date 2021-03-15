@@ -28,6 +28,7 @@ class Uom extends Model
             "searchable" => true,
             "sortable" => true,
             "filter" => false,
+            "filter_operation" => "",
             "default" => "",
             "add" => true,
             "edit" => true,
@@ -40,6 +41,7 @@ class Uom extends Model
             "searchable" => true,
             "sortable" => true,
             "filter" => false,
+            "filter_operation" => "",
             "default" => "",
             "add" => true,
             "edit" => true,
@@ -52,6 +54,7 @@ class Uom extends Model
             "searchable" => true,
             "sortable" => true,
             "filter" => false,
+            "filter_operation" => "",
             "default" => "",
             "add" => true,
             "edit" => true,
@@ -64,6 +67,7 @@ class Uom extends Model
             "searchable" => true,
             "sortable" => true,
             "filter" => false,
+            "filter_operation" => "",
             "default" => "",
             "add" => true,
             "edit" => true,
@@ -77,18 +81,16 @@ class Uom extends Model
         return $input;
     }
 
-    public static function afterInsert($object)
+    public static function afterInsert($object, $input)
     {
-        Log::debug(json_encode($object));
-    }
+        }
 
     public static function beforeUpdate($input)
     {
         return $input;
     }
 
-    public static function afterUpdate($object)
+    public static function afterUpdate($object, $input)
     {
-        Log::debug(json_encode($object));
-    }
+        }
 }

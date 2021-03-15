@@ -55,16 +55,89 @@ class GenerateModel extends Command
             }
             $modelName = Str::ucfirst(Str::camel($tableName));
             $fileName = base_path("app/Models/" . $modelName . ".php");
+            $fields = DB::select("SELECT * FROM information_schema.columns
+            WHERE table_catalog = 'boilerplate-model' AND table_name = '$tableNameOriginal'");
+
+            $fieldConfigs = [];
+            foreach ($fields as $field) {
+                $fieldConfigs[$field->column_name] = [
+                    "validation_add" => "",
+                    "validation_edit" => "",
+                    "searchable" => true,
+                    "sortable" => true,
+                    "filter" => false,
+                    "filter_operation" => "",
+                    "default" => "",
+                    "add" => true,
+                    "edit" => true,
+                    "get" => true,
+                    "find" => true
+                ];
+            }
+
             if (!is_file($fileName)) {
+                $beforeInsert = "\n        return \$input;\n    ";
+                $beforeUpdate = "\n        return \$input;\n    ";
+                $afterInsert = "\n        ";
+                $afterUpdate = "\n        ";
                 $fileContent = view('generate.model', [
+                    'add' => true,
                     'studly_caps' => $modelName,
                     'table_name' => $tableNameOriginal,
-                    'fields' => DB::select("SELECT * FROM information_schema.columns
-                        WHERE table_catalog = 'boilerplate-model' AND table_name = '$tableNameOriginal'")
+                    'before_insert' => "{" . $beforeInsert . "}",
+                    'after_insert' => "{" . $afterInsert . "}",
+                    'before_update' => "{" . $beforeUpdate . "}",
+                    'after_update' => "{" . $afterUpdate . "}",
+                    'fields' => $fieldConfigs
                 ]);
-                file_put_contents($fileName, "<?php \n\n".$fileContent);
+                file_put_contents($fileName, "<?php \n\n" . $fileContent);
 
                 $this->info("Success Generate Model " . $modelName);
+            } else {
+                $contents = file_get_contents($fileName);
+                // echo $contents;
+                $classModel = "\\App\\Models\\" . $modelName;
+
+                preg_match_all("/public static function beforeInsert\([\$]input\)\n    {([^}]*)}/", $contents, $matches);
+                $beforeInsert = $matches[1][0];
+                preg_match_all("/public static function afterInsert\([\$]object, [\$]input\)\n    {([^}]*)}/", $contents, $matches);
+                $afterInsert = $matches[1][0];
+                preg_match_all("/public static function beforeUpdate\([\$]input\)\n    {([^}]*)}/", $contents, $matches);
+                $beforeUpdate = $matches[1][0];
+                preg_match_all("/public static function afterUpdate\([\$]object, [\$]input\)\n    {([^}]*)}/", $contents, $matches);
+                $afterUpdate = $matches[1][0];
+
+                foreach ($classModel::FIELDS as $fieldName => $value) {
+                    $fieldConfigs[$fieldName] = isset($fieldConfigs[$fieldName]) ?
+                        $value : [
+                            "validation_add" => "",
+                            "validation_edit" => "",
+                            "searchable" => true,
+                            "sortable" => true,
+                            "filter" => false,
+                            "filter_operation" => "",
+                            "default" => "",
+                            "add" => true,
+                            "edit" => true,
+                            "get" => true,
+                            "find" => true
+                        ];
+                }
+
+                $fileContent = view('generate.model', [
+                    'add' => $classModel::ADD,
+                    'before_insert' => "{" . $beforeInsert . "}",
+                    'after_insert' => "{" . $afterInsert . "}",
+                    'before_update' => "{" . $beforeUpdate . "}",
+                    'after_update' => "{" . $afterUpdate . "}",
+                    'studly_caps' => $modelName,
+                    'table_name' => $tableNameOriginal,
+                    'fields' => $fieldConfigs
+                ]);
+
+
+                file_put_contents($fileName, "<?php \n\n" . $fileContent);
+                $this->info("Success Modified Model " . $modelName);
             }
         }
     }

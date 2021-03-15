@@ -10,7 +10,7 @@ class {{ $studly_caps }} extends Model
     protected $table = '{{ $table_name }}';
     protected $fillable = [];
     const TABLE_NAME = "{{ $table_name }}";
-    const ADD = true;
+    const ADD = {{ $add? "true" : "false" }};
     const EDIT = true;
     const DELETE = true;
     const GET = true;
@@ -21,41 +21,34 @@ class {{ $studly_caps }} extends Model
     const TIMESTAMP = true;
 
     const FIELDS = [
-@foreach ($fields as $field)
-@if($field->column_name != "id")
-        "{{$field->column_name}}" => [
-            "validation_add" => "required",
-            "validation_edit" => "required",
-            "searchable" => true,
-            "sortable" => true,
-            "filter" => false,
+@foreach ($fields as $field => $value)
+@if($field != "id")
+        "{{$field}}" => [
+            "validation_add" => "{{ $value["validation_add"] }}",
+            "validation_edit" => "{{ $value["validation_edit"] }}",
+            "searchable" => {{ $value["searchable"]? "true" : "false" }},
+            "sortable" => {{ $value["sortable"]? "true" : "false" }},
+            "filter" => {{ $value["filter"]? "true" : "false" }},
+            "filter_operation" => "{{ $value["filter_operation"] ?? "" }}",
             "default" => "",
-            "add" => true,
-            "edit" => true,
-            "get" => true,
-            "find" => true
+            "add" => {{ $value["add"]? "true" : "false" }},
+            "edit" => {{ $value["edit"]? "true" : "false" }},
+            "get" => {{ $value["get"]? "true" : "false" }},
+            "find" => {{ $value["find"]? "true" : "false" }}
         ],
 @endif
 @endforeach
     ];
 
     public static function beforeInsert($input)
-    {
-        return $input;
-    }
+    {{{$before_insert}}}
 
-    public static function afterInsert($object)
-    {
-        Log::debug(json_encode($object));
-    }
+    public static function afterInsert($object, $input)
+    {{{$after_insert}}}
 
     public static function beforeUpdate($input)
-    {
-        return $input;
-    }
+    {{{$before_update}}}
 
-    public static function afterUpdate($object)
-    {
-        Log::debug(json_encode($object));
-    }
+    public static function afterUpdate($object, $input)
+    {{{$after_update}}}
 }
