@@ -64,7 +64,7 @@ class Product extends Model
         "uom_id" => [
             "validation_add" => "required",
             "validation_edit" => "required",
-            "searchable" => true,
+            "searchable" => false,
             "sortable" => true,
             "filter" => false,
             "filter_operation" => "",
@@ -77,7 +77,7 @@ class Product extends Model
         "created_at" => [
             "validation_add" => "required",
             "validation_edit" => "required",
-            "searchable" => true,
+            "searchable" => false,
             "sortable" => true,
             "filter" => false,
             "filter_operation" => "",
@@ -90,7 +90,7 @@ class Product extends Model
         "updated_at" => [
             "validation_add" => "required",
             "validation_edit" => "required",
-            "searchable" => true,
+            "searchable" => false,
             "sortable" => true,
             "filter" => false,
             "filter_operation" => "",
@@ -103,7 +103,7 @@ class Product extends Model
         "version" => [
             "validation_add" => "required",
             "validation_edit" => "required",
-            "searchable" => true,
+            "searchable" => false,
             "sortable" => true,
             "filter" => false,
             "filter_operation" => "",
