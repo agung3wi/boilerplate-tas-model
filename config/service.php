@@ -28,13 +28,28 @@ return [
     ],
     [
         "type" => "GET",
+        "end_point" => "/user/find",
+        "class" => "App\Services\User\FinduserById"
+    ],
+    [
+        "type" => "GET",
         "end_point" => "/user",
         "class" => "App\Services\User\GetUser"
     ],
     [
         "type" => "POST",
+        "end_point" => "/reset-password",
+        "class" => "App\Services\User\ResetPassword"
+    ],
+    [
+        "type" => "POST",
         "end_point" => "/user/add",
         "class" => "App\Services\User\AddUser"
+    ],
+    [
+        "type" => "POST",
+        "end_point" => "/user/edit",
+        "class" => "App\Services\User\EditUser"
     ],
     [
         "type" => "GET",
