@@ -28,8 +28,6 @@ class DoLogout extends CoreService
 
     protected function validation()
     {
-        return [
-            "aaa" => "integer"
-        ];
+        return [];
     }
 }

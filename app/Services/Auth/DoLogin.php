@@ -61,7 +61,8 @@ class DoLogin extends CoreService
     protected function validation()
     {
         return [
-            "aaa" => "integer"
+            "username" => "required",
+            "password" => "required"
         ];
     }
 }
