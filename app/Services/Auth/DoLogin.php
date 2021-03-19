@@ -42,9 +42,18 @@ class DoLogin extends CoreService
             }
         }
 
+        $sql = "SELECT B.task_code FROM role_task A
+            INNER JOIN tasks B ON B.id = A.task_id
+            INNER JOIN users C ON C.role_id = A.role_id AND C.id = ?";
+
+        $permissionList =  array_map(function ($item) {
+            return $item->task_code;
+        }, DB::select($sql, [$user->id]));
+
         return [
             "user" => $user,
             "token" => $token,
+            "tasks" => $permissionList,
             "message" => __("message.loginSuccess")
         ];
     }

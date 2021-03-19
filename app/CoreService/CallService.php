@@ -24,7 +24,10 @@ class CallService
             // begin transaction
             if ($object->transaction !== null && $object->transaction !== false)
                 DB::beginTransaction();
-
+            $input["session"] = [
+                "datetime" => date("YmdHis"),
+                "user_id" => Auth::id()
+            ];
             $result = $object->execute($input);
 
             if ($object->transaction !== null && $object->transaction !== false)

@@ -21,4 +21,24 @@ return [
         "end_point" => "/login",
         "class" => "App\Services\Auth\DoLogin"
     ],
+    [
+        "type" => "GET",
+        "end_point" => "/role",
+        "class" => "App\Services\User\GetRole"
+    ],
+    [
+        "type" => "GET",
+        "end_point" => "/user",
+        "class" => "App\Services\User\GetUser"
+    ],
+    [
+        "type" => "POST",
+        "end_point" => "/user/add",
+        "class" => "App\Services\User\AddUser"
+    ],
+    [
+        "type" => "GET",
+        "end_point" => "/login",
+        "class" => "App\Services\Auth\DoLogin"
+    ],
 ];

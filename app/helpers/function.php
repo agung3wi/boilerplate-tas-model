@@ -15,3 +15,11 @@ if (!function_exists('hasPermission')) {
         return !is_null($permission);
     }
 }
+
+if (!function_exists('is_blank')) {
+
+    function is_blank($array, $key)
+    {
+        return isset($array[$key]) ? (empty($array[$key]) ? true : false) : true;
+    }
+}
