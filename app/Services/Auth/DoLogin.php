@@ -28,8 +28,6 @@ class DoLogin extends CoreService
             "password" => $input["password"]
         ];
 
-
-
         $user = User::where("username", $input["username"])->first();
         if (Config::get("auth.defaults.guard") == "web") {
             if ($token = !Auth::attempt($credentials)) {
