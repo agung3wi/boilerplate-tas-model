@@ -1,11 +1,15 @@
 <?php
 
-
 return [
     [
         "type" => "GET",
         "end_point" => "/sample",
         "class" => "App\Services\Sample\SampleService"
+    ],
+    [
+        "type" => "GET",
+        "end_point" => "/me",
+        "class" => "App\Services\Auth\Me"
     ],
     [
         "type" => "GET",

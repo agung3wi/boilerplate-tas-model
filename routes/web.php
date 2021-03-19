@@ -15,8 +15,11 @@ use Illuminate\Support\Facades\DB;
 */
 
 Route::get('/', function () {
-    $columns = DB::getDoctrineColumn('m_product', 'uom_id')->getType()->getName();
-    dd($columns);
+    return view('home');
+});
+
+Route::get('/admin', function () {
+    return view('home');
 });
 
 // Route::get('/{model}', [CrudController::class, 'index']);

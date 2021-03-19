@@ -29,8 +29,8 @@ class InitUserAndAddRoleId extends Migration
         ]);
 
         DB::table("users")->insert([
-            "name" => "Admin",
-            "email" => "admin@teknosejahtera.com",
+            "name" => "Super Admin",
+            "username" => "superadmin",
             "password" => bcrypt("plamongan17"),
             "role_id" => -1
         ]);

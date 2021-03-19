@@ -8,6 +8,7 @@ use App\CoreService\CoreException;
 use App\CoreService\CoreService;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Config;
 
 class DoLogin extends CoreService
 {
@@ -23,22 +24,31 @@ class DoLogin extends CoreService
     public function process($input, $originalInput)
     {
         $credentials = [
-            "email" => $input["email"],
+            "username" => $input["username"],
             "password" => $input["password"]
         ];
 
-        if (Auth::attempt($credentials)) {
-            $user = User::where("email", $input["email"])->first();
+
+
+        $user = User::where("username", $input["username"])->first();
+        if (Config::get("auth.defaults.guard") == "web") {
+            if ($token = !Auth::attempt($credentials)) {
+                throw new CoreException(__("message.401"));
+            }
             Auth::loginUsingId($user->id);
-            return [
-                "user" => $user,
-                "message" => __("message.loginSuccess")
-            ];
+            $token = null;
         } else {
-            return [
-                "message" => __("message.loginFailed")
-            ];
+            if ($token = Auth::attempt($credentials)) {
+            } else {
+                throw new CoreException(__("message.401"));
+            }
         }
+
+        return [
+            "user" => $user,
+            "token" => $token,
+            "message" => __("message.loginSuccess")
+        ];
     }
 
     protected function validation()
