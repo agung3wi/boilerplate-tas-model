@@ -20,28 +20,28 @@ class SavePermission extends CoreService
         ORDER BY id ASC"));
         $input["roles"] = [];
         foreach ($roleList as $role) {
-            $input["roles"]["cat_" . str_replace("-", "_", $role->role_code)] = $role->id;
+            $input["roles"][$role->role_code] = $role->id;
         }
         return $input;
     }
 
     public function process($input, $originalInput)
     {
-        $permissionInput = [];
+
         foreach ($input["permissions"] as $permission) {
+            $taskId = $permission["task_id"];
+            DB::statement("DELETE FROM role_task WHERE task_id = ?", [$taskId]);
+            $permissionInput = [];
             foreach ($permission as $key => $value) {
-                if (substr($key, 0, 3) == "cat" && $value == "Y") {
+                if (isset($input["roles"][$key]) && $value == "Y")
                     $permissionInput[] = [
-                        "task_id" => $permission["task_id"],
+                        "task_id" => $taskId,
                         "role_id" =>  $input["roles"][$key]
                     ];
-                }
             }
+
+            DB::table("role_task")->insert($permissionInput);
         }
-
-
-        DB::select("TRUNCATE TABLE role_task");
-        DB::table("role_task")->insert($permissionInput);
         return [
             "message" => "Berhasil"
         ];
