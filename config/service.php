@@ -61,4 +61,14 @@ return [
         "end_point" => "/reset-password",
         "class" => "App\Services\User\ResetPassword"
     ],
+    [
+        "type" => "GET",
+        "end_point" => "/permission",
+        "class" => "App\Services\User\ViewPermission"
+    ],
+    [
+        "type" => "POST",
+        "end_point" => "/permission/save",
+        "class" => "App\Services\User\SavePermission"
+    ],
 ];

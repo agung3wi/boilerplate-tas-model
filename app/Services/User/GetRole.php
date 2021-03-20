@@ -61,7 +61,6 @@ class GetRole extends CoreService
                 FROM roles A
             $condition
             ORDER BY " . $input['order'] . " " . $input['sort'] . " LIMIT :limit OFFSET :offset";
-
         $params["limit"] = $input["limit"];
         $params["offset"] = $input["offset"];
 
