@@ -29,6 +29,9 @@ class DoLogin extends CoreService
         ];
 
         $user = User::where("username", $input["username"])->first();
+        if ($user->active == "N")
+            throw new CoreException("Pengguna tidak aktif, Silahkan Hubungi Administrator");
+
         if (Config::get("auth.defaults.guard") == "web") {
             if ($token = !Auth::attempt($credentials)) {
                 throw new CoreException(__("message.401"));

@@ -38,11 +38,6 @@ return [
     ],
     [
         "type" => "POST",
-        "end_point" => "/reset-password",
-        "class" => "App\Services\User\ResetPassword"
-    ],
-    [
-        "type" => "POST",
         "end_point" => "/user/add",
         "class" => "App\Services\User\AddUser"
     ],
@@ -52,8 +47,18 @@ return [
         "class" => "App\Services\User\EditUser"
     ],
     [
-        "type" => "GET",
-        "end_point" => "/login",
-        "class" => "App\Services\Auth\DoLogin"
+        "type" => "POST",
+        "end_point" => "/user/remove",
+        "class" => "App\Services\User\RemoveUser"
+    ],
+    [
+        "type" => "POST",
+        "end_point" => "/user/restore",
+        "class" => "App\Services\User\RestoreUser"
+    ],
+    [
+        "type" => "POST",
+        "end_point" => "/reset-password",
+        "class" => "App\Services\User\ResetPassword"
     ],
 ];
