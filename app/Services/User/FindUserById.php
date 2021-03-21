@@ -23,7 +23,7 @@ class FindUserById extends CoreService
     public function process($input, $originalInput)
     {
         $user = User::find($input["id"]);
-
+        $user->password = "";
         return $user;
     }
 

@@ -21,7 +21,20 @@ class ViewPermission extends CoreService
 
     public function process($input, $originalInput)
     {
-        $tasks = DB::select("SELECT * FROM tasks");
+        $condition = "WHERE true";
+        $params = [];
+        if (!is_null($input["src"] ?? null)) {
+            $condition .= " AND (
+                UPPER(task_code) LIKE ?
+                OR UPPER(task_name) LIKE ?
+                OR UPPER(description) LIKE ?
+            )";
+            $params[] = "%" . $input["src"] . "%";
+            $params[] = "%" . $input["src"] . "%";
+            $params[] = "%" . $input["src"] . "%";
+        }
+
+        $tasks = DB::select("SELECT * FROM tasks $condition", $params);
         $roles = DB::select("SELECT * FROM roles");
         $roleTaskList = [];
         foreach (DB::select("SELECT * FROM role_task") as $roleTask) {
