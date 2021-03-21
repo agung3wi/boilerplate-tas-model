@@ -71,4 +71,9 @@ return [
         "end_point" => "/permission/save",
         "class" => "App\Services\User\SavePermission"
     ],
+    [
+        "type" => "POST",
+        "end_point" => "/role/add",
+        "class" => "App\Services\User\AddRole"
+    ],
 ];
