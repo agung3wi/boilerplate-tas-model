@@ -22,14 +22,13 @@ class FindRoleById extends CoreService
     public function process($input, $originalInput)
     {
         $user = Role::find($input["id"]);
-        $user->password = "";
         return $user;
     }
 
     protected function validation()
     {
         return [
-            "id" => "required|integer|min:0"
+            "id" => "required|integer"
         ];
     }
 }
