@@ -76,4 +76,14 @@ return [
         "end_point" => "/role/add",
         "class" => "App\Services\User\AddRole"
     ],
+    [
+        "type" => "POST",
+        "end_point" => "/role/edit",
+        "class" => "App\Services\User\EditRole"
+    ],
+    [
+        "type" => "GET",
+        "end_point" => "/role/find",
+        "class" => "App\Services\User\FindRoleById"
+    ],
 ];
