@@ -30,8 +30,8 @@ class AddRole extends CoreService
         $user->role_code = $input["role_code"];
         $user->role_name = $input["role_name"];
         $user->description = isset($input["description"]) ? $input["description"] : "";
-        $user->created_at = $input["session"]["datetime"];
-        $user->updated_at = $input["session"]["datetime"];
+        // $user->created_at = $input["session"]["datetime"];
+        // $user->updated_at = $input["session"]["datetime"];
         $user->save();
 
         return $user;

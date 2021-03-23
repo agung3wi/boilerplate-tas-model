@@ -17,7 +17,7 @@ return [
         "class" => "App\Services\Auth\DoLogout"
     ],
     [
-        "type" => "GET",
+        "type" => "POST",
         "end_point" => "/login",
         "class" => "App\Services\Auth\DoLogin"
     ],

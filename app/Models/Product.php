@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Log;
 class Product extends Model
 {
     protected $table = 'm_product';
-    protected $fillable = [];
+    protected $fillable = ["code", "name", "uom_name", "default_price", "created_by", "updated_by"];
     const TABLE_NAME = "m_product";
     const ADD = true;
     const EDIT = true;
@@ -22,9 +22,22 @@ class Product extends Model
     const TIMESTAMP = true;
 
     const FIELDS = [
-        "product_code" => [
-            "validation_add" => "required|max:25|string|unique:m_product",
-            "validation_edit" => "required|max:25",
+        "code" => [
+            "validation_add" => "",
+            "validation_edit" => "",
+            "searchable" => true,
+            "sortable" => true,
+            "filter" => false,
+            "filter_operation" => "",
+            "default" => "",
+            "add" => true,
+            "edit" => false,
+            "get" => true,
+            "find" => true
+        ],
+        "name" => [
+            "validation_add" => "",
+            "validation_edit" => "",
             "searchable" => true,
             "sortable" => true,
             "filter" => false,
@@ -35,80 +48,80 @@ class Product extends Model
             "get" => true,
             "find" => true
         ],
-        "product_name" => [
+        "default_price" => [
             "validation_add" => "required",
-            "validation_edit" => "required",
-            "searchable" => true,
-            "sortable" => true,
-            "filter" => false,
-            "filter_operation" => "",
-            "default" => "",
-            "add" => true,
-            "edit" => true,
-            "get" => true,
-            "find" => true
-        ],
-        "description" => [
-            "validation_add" => "required",
-            "validation_edit" => "required",
-            "searchable" => true,
-            "sortable" => true,
-            "filter" => false,
-            "filter_operation" => "",
-            "default" => "",
-            "add" => true,
-            "edit" => true,
-            "get" => true,
-            "find" => true
-        ],
-        "uom_id" => [
-            "validation_add" => "required",
-            "validation_edit" => "required",
+            "validation_edit" => "",
             "searchable" => false,
             "sortable" => true,
             "filter" => false,
             "filter_operation" => "",
             "default" => "",
             "add" => true,
+            "edit" => true,
+            "get" => true,
+            "find" => true
+        ],
+        "uom_name" => [
+            "validation_add" => "",
+            "validation_edit" => "",
+            "searchable" => true,
+            "sortable" => true,
+            "filter" => false,
+            "filter_operation" => "",
+            "default" => "",
+            "add" => true,
+            "edit" => true,
+            "get" => true,
+            "find" => true
+        ],
+        "created_by" => [
+            "validation_add" => "",
+            "validation_edit" => "",
+            "searchable" => false,
+            "sortable" => true,
+            "filter" => false,
+            "filter_operation" => "",
+            "default" => "",
+            "add" => false,
+            "edit" => true,
+            "get" => true,
+            "find" => true
+        ],
+        "updated_by" => [
+            "validation_add" => "",
+            "validation_edit" => "",
+            "searchable" => false,
+            "sortable" => true,
+            "filter" => false,
+            "filter_operation" => "",
+            "default" => "",
+            "add" => false,
             "edit" => true,
             "get" => true,
             "find" => true
         ],
         "created_at" => [
-            "validation_add" => "required",
-            "validation_edit" => "required",
+            "validation_add" => "",
+            "validation_edit" => "",
             "searchable" => false,
             "sortable" => true,
             "filter" => false,
             "filter_operation" => "",
             "default" => "",
-            "add" => true,
+            "add" => false,
             "edit" => true,
             "get" => true,
             "find" => true
         ],
         "updated_at" => [
-            "validation_add" => "required",
-            "validation_edit" => "required",
+            "validation_add" => "",
+            "validation_edit" => "",
             "searchable" => false,
             "sortable" => true,
             "filter" => false,
             "filter_operation" => "",
             "default" => "",
-            "add" => true,
-            "edit" => true,
-            "get" => true,
-            "find" => true
-        ],
-        "version" => [
-            "validation_add" => "required",
-            "validation_edit" => "required",
-            "searchable" => false,
-            "sortable" => true,
-            "filter" => false,
-            "filter_operation" => "",
-            "default" => "",
-            "add" => true,
+            "add" => false,
             "edit" => true,
             "get" => true,
             "find" => true
@@ -117,6 +130,7 @@ class Product extends Model
 
     public static function beforeInsert($input)
     {
+        $input["code"] = strtoupper($input["code"]);
         return $input;
     }
 

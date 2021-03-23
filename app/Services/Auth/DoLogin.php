@@ -34,14 +34,14 @@ class DoLogin extends CoreService
 
         if (Config::get("auth.defaults.guard") == "web") {
             if ($token = !Auth::attempt($credentials)) {
-                throw new CoreException(__("message.401"));
+                throw new CoreException(__("message.401"), 401);
             }
             Auth::loginUsingId($user->id);
             $token = null;
         } else {
             if ($token = Auth::attempt($credentials)) {
             } else {
-                throw new CoreException(__("message.401"));
+                throw new CoreException(__("message.401"), 401);
             }
         }
 

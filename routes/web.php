@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CrudController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
 
@@ -22,8 +23,8 @@ Route::get('/admin', function () {
     return view('home');
 });
 
-// Route::get('/{model}', [CrudController::class, 'index']);
-// Route::get('/{model}/{id}', [CrudController::class, 'find']);
-// Route::post('/{model}', [CrudController::class, 'create']);
-// Route::put('/{model}/{id}', [CrudController::class, 'update']);
-// Route::delete('/{model}/{id}', [CrudController::class, 'delete']);
+Route::get('/{model}', [CrudController::class, 'index']);
+Route::get('/{model}/{id}', [CrudController::class, 'find']);
+Route::post('/{model}', [CrudController::class, 'create']);
+Route::put('/{model}/{id}', [CrudController::class, 'update']);
+Route::delete('/{model}/{id}', [CrudController::class, 'delete']);

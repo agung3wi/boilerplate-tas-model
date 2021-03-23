@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -18,8 +19,8 @@ class CrudController extends Controller
             return $this->notFound();
         if (!$classModel::GET)
             return $this->notFound();
-        if (!hasPermission("view-" . $model))
-            return $this->forbidden();
+        // if (!hasPermission("view-" . $model))
+        //     return $this->forbidden();
 
         $input = request()->all();
         $selectableList = ["A." . ($classModel::PRIMARY_KEY ?? "id")];
@@ -97,17 +98,15 @@ class CrudController extends Controller
         ];
     }
 
-    public function show($model)
+    public function show($model, $id)
     {
         $classModel = "\\App\\Models\\" . Str::upper(Str::camel($model));
         if (!class_exists($classModel))
             return $this->notFound();
         if (!$classModel::FIND)
             return $this->notFound();
-        if (!hasPermission("view-" . $model))
-            return $this->forbidden();
-
-        $id = request()->input("id");
+        // if (!hasPermission("view-" . $model))
+        //     return $this->forbidden();
 
         $selectableList = ["A." . ($classModel::PRIMARY_KEY ?? "id")];
         $tableJoinList = [];
@@ -147,9 +146,9 @@ class CrudController extends Controller
         if (!$classModel::ADD)
             return $this->notFound();
 
-        if (!hasPermission("add-" . $model)) {
-            return $this->forbidden();
-        }
+        // if (!hasPermission("add-" . $model)) {
+        //     return $this->forbidden();
+        // }
 
         $validation = [];
 
@@ -173,8 +172,12 @@ class CrudController extends Controller
             $inputOnly[$item] = ($value["add"]) ? $input[$item] : $value["default"];
         }
 
+        $inputOnly["created_by"] = -1;
+        $inputOnly["updated_by"] = -1;
+
+
         $product =  $classModel::create($inputOnly);
-        $classModel::afterInsert($product);
+        $classModel::afterInsert($product, $input);
 
         return $product;
     }
@@ -186,9 +189,9 @@ class CrudController extends Controller
             return $this->notFound();
         if (!$classModel::EDIT)
             return $this->notFound();
-        if (!hasPermission("edit-" . $model)) {
-            return $this->forbidden();
-        }
+        // if (!hasPermission("edit-" . $model)) {
+        //     return $this->forbidden();
+        // }
 
         $validation = [];
 

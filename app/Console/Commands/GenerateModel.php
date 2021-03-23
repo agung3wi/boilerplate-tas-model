@@ -41,7 +41,7 @@ class GenerateModel extends Command
     {
         $this->info("Generating Model");
         $tables = DB::select("SELECT table_name FROM information_schema.tables
-        WHERE table_catalog = 'boilerplate-model' AND table_schema='public'
+        WHERE table_catalog = '" .  env("DB_DATABASE")  . "' AND table_schema='public'
         AND table_name NOT IN ('users', 'roles', 'tasks', 'role_task', 'jobs',
             'migrations', 'password_resets', 'failed_jobs')");
         $prefix = ["m_", "fi_", "in_", "pu_", "r_", "sl_"];
@@ -56,7 +56,7 @@ class GenerateModel extends Command
             $modelName = Str::ucfirst(Str::camel($tableName));
             $fileName = base_path("app/Models/" . $modelName . ".php");
             $fields = DB::select("SELECT * FROM information_schema.columns
-            WHERE table_catalog = 'boilerplate-model' AND table_name = '$tableNameOriginal'");
+            WHERE table_catalog = '" . env("DB_DATABASE") . "' AND table_name = '$tableNameOriginal'");
 
             $fieldConfigs = [];
             foreach ($fields as $field) {

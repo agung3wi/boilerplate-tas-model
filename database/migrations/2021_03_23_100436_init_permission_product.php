@@ -2,9 +2,10 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
-class CreateUomsTable extends Migration
+class InitPermissionProduct extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +14,12 @@ class CreateUomsTable extends Migration
      */
     public function up()
     {
-        Schema::create('m_uom', function (Blueprint $table) {
-            $table->id();
-            $table->string("uom_code", 100)->unique();
-            $table->string("uom_name", 200);
-            $table->timestamps();
-        });
-
+        DB::table("tasks")
+            ->insert([
+                "task_code" => "view-product",
+                "task_name" => "View Product",
+                "description" => "View Product"
+            ]);
     }
 
     /**
@@ -29,6 +29,6 @@ class CreateUomsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('uoms');
+        //
     }
 }
