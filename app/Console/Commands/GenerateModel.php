@@ -40,7 +40,8 @@ class GenerateModel extends Command
     public function handle()
     {
         $this->info("Generating Model");
-        $tables = DB::select("SELECT table_name FROM information_schema.tables
+        $tables = DB::select("
+        SELECT table_name FROM information_schema.tables 
         WHERE table_catalog = '" .  env("DB_DATABASE")  . "' AND table_schema='public'
         AND table_name NOT IN ('users', 'roles', 'tasks', 'role_task', 'jobs',
             'migrations', 'password_resets', 'failed_jobs')");
@@ -55,8 +56,36 @@ class GenerateModel extends Command
             }
             $modelName = Str::ucfirst(Str::camel($tableName));
             $fileName = base_path("app/Models/" . $modelName . ".php");
-            $fields = DB::select("SELECT * FROM information_schema.columns
-            WHERE table_catalog = '" . env("DB_DATABASE") . "' AND table_name = '$tableNameOriginal'");
+            $fields = DB::select("
+            WITH summary_fk AS (
+                select kcu.table_name as foreign_table,
+                rel_kcu.table_name as primary_table,
+                kcu.column_name as fk_column,
+                rel_kcu.column_name as pk_column,
+                pgc.confdeltype,
+                kcu.constraint_name
+            from information_schema.table_constraints tco
+            join information_schema.key_column_usage kcu
+                    on tco.constraint_schema = kcu.constraint_schema
+                    and tco.constraint_name = kcu.constraint_name
+            join information_schema.referential_constraints rco
+                    on tco.constraint_schema = rco.constraint_schema
+                    and tco.constraint_name = rco.constraint_name
+            join information_schema.key_column_usage rel_kcu
+                    on rco.unique_constraint_schema = rel_kcu.constraint_schema
+                    and rco.unique_constraint_name = rel_kcu.constraint_name
+                    and kcu.ordinal_position = rel_kcu.ordinal_position
+            join pg_constraint pgc ON pgc.conname = kcu.constraint_name
+            where tco.constraint_type = 'FOREIGN KEY' AND kcu.constraint_catalog='".env("DB_DATABASE")."'
+                AND kcu.table_name = '$tableNameOriginal'
+            order by kcu.table_schema,
+                    kcu.table_name,
+                    kcu.ordinal_position
+            ) SELECT A.*, B.primary_table AS ref_table, B.pk_column AS ref_column 
+            FROM information_schema.columns A 
+            LEFT JOIN summary_fk B ON B.foreign_table = A.table_name AND 
+                B.fk_column = A.column_name 
+            WHERE A.table_catalog = '" . env("DB_DATABASE") . "' AND A.table_name = '$tableNameOriginal'");
 
             $fieldConfigs = [];
             foreach ($fields as $field) {
@@ -71,7 +100,9 @@ class GenerateModel extends Command
                     "add" => true,
                     "edit" => true,
                     "get" => true,
-                    "find" => true
+                    "find" => true,
+                    "ref_table" => $field->ref_table,
+                    "ref_column" => $field->ref_column
                 ];
             }
 
@@ -108,20 +139,11 @@ class GenerateModel extends Command
                 $afterUpdate = $matches[1][0];
 
                 foreach ($classModel::FIELDS as $fieldName => $value) {
-                    $fieldConfigs[$fieldName] = isset($fieldConfigs[$fieldName]) ?
-                        $value : [
-                            "validation_add" => "",
-                            "validation_edit" => "",
-                            "searchable" => true,
-                            "sortable" => true,
-                            "filter" => false,
-                            "filter_operation" => "",
-                            "default" => "",
-                            "add" => true,
-                            "edit" => true,
-                            "get" => true,
-                            "find" => true
-                        ];
+                    $currentField = $fieldConfigs[$fieldName];
+                    $fieldConfigs[$fieldName] = $value; 
+    
+                    $fieldConfigs[$fieldName]["ref_table"] = $currentField["ref_table"];
+                    $fieldConfigs[$fieldName]["ref_column"] = $currentField["ref_column"];
                 }
 
                 $fileContent = view('generate.model', [

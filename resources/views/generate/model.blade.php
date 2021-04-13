@@ -34,21 +34,25 @@ class {{ $studly_caps }} extends Model
             "add" => {{ $value["add"]? "true" : "false" }},
             "edit" => {{ $value["edit"]? "true" : "false" }},
             "get" => {{ $value["get"]? "true" : "false" }},
-            "find" => {{ $value["find"]? "true" : "false" }}
+            "find" => {{ $value["find"]? "true" : "false" }},
+            "relation" => [
+                "table_name" => "{!! $value["ref_table"] !!}",
+                "column_name" => "{!! $value["ref_column"] !!}"
+            ]
         ],
 @endif
 @endforeach
     ];
 
     public static function beforeInsert($input)
-    {{{$before_insert}}}
+    {!! $before_insert !!}
 
     public static function afterInsert($object, $input)
-    {{{$after_insert}}}
-
+    {!! $after_insert !!}
+    
     public static function beforeUpdate($input)
-    {{{$before_update}}}
-
+    {!! $before_update !!}
+    
     public static function afterUpdate($object, $input)
-    {{{$after_update}}}
+    {!! $after_update !!}
 }

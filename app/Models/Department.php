@@ -6,11 +6,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 
-class Product extends Model
+class Department extends Model
 {
-    protected $table = 'm_product';
+    protected $table = 'm_department';
     protected $fillable = [];
-    const TABLE_NAME = "m_product";
+    const TABLE_NAME = "m_department";
     const ADD = true;
     const EDIT = true;
     const DELETE = true;
@@ -22,58 +22,7 @@ class Product extends Model
     const TIMESTAMP = true;
 
     const FIELDS = [
-        "code" => [
-            "validation_add" => "",
-            "validation_edit" => "",
-            "searchable" => true,
-            "sortable" => true,
-            "filter" => false,
-            "filter_operation" => "",
-            "default" => "",
-            "add" => true,
-            "edit" => true,
-            "get" => true,
-            "find" => true,
-            "relation" => [
-                "table_name" => "",
-                "column_name" => ""
-            ]
-        ],
-        "name" => [
-            "validation_add" => "",
-            "validation_edit" => "",
-            "searchable" => true,
-            "sortable" => true,
-            "filter" => false,
-            "filter_operation" => "",
-            "default" => "",
-            "add" => true,
-            "edit" => true,
-            "get" => true,
-            "find" => true,
-            "relation" => [
-                "table_name" => "",
-                "column_name" => ""
-            ]
-        ],
-        "default_price" => [
-            "validation_add" => "",
-            "validation_edit" => "",
-            "searchable" => true,
-            "sortable" => true,
-            "filter" => false,
-            "filter_operation" => "",
-            "default" => "",
-            "add" => true,
-            "edit" => true,
-            "get" => true,
-            "find" => true,
-            "relation" => [
-                "table_name" => "",
-                "column_name" => ""
-            ]
-        ],
-        "uom_name" => [
+        "department_name" => [
             "validation_add" => "",
             "validation_edit" => "",
             "searchable" => true,
@@ -162,12 +111,12 @@ class Product extends Model
 
     public static function beforeInsert($input)
     {
+        $input["department_name"] = strtoupper("AVC");
         return $input;
     }
 
     public static function afterInsert($object, $input)
     {
-        
     }
     
     public static function beforeUpdate($input)
@@ -177,6 +126,5 @@ class Product extends Model
     
     public static function afterUpdate($object, $input)
     {
-
     }
 }

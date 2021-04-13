@@ -6,11 +6,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 
-class Product extends Model
+class Project extends Model
 {
-    protected $table = 'm_product';
+    protected $table = 'm_project';
     protected $fillable = [];
-    const TABLE_NAME = "m_product";
+    const TABLE_NAME = "m_project";
     const ADD = true;
     const EDIT = true;
     const DELETE = true;
@@ -22,7 +22,7 @@ class Product extends Model
     const TIMESTAMP = true;
 
     const FIELDS = [
-        "code" => [
+        "project_name" => [
             "validation_add" => "",
             "validation_edit" => "",
             "searchable" => true,
@@ -39,7 +39,24 @@ class Product extends Model
                 "column_name" => ""
             ]
         ],
-        "name" => [
+        "department_id" => [
+            "validation_add" => "",
+            "validation_edit" => "",
+            "searchable" => true,
+            "sortable" => true,
+            "filter" => false,
+            "filter_operation" => "",
+            "default" => "",
+            "add" => true,
+            "edit" => true,
+            "get" => true,
+            "find" => true,
+            "relation" => [
+                "table_name" => "m_department",
+                "column_name" => "id"
+            ]
+        ],
+        "description" => [
             "validation_add" => "",
             "validation_edit" => "",
             "searchable" => true,
@@ -56,24 +73,7 @@ class Product extends Model
                 "column_name" => ""
             ]
         ],
-        "default_price" => [
-            "validation_add" => "",
-            "validation_edit" => "",
-            "searchable" => true,
-            "sortable" => true,
-            "filter" => false,
-            "filter_operation" => "",
-            "default" => "",
-            "add" => true,
-            "edit" => true,
-            "get" => true,
-            "find" => true,
-            "relation" => [
-                "table_name" => "",
-                "column_name" => ""
-            ]
-        ],
-        "uom_name" => [
+        "project_img" => [
             "validation_add" => "",
             "validation_edit" => "",
             "searchable" => true,
@@ -103,8 +103,8 @@ class Product extends Model
             "get" => true,
             "find" => true,
             "relation" => [
-                "table_name" => "",
-                "column_name" => ""
+                "table_name" => "users",
+                "column_name" => "id"
             ]
         ],
         "updated_by" => [
@@ -120,8 +120,8 @@ class Product extends Model
             "get" => true,
             "find" => true,
             "relation" => [
-                "table_name" => "",
-                "column_name" => ""
+                "table_name" => "users",
+                "column_name" => "id"
             ]
         ],
         "created_at" => [
@@ -167,8 +167,7 @@ class Product extends Model
 
     public static function afterInsert($object, $input)
     {
-        
-    }
+        }
     
     public static function beforeUpdate($input)
     {
@@ -177,6 +176,5 @@ class Product extends Model
     
     public static function afterUpdate($object, $input)
     {
-
-    }
+        }
 }

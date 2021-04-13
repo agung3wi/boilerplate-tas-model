@@ -16,7 +16,8 @@ use Illuminate\Support\Facades\DB;
 */
 
 Route::get('/', function () {
-    return view('home');
+    return DB::select("SELECT * FROM information_schema.columns
+    WHERE table_catalog = '" . env("DB_DATABASE") . "' AND table_name = 'm_product'");
 });
 
 Route::get('/admin', function () {
