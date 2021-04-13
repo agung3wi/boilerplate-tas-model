@@ -7,13 +7,7 @@ class CoreResponse
 
     public static function ok($output, $message = "")
     {
-        $result["success"] = true;
-        $result["result"] = $output;
-        if (!is_null($message) && !empty($message)) {
-            $result["message"] = $message;
-        }
-
-        return response()->json($result, 200);
+        return response()->json($output, 200);
     }
 
     public static function fail($ex)
@@ -30,7 +24,7 @@ class CoreResponse
     {
         $result["success"] = false;
         if (!empty($ex->getErrorMessage()) && !is_null($ex->getErrorMessage())) {
-            $result["error_message"] = $ex->getErrorMessage();
+            $result["message"] = $ex->getErrorMessage();
         }
 
         $result["error_code"] = $ex->getErrorCode();

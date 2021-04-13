@@ -22,7 +22,7 @@ class Project extends Model
     const TIMESTAMP = true;
 
     const FIELDS = [
-        "project_name" => [
+        "created_by" => [
             "validation_add" => "",
             "validation_edit" => "",
             "searchable" => true,
@@ -35,8 +35,8 @@ class Project extends Model
             "get" => true,
             "find" => true,
             "relation" => [
-                "table_name" => "",
-                "column_name" => ""
+                "table_name" => "users",
+                "column_name" => "id"
             ]
         ],
         "department_id" => [
@@ -54,6 +54,40 @@ class Project extends Model
             "relation" => [
                 "table_name" => "m_department",
                 "column_name" => "id"
+            ]
+        ],
+        "updated_by" => [
+            "validation_add" => "",
+            "validation_edit" => "",
+            "searchable" => true,
+            "sortable" => true,
+            "filter" => false,
+            "filter_operation" => "",
+            "default" => "",
+            "add" => true,
+            "edit" => true,
+            "get" => true,
+            "find" => true,
+            "relation" => [
+                "table_name" => "users",
+                "column_name" => "id"
+            ]
+        ],
+        "project_name" => [
+            "validation_add" => "",
+            "validation_edit" => "",
+            "searchable" => true,
+            "sortable" => true,
+            "filter" => false,
+            "filter_operation" => "",
+            "default" => "",
+            "add" => true,
+            "edit" => true,
+            "get" => true,
+            "find" => true,
+            "relation" => [
+                "table_name" => "",
+                "column_name" => ""
             ]
         ],
         "description" => [
@@ -88,40 +122,6 @@ class Project extends Model
             "relation" => [
                 "table_name" => "",
                 "column_name" => ""
-            ]
-        ],
-        "created_by" => [
-            "validation_add" => "",
-            "validation_edit" => "",
-            "searchable" => true,
-            "sortable" => true,
-            "filter" => false,
-            "filter_operation" => "",
-            "default" => "",
-            "add" => true,
-            "edit" => true,
-            "get" => true,
-            "find" => true,
-            "relation" => [
-                "table_name" => "users",
-                "column_name" => "id"
-            ]
-        ],
-        "updated_by" => [
-            "validation_add" => "",
-            "validation_edit" => "",
-            "searchable" => true,
-            "sortable" => true,
-            "filter" => false,
-            "filter_operation" => "",
-            "default" => "",
-            "add" => true,
-            "edit" => true,
-            "get" => true,
-            "find" => true,
-            "relation" => [
-                "table_name" => "users",
-                "column_name" => "id"
             ]
         ],
         "created_at" => [
