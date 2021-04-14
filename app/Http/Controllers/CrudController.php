@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\CoreService\CallService;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -14,88 +15,9 @@ class CrudController extends Controller
 {
     public function index($model)
     {
-        $classModel = "\\App\\Models\\" . Str::upper(Str::camel($model));
-        if (!class_exists($classModel))
-            return $this->notFound();
-        if (!$classModel::GET)
-            return $this->notFound();
-        // if (!hasPermission("view-" . $model))
-        //     return $this->forbidden();
-
         $input = request()->all();
-        $selectableList = ["A." . ($classModel::PRIMARY_KEY ?? "id")];
-        $sortBy = "A." . ($classModel::PRIMARY_KEY ?? "id");
-        $sort = strtoupper($input["sort"] ?? "DESC") == "ASC" ? "ASC" : "DESC";
-
-        $sortableList = array_filter($classModel::FIELDS, function ($item) {
-            return $item["sortable"];
-        });
-
-        $sortableList = array_map(function ($item) {
-            return $item;
-        }, array_keys($sortableList), $sortableList);
-
-        if (in_array($input["sort_by"] ?? "", $sortableList)) {
-            $sortBy = $input["sort_by"];
-        }
-
-        $params["src"] = "%" . ($input["src"] ?? "") . "%";
-        $tableJoinList = [];
-        $filterList = [];
-
-        $i = 0;
-        foreach ($classModel::FIELDS as $item => $value) {
-            if ($value["get"]) {
-                $selectableList[] = "A." . $item;
-            }
-            if ($value["filter"] && isset($input[$item])) {
-                $filterList[] = " AND " . $item . $value["filter_op"] . ":$item";
-                $params[$item] = $input[$item];
-            }
-            if (isset($value["relation"])) {
-                $alias = $this->toAlpha($i + 1);
-                $selectableList = array_merge($selectableList, array_map(function ($item) use ($alias) {
-                    return $alias . "." . $item;
-                }, $value["relation"]["selectable"]));
-
-                $tableJoinList[] = "LEFT JOIN " . $value["relation"]["table"] . " " . $alias . " ON " .
-                    "A." . $item . " = " .  $alias . "." . $value["relation"]["field_reference"];
-            }
-            $i++;
-        }
-
-        $condition = " WHERE true";
-
-        $searchableList = array_filter($classModel::FIELDS, function ($item) {
-            return $item["searchable"];
-        });
-
-        $searchableList = array_map(function ($item) {
-            return $item . " ILIKE :src";
-        }, array_keys($searchableList), $searchableList);
-
-        $limit = $input["limit"] ?? 10;
-        $offset = $input["offset"] ?? 0;
-        if (!is_null($input["page"] ?? null)) {
-            $offset = $limit * ($input["page"] - 1);
-        }
-
-        $sql = "SELECT " . implode(", ", $selectableList) . " FROM " . $classModel::TABLE_NAME . " A " .
-            implode(" ", $tableJoinList) . $condition .
-            " AND (" . implode(" OR ", $searchableList) . ")" .
-            implode("\n", $filterList) . " ORDER BY " . $sortBy . " " . $sort . " LIMIT $limit OFFSET $offset ";
-
-        $sqlForCount = "SELECT COUNT(1) AS total FROM " . $classModel::TABLE_NAME . " A " .
-            implode(" ", $tableJoinList) . $condition .
-            " AND (" . implode(" OR ", $searchableList) . ")" .
-            implode("\n", $filterList);
-
-        $productList =  DB::select($sql, $params);
-        $total = DB::selectOne($sqlForCount, $params)->total;
-        return [
-            "data" => $productList,
-            "total" => $total
-        ];
+        $input["model"] = $model;
+        return CallService::run("Get", $input);
     }
 
     public function show($model, $id)
@@ -105,8 +27,8 @@ class CrudController extends Controller
             return $this->notFound();
         if (!$classModel::FIND)
             return $this->notFound();
-        // if (!hasPermission("view-" . $model))
-        //     return $this->forbidden();
+        if (!hasPermission("view-" . $model))
+            return $this->forbidden();
 
         $selectableList = ["A." . ($classModel::PRIMARY_KEY ?? "id")];
         $tableJoinList = [];
@@ -146,40 +68,11 @@ class CrudController extends Controller
         if (!$classModel::ADD)
             return $this->notFound();
 
-        // if (!hasPermission("add-" . $model)) {
-        //     return $this->forbidden();
-        // }
-
-        $validation = [];
-
-        foreach ($classModel::FIELDS as $item => $value) {
-            $validation[$item] = $value["validation_add"] ?? "";
+        if (!hasPermission("add-" . $model)) {
+            return $this->forbidden();
         }
 
-        $validator = Validator::make(request()->all(), $validation);
-
-        if ($validator->fails()) {
-            return response()->json(
-                ["message" => $validator->errors()->first()],
-                422
-            );
-        }
-
-        $input = $classModel::beforeInsert(request()->all());
-
-        $inputOnly = [];
-        foreach ($classModel::FIELDS as $item => $value) {
-            $inputOnly[$item] = ($value["add"]) ? $input[$item] : $value["default"];
-        }
-
-        $inputOnly["created_by"] = -1;
-        $inputOnly["updated_by"] = -1;
-
-
-        $product =  $classModel::create($inputOnly);
-        $classModel::afterInsert($product, $input);
-
-        return $product;
+        
     }
 
     public function update($model)
@@ -189,9 +82,9 @@ class CrudController extends Controller
             return $this->notFound();
         if (!$classModel::EDIT)
             return $this->notFound();
-        // if (!hasPermission("edit-" . $model)) {
-        //     return $this->forbidden();
-        // }
+        if (!hasPermission("edit-" . $model)) {
+            return $this->forbidden();
+        }
 
         $validation = [];
 
