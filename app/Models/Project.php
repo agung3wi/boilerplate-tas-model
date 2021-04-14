@@ -25,7 +25,7 @@ class Project extends Model
         "created_by" => [
             "validation_add" => "",
             "validation_edit" => "",
-            "searchable" => true,
+            "searchable" => false,
             "sortable" => true,
             "filter" => false,
             "filter_operation" => "",
@@ -36,13 +36,14 @@ class Project extends Model
             "find" => true,
             "relation" => [
                 "table_name" => "users",
-                "column_name" => "id"
+                "column_name" => "id",
+                "selectable" => ["*"]
             ]
         ],
         "department_id" => [
             "validation_add" => "",
             "validation_edit" => "",
-            "searchable" => true,
+            "searchable" => false,
             "sortable" => true,
             "filter" => false,
             "filter_operation" => "",
@@ -53,13 +54,14 @@ class Project extends Model
             "find" => true,
             "relation" => [
                 "table_name" => "m_department",
-                "column_name" => "id"
+                "column_name" => "id",
+                "selectable" => ["*"]
             ]
         ],
         "updated_by" => [
             "validation_add" => "",
             "validation_edit" => "",
-            "searchable" => true,
+            "searchable" => false,
             "sortable" => true,
             "filter" => false,
             "filter_operation" => "",
@@ -70,7 +72,8 @@ class Project extends Model
             "find" => true,
             "relation" => [
                 "table_name" => "users",
-                "column_name" => "id"
+                "column_name" => "id",
+                "selectable" => ["*"]
             ]
         ],
         "project_name" => [
@@ -93,7 +96,7 @@ class Project extends Model
         "description" => [
             "validation_add" => "",
             "validation_edit" => "",
-            "searchable" => true,
+            "searchable" => false,
             "sortable" => true,
             "filter" => false,
             "filter_operation" => "",
@@ -110,7 +113,7 @@ class Project extends Model
         "project_img" => [
             "validation_add" => "",
             "validation_edit" => "",
-            "searchable" => true,
+            "searchable" => false,
             "sortable" => true,
             "filter" => false,
             "filter_operation" => "",
@@ -127,7 +130,7 @@ class Project extends Model
         "created_at" => [
             "validation_add" => "",
             "validation_edit" => "",
-            "searchable" => true,
+            "searchable" => false,
             "sortable" => true,
             "filter" => false,
             "filter_operation" => "",
@@ -144,7 +147,7 @@ class Project extends Model
         "updated_at" => [
             "validation_add" => "",
             "validation_edit" => "",
-            "searchable" => true,
+            "searchable" => false,
             "sortable" => true,
             "filter" => false,
             "filter_operation" => "",

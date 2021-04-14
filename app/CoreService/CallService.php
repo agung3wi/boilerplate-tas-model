@@ -49,6 +49,35 @@ class CallService
         }
     }
 
+    public static function run($serviceName, $input)
+    {
+        try {
+            $object = $object = app()->make($serviceName);
+
+            // begin transaction
+            if ($object->transaction !== null && $object->transaction !== false)
+                DB::beginTransaction();
+            $result = $object->execute($input);
+
+            if ($object->transaction !== null && $object->transaction !== false)
+                DB::commit();
+
+            return CoreResponse::ok($result);
+        } catch (CoreException $ex) {
+            if ($object->transaction !== null && $object->transaction !== false)
+                DB::rollback();
+
+            return CoreResponse::fail($ex);
+        } catch (Exception $ex) {
+            if (isset($object) && $object->transaction !== null && $object->transaction !== false)
+                DB::rollback();
+
+            $result["success"] = false;
+            $result["error_message"] = $ex->getMessage();
+            return response()->json($result, 500);
+        }
+    }
+
     public static function call($serviceName, $input)
     {
         try {

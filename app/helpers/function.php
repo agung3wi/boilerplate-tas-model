@@ -23,3 +23,15 @@ if (!function_exists('is_blank')) {
         return isset($array[$key]) ? (empty($array[$key]) ? true : false) : true;
     }
 }
+
+if (!function_exists('toAlpha')) {
+
+    function toAlpha($data)
+    {
+        $alphabet =   array(
+            'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L',
+            'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
+        );
+        return $alphabet[$data];
+    }
+}

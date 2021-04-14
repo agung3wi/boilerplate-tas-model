@@ -3,6 +3,21 @@
 return [
     [
         "type" => "GET",
+        "end_point" => "/get",
+        "class" => "App\Services\Crud\Get"
+    ],
+    [
+        "type" => "POST",
+        "end_point" => "/create",
+        "class" => "App\Services\Crud\Add"
+    ],
+    [
+        "type" => "GET",
+        "end_point" => "/sample",
+        "class" => "App\Services\Sample\SampleService"
+    ],
+    [
+        "type" => "GET",
         "end_point" => "/sample",
         "class" => "App\Services\Sample\SampleService"
     ],
