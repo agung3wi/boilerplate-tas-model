@@ -113,15 +113,17 @@ class GenerateModel extends Command
                 LEFT JOIN summary_comment C ON C.table_name = A.table_name AND C.column_name = A.column_name 
                 WHERE A.table_catalog = '" . env("DB_DATABASE") . "' AND A.table_name = '$tableNameOriginal'";
             } elseif (env("DB_CONNECTION") == "mysql") {
-                $sql = "SELECT A.column_name, A.data_type, A.character_maximum_length, B.ref_table, B.ref_column, A.column_comment FROM information_schema.columns A
-                LEFT JOIN (SELECT table_name,column_name, REFERENCED_TABLE_NAME AS ref_table, REFERENCED_COLUMN_NAME AS ref_column
-                    FROM
-                  INFORMATION_SCHEMA.KEY_COLUMN_USAGE
-                  WHERE TABLE_NAME = '$tableNameOriginal' AND REFERENCED_TABLE_NAME IS NOT NULL
-                ) B ON B.table_name = A.table_name AND B.column_name = A.column_name
-                WHERE A.table_schema = '" . env("DB_DATABASE") . "' AND A.table_name = '$tableNameOriginal'";
+                $sql = "SELECT A.column_name, A.data_type, A.character_maximum_length, B.ref_table, B.ref_column, A.column_comment 
+                FROM information_schema.columns A
+            LEFT JOIN (
+                SELECT table_name,column_name, REFERENCED_TABLE_NAME AS ref_table, REFERENCED_COLUMN_NAME AS ref_column
+                  FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
+                  WHERE table_schema='". env("DB_DATABASE") ."' AND table_name = '$tableNameOriginal' AND REFERENCED_TABLE_NAME IS NOT NULL
+            ) B ON B.table_name = A.table_name AND B.column_name = A.column_name
+            WHERE A.table_name = '$tableNameOriginal' AND A.table_schema = '". env("DB_DATABASE") ."'";
                 
             }
+            $this->info($sql);
             $fields = DB::select($sql);
 
             $fieldConfigs = [];
