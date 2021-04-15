@@ -24,8 +24,8 @@ class Get extends CoreService
         if (!$classModel::GET)
             throw New CoreException("Not found", 404);
 
-        // if (!hasPermission("view-" . $model))
-        //     throw New CoreException("Forbidden", 403);
+        if (!hasPermission("view-" . $model))
+            throw New CoreException(Auth(), 403);
         $input["class_model"] = $classModel;
         return $input;
     }

@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Log;
 class {{ $studly_caps }} extends Model
 {
     protected $table = '{{ $table_name }}';
-    protected $fillable = [];
+    protected $fillable = [{!! $fillable !!}];
     const TABLE_NAME = "{{ $table_name }}";
     const ADD = {{ $add? "true" : "false" }};
     const EDIT = true;

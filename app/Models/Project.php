@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Log;
 class Project extends Model
 {
     protected $table = 'm_project';
-    protected $fillable = [];
+    protected $fillable = ["project_name","department_id","description","project_img","created_by","updated_by"];
     const TABLE_NAME = "m_project";
     const ADD = true;
     const EDIT = true;
@@ -22,60 +22,6 @@ class Project extends Model
     const TIMESTAMP = true;
 
     const FIELDS = [
-        "created_by" => [
-            "validation_add" => "",
-            "validation_edit" => "",
-            "searchable" => false,
-            "sortable" => true,
-            "filter" => false,
-            "filter_operation" => "",
-            "default" => "",
-            "add" => true,
-            "edit" => true,
-            "get" => true,
-            "find" => true,
-            "relation" => [
-                "table_name" => "users",
-                "column_name" => "id",
-                "selectable" => ["*"]
-            ]
-        ],
-        "department_id" => [
-            "validation_add" => "",
-            "validation_edit" => "",
-            "searchable" => false,
-            "sortable" => true,
-            "filter" => false,
-            "filter_operation" => "",
-            "default" => "",
-            "add" => true,
-            "edit" => true,
-            "get" => true,
-            "find" => true,
-            "relation" => [
-                "table_name" => "m_department",
-                "column_name" => "id",
-                "selectable" => ["*"]
-            ]
-        ],
-        "updated_by" => [
-            "validation_add" => "",
-            "validation_edit" => "",
-            "searchable" => false,
-            "sortable" => true,
-            "filter" => false,
-            "filter_operation" => "",
-            "default" => "",
-            "add" => true,
-            "edit" => true,
-            "get" => true,
-            "find" => true,
-            "relation" => [
-                "table_name" => "users",
-                "column_name" => "id",
-                "selectable" => ["*"]
-            ]
-        ],
         "project_name" => [
             "validation_add" => "",
             "validation_edit" => "",
@@ -93,10 +39,27 @@ class Project extends Model
                 "column_name" => ""
             ]
         ],
+        "department_id" => [
+            "validation_add" => "",
+            "validation_edit" => "",
+            "searchable" => true,
+            "sortable" => true,
+            "filter" => false,
+            "filter_operation" => "",
+            "default" => "",
+            "add" => true,
+            "edit" => true,
+            "get" => true,
+            "find" => true,
+            "relation" => [
+                "table_name" => "m_department",
+                "column_name" => "id"
+            ]
+        ],
         "description" => [
             "validation_add" => "",
             "validation_edit" => "",
-            "searchable" => false,
+            "searchable" => true,
             "sortable" => true,
             "filter" => false,
             "filter_operation" => "",
@@ -113,7 +76,7 @@ class Project extends Model
         "project_img" => [
             "validation_add" => "",
             "validation_edit" => "",
-            "searchable" => false,
+            "searchable" => true,
             "sortable" => true,
             "filter" => false,
             "filter_operation" => "",
@@ -127,10 +90,44 @@ class Project extends Model
                 "column_name" => ""
             ]
         ],
+        "created_by" => [
+            "validation_add" => "",
+            "validation_edit" => "",
+            "searchable" => true,
+            "sortable" => true,
+            "filter" => false,
+            "filter_operation" => "",
+            "default" => "",
+            "add" => true,
+            "edit" => true,
+            "get" => true,
+            "find" => true,
+            "relation" => [
+                "table_name" => "users",
+                "column_name" => "id"
+            ]
+        ],
+        "updated_by" => [
+            "validation_add" => "",
+            "validation_edit" => "",
+            "searchable" => true,
+            "sortable" => true,
+            "filter" => false,
+            "filter_operation" => "",
+            "default" => "",
+            "add" => true,
+            "edit" => true,
+            "get" => true,
+            "find" => true,
+            "relation" => [
+                "table_name" => "users",
+                "column_name" => "id"
+            ]
+        ],
         "created_at" => [
             "validation_add" => "",
             "validation_edit" => "",
-            "searchable" => false,
+            "searchable" => true,
             "sortable" => true,
             "filter" => false,
             "filter_operation" => "",
@@ -147,7 +144,7 @@ class Project extends Model
         "updated_at" => [
             "validation_add" => "",
             "validation_edit" => "",
-            "searchable" => false,
+            "searchable" => true,
             "sortable" => true,
             "filter" => false,
             "filter_operation" => "",

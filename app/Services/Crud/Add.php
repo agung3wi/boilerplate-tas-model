@@ -25,8 +25,8 @@ class Add extends CoreService
         if (!$classModel::GET)
             throw New CoreException("Not found", 404);
 
-        // if (!hasPermission("add-" . $model))
-        //     throw New CoreException("Forbidden", 403);
+        if (!hasPermission("add-" . $model))
+            throw New CoreException("Forbidden", 403);
         $input["class_model"] = $classModel;
         return $input;
     }
@@ -41,21 +41,27 @@ class Add extends CoreService
             $validation[$item] = $value["validation_add"] ?? "";
         }
 
-        $validator = Validator::make(request()->all(), $validation);
+        $validator = Validator::make($input, $validation);
 
         if ($validator->fails()) {
             throw new CoreException($validator->errors()->first());
         }
 
-        $input = $classModel::beforeInsert(request()->all());
+        $input = $classModel::beforeInsert($input);
 
         $inputOnly = [];
         foreach ($classModel::FIELDS as $item => $value) {
-            $inputOnly[$item] = ($value["add"]) ? $input[$item] : $value["default"];
+            if($item == "created_by") {
+                $value["add"] = false;
+                $value["default"] = Auth::id();
+            }
+            if($item == "updated_by") {
+                $value["add"] = false;
+                $value["default"] = Auth::id();
+            }
+            $inputOnly[$item] = ($value["add"]) ? ($input[$item] ?? null) : $value["default"];
         }
 
-        $inputOnly["created_by"] = -1;
-        $inputOnly["updated_by"] = -1;
 
 
         $product =  $classModel::create($inputOnly);

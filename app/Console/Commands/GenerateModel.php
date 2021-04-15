@@ -123,11 +123,15 @@ class GenerateModel extends Command
             WHERE A.table_name = '$tableNameOriginal' AND A.table_schema = '". env("DB_DATABASE") ."'";
                 
             }
-            $this->info($sql);
+
             $fields = DB::select($sql);
 
             $fieldConfigs = [];
+            $fillableList = [];
+            $fillableBackList = ["id", "created_at", "updated_at"];
             foreach ($fields as $field) {
+                if(!in_array($field->column_name, $fillableBackList))
+                    $fillableList[] = '"'. $field->column_name. '"';
                 $fieldConfigs[$field->column_name] = [
                     "validation_add" => "",
                     "validation_edit" => "",
@@ -193,7 +197,8 @@ class GenerateModel extends Command
                     'after_update' => "{" . $afterUpdate . "}",
                     'studly_caps' => $modelName,
                     'table_name' => $tableNameOriginal,
-                    'fields' => $fieldConfigs
+                    'fields' => $fieldConfigs,
+                    'fillable' => implode(",", $fillableList)
                 ]);
 
 

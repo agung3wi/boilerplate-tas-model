@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Log;
 class Product extends Model
 {
     protected $table = 'm_product';
-    protected $fillable = [];
+    protected $fillable = ["code","name","default_price","uom_name","created_by","updated_by"];
     const TABLE_NAME = "m_product";
     const ADD = true;
     const EDIT = true;
@@ -167,8 +167,7 @@ class Product extends Model
 
     public static function afterInsert($object, $input)
     {
-        
-    }
+        }
     
     public static function beforeUpdate($input)
     {
@@ -177,6 +176,5 @@ class Product extends Model
     
     public static function afterUpdate($object, $input)
     {
-
-    }
+        }
 }

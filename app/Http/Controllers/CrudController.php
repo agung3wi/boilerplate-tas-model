@@ -62,17 +62,9 @@ class CrudController extends Controller
 
     public function create($model)
     {
-        $classModel = "\\App\\Models\\" . Str::upper(Str::camel($model));
-        if (!class_exists($classModel))
-            return $this->notFound();
-        if (!$classModel::ADD)
-            return $this->notFound();
-
-        if (!hasPermission("add-" . $model)) {
-            return $this->forbidden();
-        }
-
-        
+        $input = request()->all();
+        $input["model"] = $model;
+        return CallService::run("Add", $input);
     }
 
     public function update($model)

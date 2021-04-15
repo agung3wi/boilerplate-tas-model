@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Log;
 class Department extends Model
 {
     protected $table = 'm_department';
-    protected $fillable = [];
+    protected $fillable = ["department_name","created_by","updated_by"];
     const TABLE_NAME = "m_department";
     const ADD = true;
     const EDIT = true;
@@ -111,13 +111,12 @@ class Department extends Model
 
     public static function beforeInsert($input)
     {
-        $input["department_name"] = strtoupper("AVC");
         return $input;
     }
 
     public static function afterInsert($object, $input)
     {
-    }
+        }
     
     public static function beforeUpdate($input)
     {
@@ -126,5 +125,5 @@ class Department extends Model
     
     public static function afterUpdate($object, $input)
     {
-    }
+        }
 }
