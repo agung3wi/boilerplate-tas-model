@@ -50,9 +50,9 @@ class Get extends CoreService
             $sortBy = $input["sort_by"];
         }
 
-        $params["src"] = "%" . strtoupper($input["src"] ?? "") . "%";
         $tableJoinList = [];
         $filterList = [];
+        $params = [];
 
         $i = 0;
         foreach ($classModel::FIELDS as $item => $value) {
@@ -85,6 +85,9 @@ class Get extends CoreService
             return "UPPER($item) LIKE :src";
         }, array_keys($searchableList), $searchableList);
 
+        if(count($searchableList)>0)
+            $params["src"] = "%" . strtoupper($input["src"] ?? "") . "%";
+
         $limit = $input["limit"] ?? 10;
         $offset = $input["offset"] ?? 0;
         if (!is_null($input["page"] ?? null)) {
@@ -93,12 +96,12 @@ class Get extends CoreService
 
         $sql = "SELECT " . implode(", ", $selectableList) . " FROM " . $classModel::TABLE_NAME . " A " .
             implode(" ", $tableJoinList) . $condition .
-            " AND (" . implode(" OR ", $searchableList) . ")" .
+            (count($searchableList) > 0 ? " AND (" . implode(" OR ", $searchableList) . ")" : "").
             implode("\n", $filterList) . " ORDER BY " . $sortBy . " " . $sort . " LIMIT $limit OFFSET $offset ";
 
         $sqlForCount = "SELECT COUNT(1) AS total FROM " . $classModel::TABLE_NAME . " A " .
             implode(" ", $tableJoinList) . $condition .
-            " AND (" . implode(" OR ", $searchableList) . ")" .
+            (count($searchableList) > 0 ? " AND (" . implode(" OR ", $searchableList) . ")" : "").
             implode("\n", $filterList);
 
         $productList =  DB::select($sql, $params);

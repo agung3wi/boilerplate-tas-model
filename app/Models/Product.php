@@ -25,7 +25,7 @@ class Product extends Model
         "code" => [
             "validation_add" => "",
             "validation_edit" => "",
-            "searchable" => true,
+            "searchable" => false,
             "sortable" => true,
             "filter" => false,
             "filter_operation" => "",
@@ -36,13 +36,14 @@ class Product extends Model
             "find" => true,
             "relation" => [
                 "table_name" => "",
-                "column_name" => ""
+                "column_name" => "",
+                "selectable" => []
             ]
         ],
         "name" => [
             "validation_add" => "",
             "validation_edit" => "",
-            "searchable" => true,
+            "searchable" => false,
             "sortable" => true,
             "filter" => false,
             "filter_operation" => "",
@@ -53,13 +54,14 @@ class Product extends Model
             "find" => true,
             "relation" => [
                 "table_name" => "",
-                "column_name" => ""
+                "column_name" => "",
+                "selectable" => []
             ]
         ],
         "default_price" => [
             "validation_add" => "",
             "validation_edit" => "",
-            "searchable" => true,
+            "searchable" => false,
             "sortable" => true,
             "filter" => false,
             "filter_operation" => "",
@@ -70,13 +72,14 @@ class Product extends Model
             "find" => true,
             "relation" => [
                 "table_name" => "",
-                "column_name" => ""
+                "column_name" => "",
+                "selectable" => []
             ]
         ],
         "uom_name" => [
             "validation_add" => "",
             "validation_edit" => "",
-            "searchable" => true,
+            "searchable" => false,
             "sortable" => true,
             "filter" => false,
             "filter_operation" => "",
@@ -87,13 +90,14 @@ class Product extends Model
             "find" => true,
             "relation" => [
                 "table_name" => "",
-                "column_name" => ""
+                "column_name" => "",
+                "selectable" => []
             ]
         ],
         "created_by" => [
             "validation_add" => "",
             "validation_edit" => "",
-            "searchable" => true,
+            "searchable" => false,
             "sortable" => true,
             "filter" => false,
             "filter_operation" => "",
@@ -104,13 +108,14 @@ class Product extends Model
             "find" => true,
             "relation" => [
                 "table_name" => "",
-                "column_name" => ""
+                "column_name" => "",
+                "selectable" => []
             ]
         ],
         "updated_by" => [
             "validation_add" => "",
             "validation_edit" => "",
-            "searchable" => true,
+            "searchable" => false,
             "sortable" => true,
             "filter" => false,
             "filter_operation" => "",
@@ -121,13 +126,14 @@ class Product extends Model
             "find" => true,
             "relation" => [
                 "table_name" => "",
-                "column_name" => ""
+                "column_name" => "",
+                "selectable" => []
             ]
         ],
         "created_at" => [
             "validation_add" => "",
             "validation_edit" => "",
-            "searchable" => true,
+            "searchable" => false,
             "sortable" => true,
             "filter" => false,
             "filter_operation" => "",
@@ -138,13 +144,14 @@ class Product extends Model
             "find" => true,
             "relation" => [
                 "table_name" => "",
-                "column_name" => ""
+                "column_name" => "",
+                "selectable" => []
             ]
         ],
         "updated_at" => [
             "validation_add" => "",
             "validation_edit" => "",
-            "searchable" => true,
+            "searchable" => false,
             "sortable" => true,
             "filter" => false,
             "filter_operation" => "",
@@ -155,7 +162,8 @@ class Product extends Model
             "find" => true,
             "relation" => [
                 "table_name" => "",
-                "column_name" => ""
+                "column_name" => "",
+                "selectable" => []
             ]
         ],
     ];

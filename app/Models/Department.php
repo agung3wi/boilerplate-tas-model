@@ -25,7 +25,7 @@ class Department extends Model
         "department_name" => [
             "validation_add" => "",
             "validation_edit" => "",
-            "searchable" => true,
+            "searchable" => false,
             "sortable" => true,
             "filter" => false,
             "filter_operation" => "",
@@ -36,13 +36,14 @@ class Department extends Model
             "find" => true,
             "relation" => [
                 "table_name" => "",
-                "column_name" => ""
+                "column_name" => "",
+                "selectable" => []
             ]
         ],
         "created_by" => [
             "validation_add" => "",
             "validation_edit" => "",
-            "searchable" => true,
+            "searchable" => false,
             "sortable" => true,
             "filter" => false,
             "filter_operation" => "",
@@ -53,13 +54,14 @@ class Department extends Model
             "find" => true,
             "relation" => [
                 "table_name" => "",
-                "column_name" => ""
+                "column_name" => "",
+                "selectable" => []
             ]
         ],
         "updated_by" => [
             "validation_add" => "",
             "validation_edit" => "",
-            "searchable" => true,
+            "searchable" => false,
             "sortable" => true,
             "filter" => false,
             "filter_operation" => "",
@@ -70,13 +72,14 @@ class Department extends Model
             "find" => true,
             "relation" => [
                 "table_name" => "",
-                "column_name" => ""
+                "column_name" => "",
+                "selectable" => []
             ]
         ],
         "created_at" => [
             "validation_add" => "",
             "validation_edit" => "",
-            "searchable" => true,
+            "searchable" => false,
             "sortable" => true,
             "filter" => false,
             "filter_operation" => "",
@@ -87,13 +90,14 @@ class Department extends Model
             "find" => true,
             "relation" => [
                 "table_name" => "",
-                "column_name" => ""
+                "column_name" => "",
+                "selectable" => []
             ]
         ],
         "updated_at" => [
             "validation_add" => "",
             "validation_edit" => "",
-            "searchable" => true,
+            "searchable" => false,
             "sortable" => true,
             "filter" => false,
             "filter_operation" => "",
@@ -104,7 +108,8 @@ class Department extends Model
             "find" => true,
             "relation" => [
                 "table_name" => "",
-                "column_name" => ""
+                "column_name" => "",
+                "selectable" => []
             ]
         ],
     ];

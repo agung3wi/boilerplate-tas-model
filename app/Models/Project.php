@@ -25,7 +25,7 @@ class Project extends Model
         "project_name" => [
             "validation_add" => "",
             "validation_edit" => "",
-            "searchable" => true,
+            "searchable" => false,
             "sortable" => true,
             "filter" => false,
             "filter_operation" => "",
@@ -36,13 +36,14 @@ class Project extends Model
             "find" => true,
             "relation" => [
                 "table_name" => "",
-                "column_name" => ""
+                "column_name" => "",
+                "selectable" => []
             ]
         ],
         "department_id" => [
             "validation_add" => "",
             "validation_edit" => "",
-            "searchable" => true,
+            "searchable" => false,
             "sortable" => true,
             "filter" => false,
             "filter_operation" => "",
@@ -53,13 +54,14 @@ class Project extends Model
             "find" => true,
             "relation" => [
                 "table_name" => "m_department",
-                "column_name" => "id"
+                "column_name" => "id",
+                "selectable" => ["department_name"]
             ]
         ],
         "description" => [
             "validation_add" => "",
             "validation_edit" => "",
-            "searchable" => true,
+            "searchable" => false,
             "sortable" => true,
             "filter" => false,
             "filter_operation" => "",
@@ -70,13 +72,14 @@ class Project extends Model
             "find" => true,
             "relation" => [
                 "table_name" => "",
-                "column_name" => ""
+                "column_name" => "",
+                "selectable" => []
             ]
         ],
         "project_img" => [
             "validation_add" => "",
             "validation_edit" => "",
-            "searchable" => true,
+            "searchable" => false,
             "sortable" => true,
             "filter" => false,
             "filter_operation" => "",
@@ -87,13 +90,14 @@ class Project extends Model
             "find" => true,
             "relation" => [
                 "table_name" => "",
-                "column_name" => ""
+                "column_name" => "",
+                "selectable" => []
             ]
         ],
         "created_by" => [
             "validation_add" => "",
             "validation_edit" => "",
-            "searchable" => true,
+            "searchable" => false,
             "sortable" => true,
             "filter" => false,
             "filter_operation" => "",
@@ -104,13 +108,14 @@ class Project extends Model
             "find" => true,
             "relation" => [
                 "table_name" => "users",
-                "column_name" => "id"
+                "column_name" => "id",
+                "selectable" => ["*"]
             ]
         ],
         "updated_by" => [
             "validation_add" => "",
             "validation_edit" => "",
-            "searchable" => true,
+            "searchable" => false,
             "sortable" => true,
             "filter" => false,
             "filter_operation" => "",
@@ -121,13 +126,14 @@ class Project extends Model
             "find" => true,
             "relation" => [
                 "table_name" => "users",
-                "column_name" => "id"
+                "column_name" => "id",
+                "selectable" => ["*"]
             ]
         ],
         "created_at" => [
             "validation_add" => "",
             "validation_edit" => "",
-            "searchable" => true,
+            "searchable" => false,
             "sortable" => true,
             "filter" => false,
             "filter_operation" => "",
@@ -138,13 +144,14 @@ class Project extends Model
             "find" => true,
             "relation" => [
                 "table_name" => "",
-                "column_name" => ""
+                "column_name" => "",
+                "selectable" => []
             ]
         ],
         "updated_at" => [
             "validation_add" => "",
             "validation_edit" => "",
-            "searchable" => true,
+            "searchable" => false,
             "sortable" => true,
             "filter" => false,
             "filter_operation" => "",
@@ -155,7 +162,8 @@ class Project extends Model
             "find" => true,
             "relation" => [
                 "table_name" => "",
-                "column_name" => ""
+                "column_name" => "",
+                "selectable" => []
             ]
         ],
     ];

@@ -135,7 +135,7 @@ class GenerateModel extends Command
                 $fieldConfigs[$field->column_name] = [
                     "validation_add" => "",
                     "validation_edit" => "",
-                    "searchable" => true,
+                    "searchable" => false,
                     "sortable" => true,
                     "filter" => false,
                     "filter_operation" => "",
@@ -145,7 +145,8 @@ class GenerateModel extends Command
                     "get" => true,
                     "find" => true,
                     "ref_table" => $field->ref_table,
-                    "ref_column" => $field->ref_column
+                    "ref_column" => $field->ref_column,
+                    "selectable" => !is_null($field->ref_table) ? ["*"] : []
                 ];
             }
 
@@ -162,7 +163,8 @@ class GenerateModel extends Command
                     'after_insert' => "{" . $afterInsert . "}",
                     'before_update' => "{" . $beforeUpdate . "}",
                     'after_update' => "{" . $afterUpdate . "}",
-                    'fields' => $fieldConfigs
+                    'fields' => $fieldConfigs,
+                    'fillable' => implode(",", $fillableList)
                 ]);
                 file_put_contents($fileName, "<?php \n\n" . $fileContent);
 
@@ -184,7 +186,7 @@ class GenerateModel extends Command
                 foreach ($classModel::FIELDS as $fieldName => $value) {
                     $currentField = $fieldConfigs[$fieldName];
                     $fieldConfigs[$fieldName] = $value; 
-    
+                    $fieldConfigs[$fieldName]["selectable"] = $value["relation"]["selectable"];
                     $fieldConfigs[$fieldName]["ref_table"] = $currentField["ref_table"];
                     $fieldConfigs[$fieldName]["ref_column"] = $currentField["ref_column"];
                 }

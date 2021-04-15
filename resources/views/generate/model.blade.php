@@ -37,7 +37,8 @@ class {{ $studly_caps }} extends Model
             "find" => {{ $value["find"]? "true" : "false" }},
             "relation" => [
                 "table_name" => "{!! $value["ref_table"] !!}",
-                "column_name" => "{!! $value["ref_column"] !!}"
+                "column_name" => "{!! $value["ref_column"] !!}",
+                "selectable" => {!! arrayToString($value["selectable"]) !!}
             ]
         ],
 @endif

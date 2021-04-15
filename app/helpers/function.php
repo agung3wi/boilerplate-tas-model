@@ -35,3 +35,15 @@ if (!function_exists('toAlpha')) {
         return $alphabet[$data];
     }
 }
+
+if (!function_exists('arrayToString')) {
+
+    function arrayToString($array)
+    {
+        $list = [];
+        foreach ($array as $value) {
+            $list[] = '"'.$value.'"'; 
+        }
+        return "[".implode(", ", $list). "]";
+    }
+}
