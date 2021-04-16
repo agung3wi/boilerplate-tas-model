@@ -64,7 +64,7 @@ class CrudController extends Controller
     {
         $input = request()->all();
         $input["model"] = $model;
-        return CallService::run("Add", $input);
+        return CallService::run("Get", $input);
     }
 
     public function update($model)
