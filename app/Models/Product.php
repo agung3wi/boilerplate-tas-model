@@ -9,164 +9,46 @@ use Illuminate\Support\Facades\Log;
 class Product extends Model
 {
     protected $table = 'm_product';
-    protected $fillable = ["code","name","default_price","uom_name","created_by","updated_by"];
-    const TABLE_NAME = "m_product";
-    const ADD = true;
-    const EDIT = true;
-    const DELETE = true;
-    const GET = true;
-    const FIND = true;
-    const REMOVE = true;
-    const RESTORE = true;
-    const PRIMARY_KEY = "id";
-    const TIMESTAMP = true;
-
-    const FIELDS = [
-        "code" => [
-            "validation_add" => "",
-            "validation_edit" => "",
-            "searchable" => false,
-            "sortable" => true,
-            "filter" => false,
-            "filter_operation" => "",
-            "default" => "",
-            "add" => true,
-            "edit" => true,
-            "get" => true,
-            "find" => true,
-            "relation" => [
-                "table_name" => "",
-                "column_name" => "",
-                "selectable" => []
-            ]
-        ],
-        "name" => [
-            "validation_add" => "",
-            "validation_edit" => "",
-            "searchable" => false,
-            "sortable" => true,
-            "filter" => false,
-            "filter_operation" => "",
-            "default" => "",
-            "add" => true,
-            "edit" => true,
-            "get" => true,
-            "find" => true,
-            "relation" => [
-                "table_name" => "",
-                "column_name" => "",
-                "selectable" => []
-            ]
-        ],
-        "default_price" => [
-            "validation_add" => "",
-            "validation_edit" => "",
-            "searchable" => false,
-            "sortable" => true,
-            "filter" => false,
-            "filter_operation" => "",
-            "default" => "",
-            "add" => true,
-            "edit" => true,
-            "get" => true,
-            "find" => true,
-            "relation" => [
-                "table_name" => "",
-                "column_name" => "",
-                "selectable" => []
-            ]
-        ],
-        "uom_name" => [
-            "validation_add" => "",
-            "validation_edit" => "",
-            "searchable" => false,
-            "sortable" => true,
-            "filter" => false,
-            "filter_operation" => "",
-            "default" => "",
-            "add" => true,
-            "edit" => true,
-            "get" => true,
-            "find" => true,
-            "relation" => [
-                "table_name" => "",
-                "column_name" => "",
-                "selectable" => []
-            ]
-        ],
-        "created_by" => [
-            "validation_add" => "",
-            "validation_edit" => "",
-            "searchable" => false,
-            "sortable" => true,
-            "filter" => false,
-            "filter_operation" => "",
-            "default" => "",
-            "add" => true,
-            "edit" => true,
-            "get" => true,
-            "find" => true,
-            "relation" => [
-                "table_name" => "",
-                "column_name" => "",
-                "selectable" => []
-            ]
-        ],
-        "updated_by" => [
-            "validation_add" => "",
-            "validation_edit" => "",
-            "searchable" => false,
-            "sortable" => true,
-            "filter" => false,
-            "filter_operation" => "",
-            "default" => "",
-            "add" => true,
-            "edit" => true,
-            "get" => true,
-            "find" => true,
-            "relation" => [
-                "table_name" => "",
-                "column_name" => "",
-                "selectable" => []
-            ]
-        ],
-        "created_at" => [
-            "validation_add" => "",
-            "validation_edit" => "",
-            "searchable" => false,
-            "sortable" => true,
-            "filter" => false,
-            "filter_operation" => "",
-            "default" => "",
-            "add" => true,
-            "edit" => true,
-            "get" => true,
-            "find" => true,
-            "relation" => [
-                "table_name" => "",
-                "column_name" => "",
-                "selectable" => []
-            ]
-        ],
-        "updated_at" => [
-            "validation_add" => "",
-            "validation_edit" => "",
-            "searchable" => false,
-            "sortable" => true,
-            "filter" => false,
-            "filter_operation" => "",
-            "default" => "",
-            "add" => true,
-            "edit" => true,
-            "get" => true,
-            "find" => true,
-            "relation" => [
-                "table_name" => "",
-                "column_name" => "",
-                "selectable" => []
-            ]
-        ],
+    protected $fillable = ["code", "name", "default_price", "uom_name", "created_by", "updated_by"];
+    const TABLE = "m_product";
+    const IS_LIST = true;
+    const IS_ADD = true;
+    const IS_EDIT = true;
+    const IS_DELETE = true;
+    const IS_VIEW = true;
+    const FIELD_LIST = ["id", "code", "name", "default_price", "uom_name", "created_by", "updated_by", "created_at", "updated_at"];
+    const FIELD_ADD = ["id", "code", "name", "default_price", "uom_name", "created_by", "updated_by", "created_at", "updated_at"];
+    const FIELD_EDIT = ["id", "code", "name", "default_price", "uom_name", "created_by", "updated_by", "created_at", "updated_at"];
+    const FIELD_VIEW = ["id", "code", "name", "default_price", "uom_name", "created_by", "updated_by", "created_at", "updated_at"];
+    const FIELD_READONLY = [];
+    const FIELD_FILTERABLE = ["id", "code", "name", "default_price", "uom_name", "created_by", "created_by", "updated_by", "updated_by", "created_at", "updated_at"];
+    const FIELD_SEARCHABLE = ["code", "name", "uom_name"];
+    const FIELD_SORTABLE = ["id", "code", "name", "default_price", "uom_name", "created_by", "updated_by", "created_at", "updated_at"];
+    const FIELD_TYPE = [
+        "id" => "bigint",
+        "code" => "character varying",
+        "name" => "character varying",
+        "default_price" => "numeric",
+        "uom_name" => "character varying",
+        "created_by" => "bigint",
+        "updated_by" => "bigint",
+        "created_at" => "timestamp without time zone",
+        "updated_at" => "timestamp without time zone",
     ];
+    const FIELD_RELATION = [
+    ];
+    const FIELD_VALIDATION = [
+        "id" => "",
+        "code" => "",
+        "name" => "",
+        "default_price" => "",
+        "uom_name" => "",
+        "created_by" => "",
+        "updated_by" => "",
+        "created_at" => "",
+        "updated_at" => "",
+    ];
+    const PARENT_CHILD = [];
 
     public static function beforeInsert($input)
     {

@@ -125,47 +125,77 @@ class GenerateModel extends Command
             }
 
             $fields = DB::select($sql);
-
-            $fieldConfigs = [];
-            $fillableList = [];
             $fillableBackList = ["id", "created_at", "updated_at"];
+            $fillable = [];
+            $fieldList = [];
+            $fieldAdd = [];
+            $fieldEdit = [];
+            $fieldView = [];
+            $fieldReadonly = [];
+            $fieldFilterable = [];
+            $fieldSearchable = [];
+            $fieldSortable = [];
+            $fieldType = [];
+            $fieldValidation = [];
+            $fieldRelation = [];
+            $parentChild = [];
+            
             foreach ($fields as $field) {
                 if(!in_array($field->column_name, $fillableBackList))
-                    $fillableList[] = '"'. $field->column_name. '"';
-                $fieldConfigs[$field->column_name] = [
-                    "validation_add" => "",
-                    "validation_edit" => "",
-                    "searchable" => false,
-                    "sortable" => true,
-                    "filter" => false,
-                    "filter_operation" => "",
-                    "default" => "",
-                    "add" => true,
-                    "edit" => true,
-                    "get" => true,
-                    "find" => true,
-                    "ref_table" => $field->ref_table,
-                    "ref_column" => $field->ref_column,
-                    "selectable" => !is_null($field->ref_table) ? ["*"] : []
-                ];
+                    $fillable[] = $field->column_name;
+                array_push($fieldList, $field->column_name);
+                array_push($fieldAdd, $field->column_name);
+                array_push($fieldEdit, $field->column_name);
+                array_push($fieldView, $field->column_name);
+                array_push($fieldSortable, $field->column_name);
+                if($field->data_type == "character varying" || $field->data_type == "text")
+                    array_push($fieldSearchable, $field->column_name);
+                if($field->data_type == "bigint" && !in_array($field->column_name, $fillableBackList))
+                    array_push($fieldFilterable, $field->column_name);
+                array_push($fieldFilterable, $field->column_name);
+                $fieldType[$field->column_name] = $field->data_type;
+                $fieldValidation[$field->column_name] = "";
+                if($field->ref_table != null)
+                array_push($fieldRelation, [
+                    "linkTable" => $field->ref_table,
+                    "linkField" => $field->ref_column,
+                    "selectValue" => "*"
+                ]);
             }
+            $beforeInsert = "\n        return \$input;\n    ";
+            $beforeUpdate = "\n        return \$input;\n    ";
+            $afterInsert = "\n        ";
+            $afterUpdate = "\n        ";
+            $params = [
+                'list' => true,
+                'add' => true,
+                'edit' => true,
+                'delete' => true,
+                'view' => true,
+                'fieldList' => $fieldList,
+                'fieldAdd' => $fieldAdd,
+                'fieldEdit' => $fieldEdit,
+                'fieldView' => $fieldView,
+                'fieldReadonly' => $fieldReadonly,
+                'fieldFilterable' => $fieldFilterable,
+                'fieldSearchable' => $fieldSearchable,
+                'fieldSortable' => $fieldSortable,
+                'fieldType' => $fieldType,
+                'parentChild' => $parentChild,
+                'fieldValidation' => $fieldValidation,
+                'fieldRelation' => $fieldRelation,
+                'table_name' => $tableNameOriginal,
+                'studly_caps' => Str::ucfirst(Str::camel($tableName)),
+                'before_insert' => "{" . $beforeInsert . "}",
+                'after_insert' => "{" . $afterInsert . "}",
+                'before_update' => "{" . $beforeUpdate . "}",
+                'after_update' => "{" . $afterUpdate . "}",
+                'fillable' => $fillable
+            ];
 
             if (!is_file($fileName)) {
-                $beforeInsert = "\n        return \$input;\n    ";
-                $beforeUpdate = "\n        return \$input;\n    ";
-                $afterInsert = "\n        ";
-                $afterUpdate = "\n        ";
-                $fileContent = view('generate.model', [
-                    'add' => true,
-                    'studly_caps' => $modelName,
-                    'table_name' => $tableNameOriginal,
-                    'before_insert' => "{" . $beforeInsert . "}",
-                    'after_insert' => "{" . $afterInsert . "}",
-                    'before_update' => "{" . $beforeUpdate . "}",
-                    'after_update' => "{" . $afterUpdate . "}",
-                    'fields' => $fieldConfigs,
-                    'fillable' => implode(",", $fillableList)
-                ]);
+   
+                $fileContent = view('generate.model', $params);
                 file_put_contents($fileName, "<?php \n\n" . $fileContent);
 
                 $this->info("Success Generate Model " . $modelName);
@@ -183,25 +213,34 @@ class GenerateModel extends Command
                 preg_match_all("/public static function afterUpdate\([\$]object, [\$]input\)\n    {([^}]*)}/", $contents, $matches);
                 $afterUpdate = $matches[1][0];
 
-                foreach ($classModel::FIELDS as $fieldName => $value) {
-                    $currentField = $fieldConfigs[$fieldName];
-                    $fieldConfigs[$fieldName] = $value; 
-                    $fieldConfigs[$fieldName]["selectable"] = $value["relation"]["selectable"];
-                    $fieldConfigs[$fieldName]["ref_table"] = $currentField["ref_table"];
-                    $fieldConfigs[$fieldName]["ref_column"] = $currentField["ref_column"];
-                }
-
-                $fileContent = view('generate.model', [
-                    'add' => $classModel::ADD,
+                $params = [
+                    'list' => $classModel::IS_LIST,
+                    'add' => $classModel::IS_ADD,
+                    'edit' => $classModel::IS_EDIT,
+                    'delete' => $classModel::IS_DELETE,
+                    'view' => $classModel::IS_VIEW,
+                    'fieldList' => $fieldList,
+                    'fieldAdd' => $fieldAdd,
+                    'fieldEdit' => $fieldEdit,
+                    'fieldView' => $fieldView,
+                    'fieldReadonly' => $fieldReadonly,
+                    'fieldFilterable' => $fieldFilterable,
+                    'fieldSearchable' => $fieldSearchable,
+                    'fieldSortable' => $fieldSortable,
+                    'fieldType' => $fieldType,
+                    'parentChild' => $classModel::PARENT_CHILD,
+                    'fieldValidation' => $fieldValidation,
+                    'fieldRelation' => $fieldRelation,
+                    'table_name' => $tableNameOriginal,
+                    'studly_caps' => Str::ucfirst(Str::camel($tableName)),
                     'before_insert' => "{" . $beforeInsert . "}",
                     'after_insert' => "{" . $afterInsert . "}",
                     'before_update' => "{" . $beforeUpdate . "}",
                     'after_update' => "{" . $afterUpdate . "}",
-                    'studly_caps' => $modelName,
-                    'table_name' => $tableNameOriginal,
-                    'fields' => $fieldConfigs,
-                    'fillable' => implode(",", $fillableList)
-                ]);
+                    'fillable' => $fillable
+                ];
+
+                $fileContent = view('generate.model', $params);
 
 
                 file_put_contents($fileName, "<?php \n\n" . $fileContent);

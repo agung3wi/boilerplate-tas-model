@@ -21,11 +21,12 @@ class Get extends CoreService
         if (!class_exists($classModel))
             throw New CoreException("Not found", 404);
 
-        if (!$classModel::GET)
+        if (!$classModel::IS_LIST)
             throw New CoreException("Not found", 404);
 
         if (!hasPermission("view-" . $model))
             throw New CoreException(Auth(), 403);
+
         $input["class_model"] = $classModel;
         return $input;
     }
@@ -34,17 +35,11 @@ class Get extends CoreService
     {
         $classModel = $input["class_model"];        
 
-        $selectableList = ["A." . ($classModel::PRIMARY_KEY ?? "id")];
-        $sortBy = "A." . ($classModel::PRIMARY_KEY ?? "id");
+        $selectableList = [];
+        $sortBy = "A.id";
         $sort = strtoupper($input["sort"] ?? "DESC") == "ASC" ? "ASC" : "DESC";
 
-        $sortableList = array_filter($classModel::FIELDS, function ($item) {
-            return $item["sortable"];
-        });
-
-        $sortableList = array_map(function ($item) {
-            return $item;
-        }, array_keys($sortableList), $sortableList);
+        $sortableList = $classModel::FIELD_SORTABLE;
 
         if (in_array($input["sort_by"] ?? "", $sortableList)) {
             $sortBy = $input["sort_by"];
@@ -54,36 +49,36 @@ class Get extends CoreService
         $filterList = [];
         $params = [];
 
-        $i = 0;
-        foreach ($classModel::FIELDS as $item => $value) {
-            if ($value["get"]) {
-                $selectableList[] = "A." . $item;
-            }
-            if ($value["filter"] && isset($input[$item])) {
-                $filterList[] = " AND " . $item . $value["filter_op"] . ":$item";
-                $params[$item] = $input[$item];
-            }
-            if ($value["relation"]["table_name"] != "") {
-                $alias = toAlpha($i + 1);
-                $selectableList = array_merge($selectableList, array_map(function ($item) use ($alias) {
-                    return $alias . "." . $item;
-                }, $value["relation"]["selectable"]));
-
-                $tableJoinList[] = "LEFT JOIN " . $value["relation"]["table_name"] . " " . $alias . " ON " .
-                    "A." . $item . " = " .  $alias . "." . $value["relation"]["column_name"];
-            }
-            $i++;
+        foreach ($classModel::FIELD_LIST as $list) {
+            $selectableList[] = "A." . $list;
         }
 
+        foreach ($classModel::FIELD_FILTERABLE as $filter) {      
+            if(!is_blank($input, $filter)) {     
+                $filterList[] = " AND " . $filter .  " = :$filter";
+                $params[$filter] = $input[$filter];
+            }
+        }
+        $i = 0;
+        foreach ($classModel::FIELD_RELATION as $relation) {
+            $alias = toAlpha($i + 1);
+            $selectableList[] = $alias . "." . $relation["selectValue"];
+
+            $tableJoinList[] = "LEFT JOIN " . $relation["linkTable"] . " " . $alias . " ON " .
+                "A." . $relation["linkField"] . " = " .  $alias . ".id";
+            $i++;
+        }
         $condition = " WHERE true";
 
-        $searchableList = array_filter($classModel::FIELDS, function ($item) {
-            return $item["searchable"];
-        });
+        if(!is_blank($input, "src")) {
+            $searchableList = $classModel::FIELD_SEARCHABLE;
 
-        $searchableList = array_map(function ($item) {
-            return "UPPER($item) LIKE :src";
-        }, array_keys($searchableList), $searchableList);
+            $searchableList = array_map(function ($item) {
+                return "UPPER($item) LIKE :src";
+            }, array_keys($searchableList), $searchableList);
+        } else {
+            $searchableList = [];
+        }
 
         if(count($searchableList)>0)
             $params["src"] = "%" . strtoupper($input["src"] ?? "") . "%";
@@ -93,13 +88,14 @@ class Get extends CoreService
         if (!is_null($input["page"] ?? null)) {
             $offset = $limit * ($input["page"] - 1);
         }
+        
 
-        $sql = "SELECT " . implode(", ", $selectableList) . " FROM " . $classModel::TABLE_NAME . " A " .
+        $sql = "SELECT " . implode(", ", $selectableList) . " FROM " . $classModel::TABLE . " A " .
             implode(" ", $tableJoinList) . $condition .
             (count($searchableList) > 0 ? " AND (" . implode(" OR ", $searchableList) . ")" : "").
             implode("\n", $filterList) . " ORDER BY " . $sortBy . " " . $sort . " LIMIT $limit OFFSET $offset ";
 
-        $sqlForCount = "SELECT COUNT(1) AS total FROM " . $classModel::TABLE_NAME . " A " .
+        $sqlForCount = "SELECT COUNT(1) AS total FROM " . $classModel::TABLE . " A " .
             implode(" ", $tableJoinList) . $condition .
             (count($searchableList) > 0 ? " AND (" . implode(" OR ", $searchableList) . ")" : "").
             implode("\n", $filterList);

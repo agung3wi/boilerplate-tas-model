@@ -8,42 +8,41 @@ use Illuminate\Support\Facades\Log;
 class {{ $studly_caps }} extends Model
 {
     protected $table = '{{ $table_name }}';
-    protected $fillable = [{!! $fillable !!}];
-    const TABLE_NAME = "{{ $table_name }}";
-    const ADD = {{ $add? "true" : "false" }};
-    const EDIT = true;
-    const DELETE = true;
-    const GET = true;
-    const FIND = true;
-    const REMOVE = true;
-    const RESTORE = true;
-    const PRIMARY_KEY = "id";
-    const TIMESTAMP = true;
-
-    const FIELDS = [
-@foreach ($fields as $field => $value)
-@if($field != "id")
-        "{{$field}}" => [
-            "validation_add" => "{{ $value["validation_add"] }}",
-            "validation_edit" => "{{ $value["validation_edit"] }}",
-            "searchable" => {{ $value["searchable"]? "true" : "false" }},
-            "sortable" => {{ $value["sortable"]? "true" : "false" }},
-            "filter" => {{ $value["filter"]? "true" : "false" }},
-            "filter_operation" => "{{ $value["filter_operation"] ?? "" }}",
-            "default" => "",
-            "add" => {{ $value["add"]? "true" : "false" }},
-            "edit" => {{ $value["edit"]? "true" : "false" }},
-            "get" => {{ $value["get"]? "true" : "false" }},
-            "find" => {{ $value["find"]? "true" : "false" }},
-            "relation" => [
-                "table_name" => "{!! $value["ref_table"] !!}",
-                "column_name" => "{!! $value["ref_column"] !!}",
-                "selectable" => {!! arrayToString($value["selectable"]) !!}
-            ]
-        ],
-@endif
+    protected $fillable = {!! arrayToString($fillable) !!};
+    const TABLE = "{{ $table_name }}";
+    const IS_LIST = {{ $list? "true" : "false" }};
+    const IS_ADD = {{ $add? "true" : "false" }};
+    const IS_EDIT = {{ $edit? "true" : "false" }};
+    const IS_DELETE = {{ $delete? "true" : "false" }};
+    const IS_VIEW = {{ $view? "true" : "false" }};
+    const FIELD_LIST = {!! arrayToString($fieldList) !!};
+    const FIELD_ADD = {!! arrayToString($fieldAdd) !!};
+    const FIELD_EDIT = {!! arrayToString($fieldEdit) !!};
+    const FIELD_VIEW = {!! arrayToString($fieldView) !!};
+    const FIELD_READONLY = {!! arrayToString($fieldReadonly) !!};
+    const FIELD_FILTERABLE = {!! arrayToString($fieldFilterable) !!};
+    const FIELD_SEARCHABLE = {!! arrayToString($fieldSearchable) !!};
+    const FIELD_SORTABLE = {!! arrayToString($fieldSortable) !!};
+    const FIELD_TYPE = [
+@foreach($fieldType as $key => $type)
+        "{{ $key }}" => "{{ $type }}",
 @endforeach
     ];
+    const FIELD_RELATION = [
+@foreach($fieldRelation as $relation)
+        [
+            "linkTable" => "{{ $relation["linkTable"] }}",
+            "linkField" => "{{ $relation["linkField"] }}",
+            "selectValue" => "{{ $relation["selectValue"] }}"
+        ],
+@endforeach
+    ];
+    const FIELD_VALIDATION = [
+@foreach($fieldValidation as $key => $validation)
+        "{{ $key }}" => "{{ $validation }}",
+@endforeach
+    ];
+    const PARENT_CHILD = {!! arrayToString($parentChild) !!};
 
     public static function beforeInsert($input)
     {!! $before_insert !!}
