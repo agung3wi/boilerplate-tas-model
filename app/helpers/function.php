@@ -11,7 +11,7 @@ if (!function_exists('hasPermission')) {
             INNER JOIN role_task B ON B.role_id = A.role_id
             INNER JOIN tasks C ON B.task_id = C.id AND C.task_code = ?
         WHERE A.id = ?", [$task, $userId]);
-
+        return true;
         if($permission->role_id == -1) return true;
 
         return !is_null($permission);

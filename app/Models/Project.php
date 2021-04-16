@@ -38,7 +38,7 @@ class Project extends Model
         "department_id" => [
             "linkTable" => "m_department",
             "linkField" => "id",
-            "selectValue" => "department_name"
+            "selectValue" => "*"
         ],
         "created_by" => [
             "linkTable" => "users",
@@ -52,15 +52,15 @@ class Project extends Model
         ],
     ];
     const FIELD_VALIDATION = [
-        "id" => "",
-        "project_name" => "",
-        "department_id" => "",
-        "description" => "",
-        "project_img" => "",
-        "created_by" => "",
-        "updated_by" => "",
-        "created_at" => "",
-        "updated_at" => "",
+        "id" => "required|integer",
+        "project_name" => "required|string|max:100",
+        "department_id" => "required|integer",
+        "description" => "required|string",
+        "project_img" => "required|string|max:255",
+        "created_by" => "required|integer",
+        "updated_by" => "required|integer",
+        "created_at" => "nullable",
+        "updated_at" => "nullable",
     ];
     const PARENT_CHILD = [];
 
@@ -71,7 +71,7 @@ class Project extends Model
 
     public static function afterInsert($object, $input)
     {
-    }
+        }
     
     public static function beforeUpdate($input)
     {
@@ -80,5 +80,5 @@ class Project extends Model
     
     public static function afterUpdate($object, $input)
     {
-    }
+        }
 }

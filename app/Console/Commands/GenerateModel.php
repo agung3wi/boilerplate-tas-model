@@ -121,7 +121,9 @@ class GenerateModel extends Command
                     WHERE
                         cols.table_catalog    = '" . env("DB_DATABASE") . "'
                         AND cols.table_name   = '$tableNameOriginal'
-                ) SELECT A.column_name, A.data_type, A.character_maximum_length, B.primary_table AS ref_table, B.pk_column AS ref_column, C.column_comment 
+                ) SELECT A.column_name, A.data_type, A.character_maximum_length, 
+                B.primary_table AS ref_table, B.pk_column AS ref_column, C.column_comment, 
+                A.is_nullable
                 FROM information_schema.columns A 
                 LEFT JOIN summary_fk B ON B.foreign_table = A.table_name AND 
                     B.fk_column = A.column_name 
@@ -182,7 +184,19 @@ class GenerateModel extends Command
 
                 array_push($fieldFilterable, $field->column_name);
                 $fieldType[$field->column_name] = $field->data_type;
-                $fieldValidation[$field->column_name] = "";
+                $fieldValidation[$field->column_name] = ($field->is_nullable == "YES") ? "nullable" : "required";
+
+                if($field->data_type == "bigint" || $field->data_type == "integer")
+                $fieldValidation[$field->column_name] .= "|integer";
+
+                if($field->data_type == "timestamp with time zone" || $field->data_type == "timestamp")
+                $fieldValidation[$field->column_name] .= "|date";
+
+                if($field->data_type == "character varying" || $field->data_type == "text")
+                $fieldValidation[$field->column_name] .= "|string";
+
+                if($field->character_maximum_length != null )
+                $fieldValidation[$field->column_name] .= "|max:".$field->character_maximum_length;
 
                 if($field->ref_table != null) {
                     $fieldRelation[$field->column_name] =  [
@@ -242,13 +256,13 @@ class GenerateModel extends Command
                 $classModel = "\\App\\Models\\" . $modelName;
 
                 preg_match_all("/public static function beforeInsert\([\$]input\)\n    {([^}]*)}/", $contents, $matches);
-                $beforeInsert = $matches[1][0];
+                // $beforeInsert = $matches[1][0];
                 preg_match_all("/public static function afterInsert\([\$]object, [\$]input\)\n    {([^}]*)}/", $contents, $matches);
-                $afterInsert = $matches[1][0];
+                // $afterInsert = $matches[1][0];
                 preg_match_all("/public static function beforeUpdate\([\$]input\)\n    {([^}]*)}/", $contents, $matches);
-                $beforeUpdate = $matches[1][0];
+                // $beforeUpdate = $matches[1][0];
                 preg_match_all("/public static function afterUpdate\([\$]object, [\$]input\)\n    {([^}]*)}/", $contents, $matches);
-                $afterUpdate = $matches[1][0];
+                // $afterUpdate = $matches[1][0];
 
                 // Berubah Select Value Field Relation by coding
                 foreach ($fieldRelation as $key => $relation) {

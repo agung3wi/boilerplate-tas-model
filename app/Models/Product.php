@@ -37,15 +37,15 @@ class Product extends Model
     const FIELD_RELATION = [
     ];
     const FIELD_VALIDATION = [
-        "id" => "",
-        "code" => "",
-        "name" => "",
-        "default_price" => "",
-        "uom_name" => "",
-        "created_by" => "",
-        "updated_by" => "",
-        "created_at" => "",
-        "updated_at" => "",
+        "id" => "required|integer",
+        "code" => "required|string|max:100",
+        "name" => "required|string|max:100",
+        "default_price" => "required",
+        "uom_name" => "required|string|max:100",
+        "created_by" => "required|integer",
+        "updated_by" => "required|integer",
+        "created_at" => "nullable",
+        "updated_at" => "nullable",
     ];
     const PARENT_CHILD = [];
 

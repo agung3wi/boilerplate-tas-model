@@ -34,12 +34,12 @@ class Department extends Model
     const FIELD_RELATION = [
     ];
     const FIELD_VALIDATION = [
-        "id" => "",
-        "department_name" => "",
-        "created_by" => "",
-        "updated_by" => "",
-        "created_at" => "",
-        "updated_at" => "",
+        "id" => "required|integer",
+        "department_name" => "required|string|max:100",
+        "created_by" => "required|integer",
+        "updated_by" => "required|integer",
+        "created_at" => "nullable",
+        "updated_at" => "nullable",
     ];
     const PARENT_CHILD = [];
 
