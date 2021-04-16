@@ -29,7 +29,7 @@ if (!function_exists('is_blank')) {
 
     function is_blank($array, $key)
     {
-        return isset($array[$key]) ? (empty($array[$key]) ? true : false) : true;
+        return isset($array[$key]) ? (is_null($array[$key]) ? true : false) : true;
     }
 }
 

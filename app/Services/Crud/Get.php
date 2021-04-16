@@ -55,7 +55,7 @@ class Get extends CoreService
 
         foreach ($classModel::FIELD_FILTERABLE as $filter) {      
             if(!is_blank($input, $filter)) {     
-                $filterList[] = " AND " . $filter .  " = :$filter";
+                $filterList[] = " AND A." . $filter .  " = :$filter";
                 $params[$filter] = $input[$filter];
             }
         }
@@ -70,18 +70,22 @@ class Get extends CoreService
         }
         $condition = " WHERE true";
 
-        if(!is_blank($input, "src")) {
+        if(!is_blank($input, "search")) {
+            
             $searchableList = $classModel::FIELD_SEARCHABLE;
-
+            
             $searchableList = array_map(function ($item) {
-                return "UPPER($item) LIKE :src";
+                return "UPPER($item) ILIKE :search";
             }, $searchableList);
+
         } else {
             $searchableList = [];
         }
+       
 
-        if(count($searchableList)>0 && !is_blank($input, "src"))
-            $params["src"] = "%" . strtoupper($input["src"] ?? "") . "%";
+
+        if(count($searchableList)>0 && !is_blank($input, "search"))
+            $params["search"] = "%" . strtoupper($input["search"] ?? "") . "%";
 
         $limit = $input["limit"] ?? 10;
         $offset = $input["offset"] ?? 0;
