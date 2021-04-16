@@ -12,6 +12,21 @@ return [
         "class" => "App\Services\Crud\Add"
     ],
     [
+        "type" => "POST",
+        "end_point" => "/update",
+        "class" => "App\Services\Crud\Edit"
+    ],
+    [
+        "type" => "POST",
+        "end_point" => "/delete",
+        "class" => "App\Services\Crud\Delete"
+    ],
+    [
+        "type" => "GET",
+        "end_point" => "/show",
+        "class" => "App\Services\Crud\Find"
+    ],
+    [
         "type" => "GET",
         "end_point" => "/sample",
         "class" => "App\Services\Sample\SampleService"

@@ -22,88 +22,24 @@ class CrudController extends Controller
 
     public function show($model, $id)
     {
-        $classModel = "\\App\\Models\\" . Str::upper(Str::camel($model));
-        if (!class_exists($classModel))
-            return $this->notFound();
-        if (!$classModel::FIND)
-            return $this->notFound();
-        if (!hasPermission("view-" . $model))
-            return $this->forbidden();
-
-        $selectableList = ["A." . ($classModel::PRIMARY_KEY ?? "id")];
-        $tableJoinList = [];
-
-        $i = 0;
-        foreach ($classModel::FIELDS as $item => $value) {
-            if ($value["find"]) {
-                $selectableList[] = "A." . $item;
-            }
-
-            if (isset($value["relation"])) {
-                $alias = $this->toAlpha($i + 1);
-                $selectableList = array_merge($selectableList, array_map(function ($item) use ($alias) {
-                    return $alias . "." . $item;
-                }, $value["relation"]["selectable"]));
-
-                $tableJoinList[] = "LEFT JOIN " . $value["relation"]["table"] . " " . $alias . " ON " .
-                    "A." . $item . " = " .  $alias . "." . $value["relation"]["field_reference"];
-            }
-            $i++;
-        }
-
-        $condition = " WHERE A." . ($classModel::PRIMARY_KEY ?? "id") . " = :id";
-
-        $sql = "SELECT " . implode(", ", $selectableList) . " FROM " . $classModel::TABLE_NAME . " A " .
-            implode(" ", $tableJoinList) . $condition;
-
-        $product =  DB::selectOne($sql, ["id" => $id]);
-        return response()->json($product);
+        $input = request()->all();
+        $input["id"] = $id;
+        $input["model"] = $model;
+        return CallService::run("Find", $input);
     }
 
     public function create($model)
     {
         $input = request()->all();
         $input["model"] = $model;
-        return CallService::run("Get", $input);
+        return CallService::run("Add", $input);
     }
 
     public function update($model)
     {
-        $classModel = "\\App\\Models\\" . Str::upper(Str::camel($model));
-        if (!class_exists($classModel))
-            return $this->notFound();
-        if (!$classModel::EDIT)
-            return $this->notFound();
-        if (!hasPermission("edit-" . $model)) {
-            return $this->forbidden();
-        }
-
-        $validation = [];
-
-        foreach ($classModel::FIELDS as $item => $value) {
-            $validation[$item] = $value["validation_edit"] ?? "";
-        }
-
-        $validator = Validator::make(request()->all(), $validation);
-
-        if ($validator->fails()) {
-            return ["message" => $validator->errors()->first()];
-        }
-        $id = request()->input("id");
-
-        $input = $classModel::beforeUpdate(request()->all());
-
-        $inputOnly = [];
-        foreach ($classModel::FIELDS as $item => $value) {
-            if ($value["edit"])
-                $inputOnly[$item] =  $input[$item];
-        }
-
-        $classModel::where("id", $id)
-            ->update($inputOnly);
-        $product = $classModel::find($id);
-        $classModel::afterUpdate($product);
-        return response()->json($product);
+        $input = request()->all();
+        $input["model"] = $model;
+        return CallService::run("Edit", $input);
     }
 
     public function remove($model)
@@ -147,21 +83,9 @@ class CrudController extends Controller
 
     public function delete($model)
     {
-        $classModel = "\\App\\Models\\" . Str::upper(Str::camel($model));
-        if (!class_exists($classModel))
-            return $this->notFound();
-
-        if (!hasPermission("delete-" . $model)) {
-            return $this->forbidden();
-        }
-
         $input = request()->all();
-        $id = request()->input("id");
-        $product =  $classModel::where("id", $id)
-            ->delete();
-        return [
-            "message" => __("message.successfullyDeleted")
-        ];
+        $input["model"] = $model;
+        return CallService::run("Delete", $input);
     }
 
     private function forbidden()

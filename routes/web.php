@@ -24,8 +24,15 @@ Route::get('/admin', function () {
     return view('home');
 });
 
-Route::get('/{model}', [CrudController::class, 'index']);
-Route::get('/{model}/{id}', [CrudController::class, 'find']);
-Route::post('/{model}', [CrudController::class, 'create']);
-Route::put('/{model}/{id}', [CrudController::class, 'update']);
-Route::delete('/{model}/{id}', [CrudController::class, 'delete']);
+
+Route::group([
+    'middleware' => 'setguard:web'
+], function () {
+    Route::get('/{model}', [CrudController::class, 'index']);
+    Route::post('/{model}/create', [CrudController::class, 'create']);
+    Route::put('/{model}/update', [CrudController::class, 'update']);
+    Route::delete('/{model}/delete', [CrudController::class, 'delete']);
+    Route::put('/{model}/remove', [CrudController::class, 'remove']);
+    Route::put('/{model}/restore', [CrudController::class, 'restore']);
+    Route::get('/{model}/{id}/show', [CrudController::class, 'show']);
+});

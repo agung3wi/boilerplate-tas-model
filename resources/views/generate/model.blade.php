@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Log;
 class {{ $studly_caps }} extends Model
 {
     protected $table = '{{ $table_name }}';
-    protected $fillable = {!! arrayToString($fillable) !!};
     const TABLE = "{{ $table_name }}";
     const IS_LIST = {{ $list? "true" : "false" }};
     const IS_ADD = {{ $add? "true" : "false" }};
@@ -29,8 +28,8 @@ class {{ $studly_caps }} extends Model
 @endforeach
     ];
     const FIELD_RELATION = [
-@foreach($fieldRelation as $relation)
-        [
+@foreach($fieldRelation as $key => $relation)
+        "{{ $key }}" => [
             "linkTable" => "{{ $relation["linkTable"] }}",
             "linkField" => "{{ $relation["linkField"] }}",
             "selectValue" => "{{ $relation["selectValue"] }}"

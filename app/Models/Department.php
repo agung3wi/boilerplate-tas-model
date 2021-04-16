@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Log;
 class Department extends Model
 {
     protected $table = 'm_department';
-    protected $fillable = ["department_name", "created_by", "updated_by"];
     const TABLE = "m_department";
     const IS_LIST = true;
     const IS_ADD = true;
@@ -17,8 +16,8 @@ class Department extends Model
     const IS_DELETE = true;
     const IS_VIEW = true;
     const FIELD_LIST = ["id", "department_name", "created_by", "updated_by", "created_at", "updated_at"];
-    const FIELD_ADD = ["id", "department_name", "created_by", "updated_by", "created_at", "updated_at"];
-    const FIELD_EDIT = ["id", "department_name", "created_by", "updated_by", "created_at", "updated_at"];
+    const FIELD_ADD = ["department_name", "created_by", "updated_by"];
+    const FIELD_EDIT = ["department_name", "updated_by"];
     const FIELD_VIEW = ["id", "department_name", "created_by", "updated_by", "created_at", "updated_at"];
     const FIELD_READONLY = [];
     const FIELD_FILTERABLE = ["id", "department_name", "created_by", "created_by", "updated_by", "updated_by", "created_at", "updated_at"];

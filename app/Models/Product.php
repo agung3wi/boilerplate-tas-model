@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Log;
 class Product extends Model
 {
     protected $table = 'm_product';
-    protected $fillable = ["code", "name", "default_price", "uom_name", "created_by", "updated_by"];
     const TABLE = "m_product";
     const IS_LIST = true;
     const IS_ADD = true;
@@ -17,8 +16,8 @@ class Product extends Model
     const IS_DELETE = true;
     const IS_VIEW = true;
     const FIELD_LIST = ["id", "code", "name", "default_price", "uom_name", "created_by", "updated_by", "created_at", "updated_at"];
-    const FIELD_ADD = ["id", "code", "name", "default_price", "uom_name", "created_by", "updated_by", "created_at", "updated_at"];
-    const FIELD_EDIT = ["id", "code", "name", "default_price", "uom_name", "created_by", "updated_by", "created_at", "updated_at"];
+    const FIELD_ADD = ["code", "name", "default_price", "uom_name", "created_by", "updated_by"];
+    const FIELD_EDIT = ["code", "name", "default_price", "uom_name", "updated_by"];
     const FIELD_VIEW = ["id", "code", "name", "default_price", "uom_name", "created_by", "updated_by", "created_at", "updated_at"];
     const FIELD_READONLY = [];
     const FIELD_FILTERABLE = ["id", "code", "name", "default_price", "uom_name", "created_by", "created_by", "updated_by", "updated_by", "created_at", "updated_at"];

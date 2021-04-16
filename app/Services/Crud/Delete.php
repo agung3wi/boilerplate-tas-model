@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
-class Add extends CoreService
+class Delete extends CoreService
 {
 
     public $transaction = true;
@@ -22,10 +22,10 @@ class Add extends CoreService
         if (!class_exists($classModel))
             throw New CoreException("Not found", 404);
 
-        if (!$classModel::IS_ADD)
+        if (!$classModel::IS_DELETE)
             throw New CoreException("Not found", 404);
 
-        if (!hasPermission("add-" . $model))
+        if (!hasPermission("delete-" . $model))
             throw New CoreException("Forbidden", 403);
         $input["class_model"] = $classModel;
         return $input;
@@ -33,31 +33,21 @@ class Add extends CoreService
 
     public function process($input, $originalInput)
     {
-        $classModel = $input["class_model"];        
+        $classModel = $input["class_model"];     
+        $rules = ["id" => "required|integer" ]; 
 
-        $validator = Validator::make($input, $classModel::FIELD_VALIDATION);
+        $validator = Validator::make($input, $rules);
 
         if ($validator->fails()) {
             throw new CoreException($validator->errors()->first());
         }
 
-        $input = $classModel::beforeInsert($input);
+        $object = $classModel::find($input["id"]);
+        $object->delete();
 
-        $object = new $classModel;
-        foreach ($classModel::FIELD_ADD as $item) {
-            if($item == "created_by") {
-                $input[$item] = Auth::id();
-            }
-            if($item == "updated_by") {
-                $input[$item] = Auth::id();
-            }
-            $object->{$item} = $input[$item];
-        }
-
-        $object->save();
-        $classModel::afterInsert($object, $input);
-
-        return $object;
+        return [
+            "message" => __("message.successfullyDelete")
+        ];
     }
 
     protected function validation()

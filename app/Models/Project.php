@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Log;
 class Project extends Model
 {
     protected $table = 'm_project';
-    protected $fillable = ["project_name", "department_id", "description", "project_img", "created_by", "updated_by"];
     const TABLE = "m_project";
     const IS_LIST = true;
     const IS_ADD = true;
@@ -17,8 +16,8 @@ class Project extends Model
     const IS_DELETE = true;
     const IS_VIEW = true;
     const FIELD_LIST = ["id", "project_name", "department_id", "description", "project_img", "created_by", "updated_by", "created_at", "updated_at"];
-    const FIELD_ADD = ["id", "project_name", "department_id", "description", "project_img", "created_by", "updated_by", "created_at", "updated_at"];
-    const FIELD_EDIT = ["id", "project_name", "department_id", "description", "project_img", "created_by", "updated_by", "created_at", "updated_at"];
+    const FIELD_ADD = ["project_name", "department_id", "description", "project_img", "created_by", "updated_by"];
+    const FIELD_EDIT = ["project_name", "department_id", "description", "project_img", "updated_by"];
     const FIELD_VIEW = ["id", "project_name", "department_id", "description", "project_img", "created_by", "updated_by", "created_at", "updated_at"];
     const FIELD_READONLY = [];
     const FIELD_FILTERABLE = ["id", "project_name", "department_id", "department_id", "description", "project_img", "created_by", "created_by", "updated_by", "updated_by", "created_at", "updated_at"];
@@ -36,20 +35,20 @@ class Project extends Model
         "updated_at" => "timestamp without time zone",
     ];
     const FIELD_RELATION = [
-        [
+        "department_id" => [
             "linkTable" => "m_department",
             "linkField" => "id",
-            "selectValue" => "*"
+            "selectValue" => "department_name"
         ],
-        [
+        "created_by" => [
             "linkTable" => "users",
             "linkField" => "id",
-            "selectValue" => "*"
+            "selectValue" => "username AS created_username"
         ],
-        [
+        "updated_by" => [
             "linkTable" => "users",
             "linkField" => "id",
-            "selectValue" => "*"
+            "selectValue" => "username AS updated_username"
         ],
     ];
     const FIELD_VALIDATION = [

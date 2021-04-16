@@ -60,12 +60,12 @@ class Get extends CoreService
             }
         }
         $i = 0;
-        foreach ($classModel::FIELD_RELATION as $relation) {
+        foreach ($classModel::FIELD_RELATION as $key => $relation) {
             $alias = toAlpha($i + 1);
             $selectableList[] = $alias . "." . $relation["selectValue"];
 
             $tableJoinList[] = "LEFT JOIN " . $relation["linkTable"] . " " . $alias . " ON " .
-                "A." . $relation["linkField"] . " = " .  $alias . ".id";
+                "A." . $key . " = " .  $alias . "." . $relation["linkField"];
             $i++;
         }
         $condition = " WHERE true";
@@ -75,12 +75,12 @@ class Get extends CoreService
 
             $searchableList = array_map(function ($item) {
                 return "UPPER($item) LIKE :src";
-            }, array_keys($searchableList), $searchableList);
+            }, $searchableList);
         } else {
             $searchableList = [];
         }
 
-        if(count($searchableList)>0)
+        if(count($searchableList)>0 && !is_blank($input, "src"))
             $params["src"] = "%" . strtoupper($input["src"] ?? "") . "%";
 
         $limit = $input["limit"] ?? 10;

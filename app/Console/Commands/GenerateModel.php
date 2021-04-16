@@ -126,7 +126,6 @@ class GenerateModel extends Command
 
             $fields = DB::select($sql);
             $fillableBackList = ["id", "created_at", "updated_at"];
-            $fillable = [];
             $fieldList = [];
             $fieldAdd = [];
             $fieldEdit = [];
@@ -140,27 +139,42 @@ class GenerateModel extends Command
             $fieldRelation = [];
             $parentChild = [];
             
-            foreach ($fields as $field) {
-                if(!in_array($field->column_name, $fillableBackList))
-                    $fillable[] = $field->column_name;
+            foreach ($fields as $field) {    
                 array_push($fieldList, $field->column_name);
-                array_push($fieldAdd, $field->column_name);
-                array_push($fieldEdit, $field->column_name);
+                if(!in_array($field->column_name, $fillableBackList))
+                    array_push($fieldAdd, $field->column_name);
+
+                if(!in_array($field->column_name, $fillableBackList) && $field->column_name != "created_by")
+                    array_push($fieldEdit, $field->column_name);
+
                 array_push($fieldView, $field->column_name);
                 array_push($fieldSortable, $field->column_name);
+
                 if($field->data_type == "character varying" || $field->data_type == "text")
                     array_push($fieldSearchable, $field->column_name);
+
                 if($field->data_type == "bigint" && !in_array($field->column_name, $fillableBackList))
                     array_push($fieldFilterable, $field->column_name);
+
                 array_push($fieldFilterable, $field->column_name);
                 $fieldType[$field->column_name] = $field->data_type;
                 $fieldValidation[$field->column_name] = "";
-                if($field->ref_table != null)
-                array_push($fieldRelation, [
-                    "linkTable" => $field->ref_table,
-                    "linkField" => $field->ref_column,
-                    "selectValue" => "*"
-                ]);
+
+                if($field->ref_table != null) {
+                    $fieldRelation[$field->column_name] =  [
+                        "linkTable" => $field->ref_table,
+                        "linkField" => $field->ref_column,
+                        "selectValue" => "*"
+                    ];
+
+                    if($field->column_name == "created_by") {
+                        $fieldRelation[$field->column_name]["selectValue"] = "username AS created_username";
+                    }
+
+                    if($field->column_name == "updated_by") {
+                        $fieldRelation[$field->column_name]["selectValue"] = "username AS updated_username";
+                    }
+                }
             }
             $beforeInsert = "\n        return \$input;\n    ";
             $beforeUpdate = "\n        return \$input;\n    ";
@@ -189,8 +203,7 @@ class GenerateModel extends Command
                 'before_insert' => "{" . $beforeInsert . "}",
                 'after_insert' => "{" . $afterInsert . "}",
                 'before_update' => "{" . $beforeUpdate . "}",
-                'after_update' => "{" . $afterUpdate . "}",
-                'fillable' => $fillable
+                'after_update' => "{" . $afterUpdate . "}"
             ];
 
             if (!is_file($fileName)) {
@@ -212,6 +225,13 @@ class GenerateModel extends Command
                 $beforeUpdate = $matches[1][0];
                 preg_match_all("/public static function afterUpdate\([\$]object, [\$]input\)\n    {([^}]*)}/", $contents, $matches);
                 $afterUpdate = $matches[1][0];
+
+                // Berubah Select Value Field Relation by coding
+                foreach ($fieldRelation as $key => $relation) {
+                    if(isset($classModel::FIELD_RELATION[$key]["selectValue"])) {
+                        $fieldRelation[$key]["selectValue"] = $classModel::FIELD_RELATION[$key]["selectValue"];
+                    }
+                }
 
                 $params = [
                     'list' => $classModel::IS_LIST,
@@ -236,8 +256,7 @@ class GenerateModel extends Command
                     'before_insert' => "{" . $beforeInsert . "}",
                     'after_insert' => "{" . $afterInsert . "}",
                     'before_update' => "{" . $beforeUpdate . "}",
-                    'after_update' => "{" . $afterUpdate . "}",
-                    'fillable' => $fillable
+                    'after_update' => "{" . $afterUpdate . "}"
                 ];
 
                 $fileContent = view('generate.model', $params);
