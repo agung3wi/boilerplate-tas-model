@@ -104,16 +104,11 @@ class CrudController extends Controller
 
     public function generate($model) {
         $classModel = "\\App\\Models\\" . Str::upper(Str::camel($model));
-        $fieldLeanguage = [];
         foreach ($classModel::FIELD_LIST as $list) {
             
         }
         return [
-            "table" => $classModel::TABLE,
-            "lableTable" => [
-                "ID" => "Daftar Pekerja",
-                "EN" => "Worker List"
-            ],                                        
+            "table" => $classModel::TABLE,                                      
             "primaryKey" => "id",                                        
             "isList" => $classModel::IS_LIST,
             "isView" => $classModel::IS_VIEW,
@@ -130,24 +125,21 @@ class CrudController extends Controller
             "fieldType" => $classModel::FIELD_TYPE,
             "fieldRelation" => $classModel::FIELD_RELATION,
             "fieldValidation" => $classModel::FIELD_VALIDATION,
-            "parentChild" => $classModel::PARENT_CHILD,
-            "fieldLanguage" => [
-                "ID" => [
-                    "name" => "Nama Pekerja",
-                    "department_id" => "Nama Departemen",
-                    "project_id" => "Nama Project",
-                    "type_worker_id" => "Jenis Pekerja",
-                    "expertise_id" => "Keahlian"
-                ],
-                "EN" => [
-                    "name" => "Worker Name",
-                    "department_id" => "Department Name",
-                    "project_id" => "Project Name",
-                    "type_worker_id" => "Worker Type",
-                    "expertise_id" => "Expertise"
-                ]
-            ] 
+            "parentChild" => $classModel::PARENT_CHILD
         ];
+    }
+
+    public function lang() {
+        return [
+            "ID" => [
+                "modul" => __("modul", [], "id"),
+                "field" => __("field", [], "id")
+            ],
+            "EN" => [
+                "modul" => __("modul", [], "en"),
+                "field" => __("field", [], "en")
+            ]
+            ];
     }
 
     

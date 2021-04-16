@@ -37,4 +37,5 @@ Route::group([
     Route::get('/{model}/{id}/show', [CrudController::class, 'show']);
 });
 
+Route::get('/generate/lang', [CrudController::class, 'lang']);
 Route::get('/generate/{model}', [CrudController::class, 'generate']);
