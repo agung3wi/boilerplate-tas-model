@@ -23,6 +23,7 @@ class Projects extends Model
     const FIELD_FILTERABLE = ["id", "plants_id", "plants_id", "name", "address", "singlef_photo", "latitude", "longitude", "active", "created_by", "created_by", "updated_by", "updated_by", "created_at", "updated_at"];
     const FIELD_SEARCHABLE = ["name", "address", "singlef_photo", "latitude", "longitude"];
     const FIELD_SORTABLE = ["id", "plants_id", "name", "address", "singlef_photo", "latitude", "longitude", "active", "created_by", "updated_by", "created_at", "updated_at"];
+    const FIELD_UNIQUE = [];
     const FIELD_TYPE = [
         "id" => "bigint",
         "plants_id" => "bigint",

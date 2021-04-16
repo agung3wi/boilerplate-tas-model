@@ -23,6 +23,7 @@ class CategoryMaterials extends Model
     const FIELD_FILTERABLE = ["id", "name", "active", "created_by", "created_by", "updated_by", "updated_by", "created_at", "updated_at"];
     const FIELD_SEARCHABLE = ["name"];
     const FIELD_SORTABLE = ["id", "name", "active", "created_by", "updated_by", "created_at", "updated_at"];
+    const FIELD_UNIQUE = [];
     const FIELD_TYPE = [
         "id" => "bigint",
         "name" => "character varying",

@@ -152,6 +152,7 @@ class GenerateModel extends Command
             $fieldSearchable = [];
             $fieldSortable = [];
             $fieldType = [];
+            $fieldUnique = [];
             $fieldValidation = [];
             $fieldRelation = [];
             $parentChild = [];
@@ -231,6 +232,7 @@ class GenerateModel extends Command
                 'fieldReadonly' => $fieldReadonly,
                 'fieldFilterable' => $fieldFilterable,
                 'fieldSearchable' => $fieldSearchable,
+                'fieldUnique' => $fieldUnique,
                 'fieldSortable' => $fieldSortable,
                 'fieldType' => $fieldType,
                 'parentChild' => $parentChild,
@@ -285,6 +287,7 @@ class GenerateModel extends Command
                     'fieldFilterable' => $fieldFilterable,
                     'fieldSearchable' => $fieldSearchable,
                     'fieldSortable' => $fieldSortable,
+                    'fieldUnique' => $fieldUnique,
                     'fieldType' => $fieldType,
                     'parentChild' => $classModel::PARENT_CHILD,
                     'fieldValidation' => $fieldValidation,

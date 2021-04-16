@@ -22,6 +22,7 @@ class {{ $studly_caps }} extends Model
     const FIELD_FILTERABLE = {!! arrayToString($fieldFilterable) !!};
     const FIELD_SEARCHABLE = {!! arrayToString($fieldSearchable) !!};
     const FIELD_SORTABLE = {!! arrayToString($fieldSortable) !!};
+    const FIELD_UNIQUE = {!! arrayToString($fieldUnique) !!};
     const FIELD_TYPE = [
 @foreach($fieldType as $key => $type)
         "{{ $key }}" => "{{ $type }}",

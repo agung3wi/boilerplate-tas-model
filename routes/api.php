@@ -20,7 +20,8 @@ use Illuminate\Support\Facades\Route;
 Route::group([
     'middleware' => 'setguard:api'
 ], function () {
-    Route::get('/{model}', [CrudController::class, 'index']);
+    Route::get('/{model}/list', [CrudController::class, 'index']);
+    Route::get('/{model}/dataset', [CrudController::class, 'dataset']);
     Route::post('/{model}/create', [CrudController::class, 'create']);
     Route::put('/{model}/update', [CrudController::class, 'update']);
     Route::delete('/{model}/delete', [CrudController::class, 'delete']);

@@ -23,6 +23,7 @@ class Project extends Model
     const FIELD_FILTERABLE = ["id", "project_name", "department_id", "department_id", "description", "project_img", "created_by", "created_by", "updated_by", "updated_by", "created_at", "updated_at"];
     const FIELD_SEARCHABLE = ["project_name", "description", "project_img"];
     const FIELD_SORTABLE = ["id", "project_name", "department_id", "description", "project_img", "created_by", "updated_by", "created_at", "updated_at"];
+    const FIELD_UNIQUE = [];
     const FIELD_TYPE = [
         "id" => "bigint",
         "project_name" => "character varying",
