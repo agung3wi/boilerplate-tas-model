@@ -102,12 +102,53 @@ class CrudController extends Controller
         ], 404);
     }
 
-    private function toAlpha($data)
-    {
-        $alphabet =   array(
-            'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L',
-            'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
-        );
-        return $alphabet[$data];
+    public function generate($model) {
+        $classModel = "\\App\\Models\\" . Str::upper(Str::camel($model));
+        $fieldLeanguage = [];
+        foreach ($classModel::FIELD_LIST as $list) {
+            
+        }
+        return [
+            "table" => $classModel::TABLE,
+            "lableTable" => [
+                "ID" => "Daftar Pekerja",
+                "EN" => "Worker List"
+            ],                                        
+            "primaryKey" => "id",                                        
+            "isList" => $classModel::IS_LIST,
+            "isView" => $classModel::IS_VIEW,
+            "isEdit" => $classModel::IS_EDIT,
+            "isAdd" => $classModel::IS_ADD,
+            "isDelete" => $classModel::IS_DELETE,
+            "fieldList" => $classModel::FIELD_LIST,
+            "fieldView" => $classModel::FIELD_VIEW,
+            "fieldEdit" => $classModel::FIELD_EDIT,
+            "fieldAdd" => $classModel::FIELD_ADD,
+            "fieldReadonly" => $classModel::FIELD_READONLY,                      
+            "fieldFilterable" => $classModel::FIELD_FILTERABLE,
+            "fieldSearchable" => $classModel::FIELD_SEARCHABLE,
+            "fieldType" => $classModel::FIELD_TYPE,
+            "fieldRelation" => $classModel::FIELD_RELATION,
+            "fieldValidation" => $classModel::FIELD_VALIDATION,
+            "parentChild" => $classModel::PARENT_CHILD,
+            "fieldLanguage" => [
+                "ID" => [
+                    "name" => "Nama Pekerja",
+                    "department_id" => "Nama Departemen",
+                    "project_id" => "Nama Project",
+                    "type_worker_id" => "Jenis Pekerja",
+                    "expertise_id" => "Keahlian"
+                ],
+                "EN" => [
+                    "name" => "Worker Name",
+                    "department_id" => "Department Name",
+                    "project_id" => "Project Name",
+                    "type_worker_id" => "Worker Type",
+                    "expertise_id" => "Expertise"
+                ]
+            ] 
+        ];
     }
+
+    
 }

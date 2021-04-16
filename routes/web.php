@@ -36,3 +36,5 @@ Route::group([
     Route::put('/{model}/restore', [CrudController::class, 'restore']);
     Route::get('/{model}/{id}/show', [CrudController::class, 'show']);
 });
+
+Route::get('/generate/{model}', [CrudController::class, 'generate']);

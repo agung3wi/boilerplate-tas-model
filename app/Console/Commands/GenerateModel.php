@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -54,6 +55,11 @@ class GenerateModel extends Command
         }
 
         $prefix = ["m_", "fi_", "in_", "pu_", "r_", "sl_"];
+        $fieldLeanguageID = [];
+        $fieldLeanguageEN = [];
+        $modulLeanguageID = [];
+        $modulLeanguageEN = [];
+        $modulLeanguage = [];
         foreach ($tables as $table) {
             $tableNameOriginal = $table->table_name;
             $tableName = $table->table_name;
@@ -62,6 +68,15 @@ class GenerateModel extends Command
                     $tableName = str_replace($pre, "", $tableName);
                 }
             }
+            $modulLeanguage = ucwords(str_replace("_", " ", $tableName));
+            $modulLeanguageID[$tableName] = 
+                __("modul.".$tableName, [], "id") == "modul.".$tableName ? 
+                $modulLeanguage : __("modul.".$tableName, [], "id");
+
+            $modulLeanguageEN[$tableName] = 
+                __("modul.".$tableName, [], "en") == "modul.".$tableName ? 
+                $modulLeanguage : __("modul.".$tableName, [], "en");
+
             $modelName = Str::ucfirst(Str::camel($tableName));
             $fileName = base_path("app/Models/" . $modelName . ".php");
             if(env("DB_CONNECTION") == "pgsql") {
@@ -140,6 +155,15 @@ class GenerateModel extends Command
             $parentChild = [];
             
             foreach ($fields as $field) {    
+
+                $fieldLeanguageID[$field->column_name] = 
+                    __("field.".$field->column_name, [], "id") == "field.".$field->column_name ? 
+                    ucwords(str_replace("_", " ", $field->column_name)) : __("field.".$field->column_name, [], "id");
+
+                $fieldLeanguageEN[$field->column_name] = 
+                    __("field.".$field->column_name, [], "en") == "field.".$field->column_name ? 
+                    ucwords(str_replace("_", " ", $field->column_name)) : __("field.".$field->column_name, [], "en");
+
                 array_push($fieldList, $field->column_name);
                 if(!in_array($field->column_name, $fillableBackList))
                     array_push($fieldAdd, $field->column_name);
@@ -263,8 +287,24 @@ class GenerateModel extends Command
 
 
                 file_put_contents($fileName, "<?php \n\n" . $fileContent);
-                $this->info("Success Modified Model " . $modelName);
+                $this->info("Success Generated Model " . $modelName);
             }
         }
+
+        $fileName = base_path("resources/lang/en/field.php");
+        $fileContent = view('generate.field', ["fields" => $fieldLeanguageEN]);
+        file_put_contents($fileName, "<?php \n\n" . $fileContent);
+
+        $fileName = base_path("resources/lang/id/field.php");
+        $fileContent = view('generate.field', ["fields" => $fieldLeanguageID]);
+        file_put_contents($fileName, "<?php \n\n" . $fileContent);
+
+        $fileName = base_path("resources/lang/en/modul.php");
+        $fileContent = view('generate.field', ["fields" => $modulLeanguageEN]);
+        file_put_contents($fileName, "<?php \n\n" . $fileContent);
+
+        $fileName = base_path("resources/lang/id/modul.php");
+        $fileContent = view('generate.field', ["fields" => $modulLeanguageID]);
+        file_put_contents($fileName, "<?php \n\n" . $fileContent);
     }
 }

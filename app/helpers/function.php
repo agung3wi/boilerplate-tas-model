@@ -18,6 +18,13 @@ if (!function_exists('hasPermission')) {
     }
 }
 
+if (!function_exists('isProduction')) {
+    function isProduction()
+    {
+        return env("APP_ENV") == "production" || env("APP_ENV") == "staging";
+    }
+}
+
 if (!function_exists('is_blank')) {
 
     function is_blank($array, $key)

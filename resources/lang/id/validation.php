@@ -147,8 +147,6 @@ return [
     |
     */
 
-    'attributes' => [
-        'product_name' => "Nama Produk"
-    ],
+    'attributes' => __("label"),
 
 ];
