@@ -29,7 +29,7 @@ if (!function_exists('is_blank')) {
 
     function is_blank($array, $key)
     {
-        return isset($array[$key]) ? (is_null($array[$key]) ? true : false) : true;
+        return isset($array[$key]) ? (is_null($array[$key]) || $array[$key] === "") : true;
     }
 }
 
@@ -51,6 +51,9 @@ if (!function_exists('arrayToString')) {
     {
         $list = [];
         foreach ($array as $value) {
+            if(is_array($value))
+                $list[] = arrayToString($value);
+            else 
             $list[] = '"'.$value.'"'; 
         }
         return "[".implode(", ", $list). "]";
