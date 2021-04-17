@@ -14,7 +14,7 @@ class GenerateModel extends Command
      *
      * @var string
      */
-    protected $signature = 'generate:model';
+    protected $signature = 'generate:model {table?}';
 
     /**
      * The console command description.
@@ -41,6 +41,7 @@ class GenerateModel extends Command
     public function handle()
     {
         $this->info("Generating Model");
+        $tableArgument = $this->argument('table');
         if(env("DB_CONNECTION") == "pgsql") {
             $tables = DB::select("
             SELECT table_name FROM information_schema.tables 
@@ -61,6 +62,7 @@ class GenerateModel extends Command
         $modulLeanguageEN = [];
         $modulLeanguage = [];
         foreach ($tables as $table) {
+            if(!is_null($tableArgument) && $table->table_name != $tableArgument) continue;
             $tableNameOriginal = $table->table_name;
             $tableName = $table->table_name;
             foreach ($prefix as $pre) {
@@ -129,6 +131,33 @@ class GenerateModel extends Command
                     B.fk_column = A.column_name 
                 LEFT JOIN summary_comment C ON C.table_name = A.table_name AND C.column_name = A.column_name 
                 WHERE A.table_catalog = '" . env("DB_DATABASE") . "' AND A.table_name = '$tableNameOriginal'";
+                
+                $sqlIndex = "select
+                    i.relname as index_name,
+                    string_agg(a.attname, ',') as column_list
+                from
+                    pg_class t,
+                    pg_class i,
+                    pg_index ix,
+                    pg_attribute a,
+                    pg_namespace n 
+                where
+                    t.oid = ix.indrelid
+                    and i.oid = ix.indexrelid
+                    and a.attrelid = t.oid
+                    and i.relnamespace = n.oid
+                    and a.attnum = ANY(ix.indkey)
+                    and ix.indisprimary = false
+                    and t.relkind = 'r'
+                    and n.nspname = 'public'
+                    and t.relname = '".$tableNameOriginal."'
+                group by 
+                    i.relname, t.relname
+                order by
+                    t.relname,
+                    i.relname
+                ";
+
             } elseif (env("DB_CONNECTION") == "mysql") {
                 $sql = "SELECT A.column_name, A.data_type, A.character_maximum_length, B.ref_table, B.ref_column, A.column_comment 
                 FROM information_schema.columns A
@@ -138,10 +167,39 @@ class GenerateModel extends Command
                   WHERE table_schema='". env("DB_DATABASE") ."' AND table_name = '$tableNameOriginal' AND REFERENCED_TABLE_NAME IS NOT NULL
             ) B ON B.table_name = A.table_name AND B.column_name = A.column_name
             WHERE A.table_name = '$tableNameOriginal' AND A.table_schema = '". env("DB_DATABASE") ."'";
+
+                $sqlIndex = "select
+                    i.relname as index_name,
+                    string_agg(a.attname, ',') as column_list
+                from
+                    pg_class t,
+                    pg_class i,
+                    pg_index ix,
+                    pg_attribute a,
+                    pg_namespace n 
+                where
+                    t.oid = ix.indrelid
+                    and i.oid = ix.indexrelid
+                    and a.attrelid = t.oid
+                    and i.relnamespace = n.oid
+                    and a.attnum = ANY(ix.indkey)
+                    and ix.indisprimary = false
+                    and t.relkind = 'r'
+                    and n.nspname = 'public'
+                    and t.relname = '".$tableNameOriginal."'
+                group by 
+                    i.relname, t.relname
+                order by
+                    t.relname,
+                    i.relname
+                ";
                 
             }
 
+           
+
             $fields = DB::select($sql);
+            $uniques = DB::select($sqlIndex); 
             $fillableBackList = ["id", "created_at", "updated_at"];
             $fieldList = [];
             $fieldAdd = [];
@@ -156,6 +214,10 @@ class GenerateModel extends Command
             $fieldValidation = [];
             $fieldRelation = [];
             $parentChild = [];
+
+            foreach ($uniques as $unique) {
+                array_push($fieldUnique, explode(",", $unique->column_list));
+            }
             
             foreach ($fields as $field) {    
 
@@ -217,8 +279,8 @@ class GenerateModel extends Command
             }
             $beforeInsert = "\n        return \$input;\n    ";
             $beforeUpdate = "\n        return \$input;\n    ";
-            $afterInsert = "\n        ";
-            $afterUpdate = "\n        ";
+            $afterInsert = "\n    ";
+            $afterUpdate = "\n    ";
             $params = [
                 'list' => true,
                 'add' => true,
@@ -258,13 +320,13 @@ class GenerateModel extends Command
                 $classModel = "\\App\\Models\\" . $modelName;
 
                 preg_match_all("/public static function beforeInsert\([\$]input\)\n    {([^}]*)}/", $contents, $matches);
-                // $beforeInsert = $matches[1][0];
+                $beforeInsert = $matches[1][0];
                 preg_match_all("/public static function afterInsert\([\$]object, [\$]input\)\n    {([^}]*)}/", $contents, $matches);
-                // $afterInsert = $matches[1][0];
+                $afterInsert = $matches[1][0];
                 preg_match_all("/public static function beforeUpdate\([\$]input\)\n    {([^}]*)}/", $contents, $matches);
-                // $beforeUpdate = $matches[1][0];
+                $beforeUpdate = $matches[1][0];
                 preg_match_all("/public static function afterUpdate\([\$]object, [\$]input\)\n    {([^}]*)}/", $contents, $matches);
-                // $afterUpdate = $matches[1][0];
+                $afterUpdate = $matches[1][0];
 
                 // Berubah Select Value Field Relation by coding
                 foreach ($fieldRelation as $key => $relation) {
