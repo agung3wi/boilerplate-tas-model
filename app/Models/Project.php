@@ -15,36 +15,36 @@ class Project extends Model
     const IS_EDIT = true;
     const IS_DELETE = true;
     const IS_VIEW = true;
-    const FIELD_LIST = ["id", "project_name", "department_id", "description", "project_img", "created_by", "updated_by", "created_at", "updated_at"];
-    const FIELD_ADD = ["project_name", "department_id", "description", "project_img", "created_by", "updated_by"];
-    const FIELD_EDIT = ["project_name", "department_id", "description", "project_img", "updated_by"];
-    const FIELD_VIEW = ["id", "project_name", "department_id", "description", "project_img", "created_by", "updated_by", "created_at", "updated_at"];
+    const FIELD_LIST = ["created_by", "department_id", "updated_by", "id", "project_name", "description", "project_img", "created_at", "updated_at"];
+    const FIELD_ADD = ["created_by", "department_id", "updated_by", "project_name", "description", "project_img"];
+    const FIELD_EDIT = ["department_id", "updated_by", "project_name", "description", "project_img"];
+    const FIELD_VIEW = ["created_by", "department_id", "updated_by", "id", "project_name", "description", "project_img", "created_at", "updated_at"];
     const FIELD_READONLY = [];
-    const FIELD_FILTERABLE = ["id", "project_name", "department_id", "department_id", "description", "project_img", "created_by", "created_by", "updated_by", "updated_by", "created_at", "updated_at"];
-    const FIELD_SEARCHABLE = ["project_name", "description", "project_img"];
-    const FIELD_SORTABLE = ["id", "project_name", "department_id", "description", "project_img", "created_by", "updated_by", "created_at", "updated_at"];
+    const FIELD_FILTERABLE = ["created_by", "created_by", "department_id", "department_id", "updated_by", "updated_by", "id", "project_name", "description", "project_img", "created_at", "updated_at"];
+    const FIELD_SEARCHABLE = ["description"];
+    const FIELD_SORTABLE = ["created_by", "department_id", "updated_by", "id", "project_name", "description", "project_img", "created_at", "updated_at"];
     const FIELD_UNIQUE = [];
     const FIELD_TYPE = [
-        "id" => "bigint",
-        "project_name" => "character varying",
-        "department_id" => "bigint",
-        "description" => "text",
-        "project_img" => "character varying",
         "created_by" => "bigint",
+        "department_id" => "bigint",
         "updated_by" => "bigint",
-        "created_at" => "timestamp without time zone",
-        "updated_at" => "timestamp without time zone",
+        "id" => "bigint",
+        "project_name" => "varchar",
+        "description" => "text",
+        "project_img" => "varchar",
+        "created_at" => "timestamp",
+        "updated_at" => "timestamp",
     ];
     const FIELD_RELATION = [
-        "department_id" => [
-            "linkTable" => "m_department",
-            "linkField" => "id",
-            "selectValue" => "*"
-        ],
         "created_by" => [
             "linkTable" => "users",
             "linkField" => "id",
             "selectValue" => "username AS created_username"
+        ],
+        "department_id" => [
+            "linkTable" => "m_department",
+            "linkField" => "id",
+            "selectValue" => "*"
         ],
         "updated_by" => [
             "linkTable" => "users",
@@ -53,15 +53,15 @@ class Project extends Model
         ],
     ];
     const FIELD_VALIDATION = [
-        "id" => "required|integer",
-        "project_name" => "required|string|max:100",
-        "department_id" => "required|integer",
-        "description" => "required|string",
-        "project_img" => "required|string|max:255",
         "created_by" => "required|integer",
+        "department_id" => "required|integer",
         "updated_by" => "required|integer",
-        "created_at" => "nullable",
-        "updated_at" => "nullable",
+        "id" => "required|integer",
+        "project_name" => "required|max:100",
+        "description" => "required|string|max:65535",
+        "project_img" => "required|max:255",
+        "created_at" => "nullable|date",
+        "updated_at" => "nullable|date",
     ];
     const PARENT_CHILD = [];
 

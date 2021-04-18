@@ -159,7 +159,8 @@ class GenerateModel extends Command
                 ";
 
             } elseif (env("DB_CONNECTION") == "mysql") {
-                $sql = "SELECT A.column_name, A.data_type, A.character_maximum_length, B.ref_table, B.ref_column, A.column_comment 
+                $sql = "SELECT A.column_name, A.data_type, A.character_maximum_length, B.ref_table, B.ref_column, A.column_comment,
+                A.is_nullable
                 FROM information_schema.columns A
             LEFT JOIN (
                 SELECT table_name,column_name, REFERENCED_TABLE_NAME AS ref_table, REFERENCED_COLUMN_NAME AS ref_column
@@ -168,35 +169,13 @@ class GenerateModel extends Command
             ) B ON B.table_name = A.table_name AND B.column_name = A.column_name
             WHERE A.table_name = '$tableNameOriginal' AND A.table_schema = '". env("DB_DATABASE") ."'";
 
-                $sqlIndex = "select
-                    i.relname as index_name,
-                    string_agg(a.attname, ',') as column_list
-                from
-                    pg_class t,
-                    pg_class i,
-                    pg_index ix,
-                    pg_attribute a,
-                    pg_namespace n 
-                where
-                    t.oid = ix.indrelid
-                    and i.oid = ix.indexrelid
-                    and a.attrelid = t.oid
-                    and i.relnamespace = n.oid
-                    and a.attnum = ANY(ix.indkey)
-                    and ix.indisprimary = false
-                    and t.relkind = 'r'
-                    and n.nspname = 'public'
-                    and t.relname = '".$tableNameOriginal."'
-                group by 
-                    i.relname, t.relname
-                order by
-                    t.relname,
-                    i.relname
-                ";
+                $sqlIndex = "select index_name,
+                    group_concat(column_name order by seq_in_index) as column_list
+                from information_schema.statistics
+                    where index_schema = '". env("DB_DATABASE") ."' AND non_unique = 0 AND index_name <> 'PRIMARY' AND table_name = '$tableNameOriginal'
+                group by index_name";
                 
             }
-
-           
 
             $fields = DB::select($sql);
             $uniques = DB::select($sqlIndex); 

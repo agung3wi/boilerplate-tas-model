@@ -23,24 +23,24 @@ class CutOffPeriod extends Model
     const FIELD_FILTERABLE = ["id", "year", "months_id", "start_date", "end_date", "created_by", "created_by", "updated_by", "updated_by", "created_at", "updated_at"];
     const FIELD_SEARCHABLE = [];
     const FIELD_SORTABLE = ["id", "year", "months_id", "start_date", "end_date", "created_by", "updated_by", "created_at", "updated_at"];
-    const FIELD_UNIQUE = [];
+    const FIELD_UNIQUE = [["year", "months_id"]];
     const FIELD_TYPE = [
         "id" => "bigint",
-        "year" => "integer",
-        "months_id" => "integer",
+        "year" => "int",
+        "months_id" => "int",
         "start_date" => "date",
         "end_date" => "date",
         "created_by" => "bigint",
         "updated_by" => "bigint",
-        "created_at" => "timestamp with time zone",
-        "updated_at" => "timestamp with time zone",
+        "created_at" => "timestamp",
+        "updated_at" => "timestamp",
     ];
     const FIELD_RELATION = [
     ];
     const FIELD_VALIDATION = [
         "id" => "required|integer",
-        "year" => "required|integer",
-        "months_id" => "required|integer",
+        "year" => "required",
+        "months_id" => "required",
         "start_date" => "required",
         "end_date" => "required",
         "created_by" => "nullable|integer",

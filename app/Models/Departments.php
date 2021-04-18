@@ -21,23 +21,24 @@ class Departments extends Model
     const FIELD_VIEW = ["id", "name", "active", "created_by", "updated_by", "created_at", "updated_at"];
     const FIELD_READONLY = [];
     const FIELD_FILTERABLE = ["id", "name", "active", "created_by", "created_by", "updated_by", "updated_by", "created_at", "updated_at"];
-    const FIELD_SEARCHABLE = ["name"];
+    const FIELD_SEARCHABLE = [];
     const FIELD_SORTABLE = ["id", "name", "active", "created_by", "updated_by", "created_at", "updated_at"];
-    const FIELD_UNIQUE = [];
+    const FIELD_UNIQUE = [["name"]];
     const FIELD_TYPE = [
         "id" => "bigint",
-        "name" => "character varying",
-        "active" => "integer",
+        "name" => "varchar",
+        "active" => "int",
         "created_by" => "bigint",
         "updated_by" => "bigint",
-        "created_at" => "timestamp with time zone",
-        "updated_at" => "timestamp with time zone",
+        "created_at" => "timestamp",
+        "updated_at" => "timestamp",
     ];
     const FIELD_RELATION = [
     ];
     const FIELD_VALIDATION = [
-        "name" => "required|string|max:255|unique:departments",
-        "active" => "nullable|integer",
+        "id" => "required|integer",
+        "name" => "required|max:255",
+        "active" => "nullable",
         "created_by" => "nullable|integer",
         "updated_by" => "nullable|integer",
         "created_at" => "nullable|date",

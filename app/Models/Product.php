@@ -21,32 +21,32 @@ class Product extends Model
     const FIELD_VIEW = ["id", "code", "name", "default_price", "uom_name", "created_by", "updated_by", "created_at", "updated_at"];
     const FIELD_READONLY = [];
     const FIELD_FILTERABLE = ["id", "code", "name", "default_price", "uom_name", "created_by", "created_by", "updated_by", "updated_by", "created_at", "updated_at"];
-    const FIELD_SEARCHABLE = ["code", "name", "uom_name"];
+    const FIELD_SEARCHABLE = [];
     const FIELD_SORTABLE = ["id", "code", "name", "default_price", "uom_name", "created_by", "updated_by", "created_at", "updated_at"];
-    const FIELD_UNIQUE = [];
+    const FIELD_UNIQUE = [["code"]];
     const FIELD_TYPE = [
         "id" => "bigint",
-        "code" => "character varying",
-        "name" => "character varying",
-        "default_price" => "numeric",
-        "uom_name" => "character varying",
+        "code" => "varchar",
+        "name" => "varchar",
+        "default_price" => "decimal",
+        "uom_name" => "varchar",
         "created_by" => "bigint",
         "updated_by" => "bigint",
-        "created_at" => "timestamp without time zone",
-        "updated_at" => "timestamp without time zone",
+        "created_at" => "timestamp",
+        "updated_at" => "timestamp",
     ];
     const FIELD_RELATION = [
     ];
     const FIELD_VALIDATION = [
         "id" => "required|integer",
-        "code" => "required|string|max:100",
-        "name" => "required|string|max:100",
+        "code" => "required|max:100",
+        "name" => "required|max:100",
         "default_price" => "required",
-        "uom_name" => "required|string|max:100",
+        "uom_name" => "required|max:100",
         "created_by" => "required|integer",
         "updated_by" => "required|integer",
-        "created_at" => "nullable",
-        "updated_at" => "nullable",
+        "created_at" => "nullable|date",
+        "updated_at" => "nullable|date",
     ];
     const PARENT_CHILD = [];
 
