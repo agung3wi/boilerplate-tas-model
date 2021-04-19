@@ -6,30 +6,27 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 
-class Product extends Model
+class Department extends Model
 {
-    protected $table = 'm_product';
-    const TABLE = "m_product";
+    protected $table = 'm_department';
+    const TABLE = "m_department";
     const IS_LIST = true;
     const IS_ADD = true;
     const IS_EDIT = true;
     const IS_DELETE = true;
     const IS_VIEW = true;
-    const FIELD_LIST = ["id", "code", "name", "default_price", "uom_name", "created_by", "updated_by", "created_at", "updated_at"];
-    const FIELD_ADD = ["code", "name", "default_price", "uom_name", "created_by", "updated_by"];
-    const FIELD_EDIT = ["code", "name", "default_price", "uom_name", "updated_by"];
-    const FIELD_VIEW = ["id", "code", "name", "default_price", "uom_name", "created_by", "updated_by", "created_at", "updated_at"];
+    const FIELD_LIST = ["id", "department_name", "created_by", "updated_by", "created_at", "updated_at"];
+    const FIELD_ADD = ["department_name", "created_by", "updated_by"];
+    const FIELD_EDIT = ["department_name", "updated_by"];
+    const FIELD_VIEW = ["id", "department_name", "created_by", "updated_by", "created_at", "updated_at"];
     const FIELD_READONLY = [];
-    const FIELD_FILTERABLE = ["id", "code", "name", "default_price", "uom_name", "created_by", "created_by", "updated_by", "updated_by", "created_at", "updated_at"];
+    const FIELD_FILTERABLE = ["id", "department_name", "created_by", "created_by", "updated_by", "updated_by", "created_at", "updated_at"];
     const FIELD_SEARCHABLE = [];
-    const FIELD_SORTABLE = ["id", "code", "name", "default_price", "uom_name", "created_by", "updated_by", "created_at", "updated_at"];
-    const FIELD_UNIQUE = [["code"]];
+    const FIELD_SORTABLE = ["id", "department_name", "created_by", "updated_by", "created_at", "updated_at"];
+    const FIELD_UNIQUE = [];
     const FIELD_TYPE = [
         "id" => "bigint",
-        "code" => "varchar",
-        "name" => "varchar",
-        "default_price" => "decimal",
-        "uom_name" => "varchar",
+        "department_name" => "varchar",
         "created_by" => "bigint",
         "updated_by" => "bigint",
         "created_at" => "timestamp",
@@ -39,10 +36,7 @@ class Product extends Model
     ];
     const FIELD_VALIDATION = [
         "id" => "required|integer",
-        "code" => "required|max:100",
-        "name" => "required|max:100",
-        "default_price" => "required",
-        "uom_name" => "required|max:100",
+        "department_name" => "required|max:100",
         "created_by" => "required|integer",
         "updated_by" => "required|integer",
         "created_at" => "nullable|date",

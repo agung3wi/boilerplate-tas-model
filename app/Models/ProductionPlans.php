@@ -31,11 +31,11 @@ class ProductionPlans extends Model
         "months_id" => "bigint",
         "consumers_id" => "bigint",
         "materials_id" => "bigint",
-        "volume" => "double precision",
+        "volume" => "double",
         "created_by" => "bigint",
         "updated_by" => "bigint",
-        "created_at" => "timestamp with time zone",
-        "updated_at" => "timestamp with time zone",
+        "created_at" => "timestamp",
+        "updated_at" => "timestamp",
     ];
     const FIELD_RELATION = [
     ];

@@ -21,22 +21,22 @@ class Months extends Model
     const FIELD_VIEW = ["id", "name", "created_by", "updated_by", "created_at", "updated_at"];
     const FIELD_READONLY = [];
     const FIELD_FILTERABLE = ["id", "name", "created_by", "created_by", "updated_by", "updated_by", "created_at", "updated_at"];
-    const FIELD_SEARCHABLE = ["name"];
+    const FIELD_SEARCHABLE = [];
     const FIELD_SORTABLE = ["id", "name", "created_by", "updated_by", "created_at", "updated_at"];
-    const FIELD_UNIQUE = [];
+    const FIELD_UNIQUE = [["name"]];
     const FIELD_TYPE = [
         "id" => "bigint",
-        "name" => "character varying",
+        "name" => "varchar",
         "created_by" => "bigint",
         "updated_by" => "bigint",
-        "created_at" => "timestamp with time zone",
-        "updated_at" => "timestamp with time zone",
+        "created_at" => "timestamp",
+        "updated_at" => "timestamp",
     ];
     const FIELD_RELATION = [
     ];
     const FIELD_VALIDATION = [
         "id" => "required|integer",
-        "name" => "required|string|max:255",
+        "name" => "required|max:255",
         "created_by" => "nullable|integer",
         "updated_by" => "nullable|integer",
         "created_at" => "nullable|date",
