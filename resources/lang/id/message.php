@@ -20,5 +20,6 @@ return [
     '419' => 'Page Expired',
     '500' => 'Internal Server Error',
     'alreadyExist' => 'Data :field sudah ada',
-    'forbiddenDelete' => 'Data Tidak Boleh Dihapus'
+    'forbiddenDelete' => 'Data Tidak Boleh Dihapus',
+    'fileNotExist' => 'File :field Tidak Ditemukan'
 ];

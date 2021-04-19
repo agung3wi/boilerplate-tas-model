@@ -40,6 +40,7 @@ class GenerateModel extends Command
      */
     public function handle()
     {
+
         $this->info("Generating Model");
         $tableArgument = $this->argument('table');
         if (env("DB_CONNECTION") == "pgsql") {
@@ -178,6 +179,12 @@ class GenerateModel extends Command
             $fields = DB::select($sql);
             $uniques = DB::select($sqlIndex);
             $fillableBackList = ["id", "created_at", "updated_at"];
+            $filedUploadPattern = [
+                'imgField' => 'img_',
+                'docField' => 'doc_',
+                'fileField' => 'file_'
+            ];
+            $fileRoot = "/" . $tableName;
             $fieldList = [];
             $fieldAdd = [];
             $fieldEdit = [];
@@ -190,6 +197,7 @@ class GenerateModel extends Command
             $fieldUnique = [];
             $fieldValidation = [];
             $fieldRelation = [];
+            $fieldUpload = [];
             $parentChild = [];
             $fieldDefaultValue = [];
             foreach ($uniques as $unique) {
@@ -224,8 +232,8 @@ class GenerateModel extends Command
 
                 array_push($fieldFilterable, $field->column_name);
                 $fieldType[$field->column_name] = $field->data_type;
-                
-                if($field->column_name !== 'id') $fieldDefaultValue[$field->column_name] = $field->column_default;
+
+                if ($field->column_name !== 'id') $fieldDefaultValue[$field->column_name] = $field->column_default;
 
 
                 if ($field->column_name !== 'id') {
@@ -244,6 +252,27 @@ class GenerateModel extends Command
                         $fieldValidation[$field->column_name] .= "|max:" . $field->character_maximum_length;
                 }
 
+                // START FIELD UPLOAD
+                // $pattern = array_keys($filedUploadPattern);
+                foreach ($filedUploadPattern as $c => $val) {
+                    if (preg_match("/" . $val . "/i", $field->column_name)) {
+                        switch ($c) {
+                            case 'imgField':
+                                $fieldUpload[] = $field->column_name;
+                                break;
+                            case 'docField':
+                                $fieldUpload[] = $field->column_name;
+                                break;
+                            case 'fileField':
+                                $fieldUpload[] = $field->column_name;
+                                break;
+                        }
+                    }
+                }
+                // $this->info($fieldUpload);
+
+
+                // END FIELD UPLOAD
                 if ($field->ref_table != null) {
                     $fieldRelation[$field->column_name] =  [
                         "linkTable" => $field->ref_table,
@@ -266,6 +295,7 @@ class GenerateModel extends Command
             $afterUpdate = "\n    ";
             $customContent = "\n    " . view("generate.custom");
             $params = [
+                'fileRoot' => $fileRoot,
                 'list' => true,
                 'add' => true,
                 'edit' => true,
@@ -285,6 +315,7 @@ class GenerateModel extends Command
                 'fieldValidation' => $fieldValidation,
                 'fieldRelation' => $fieldRelation,
                 'fieldDefaultValue' => $fieldDefaultValue,
+                'fieldUpload' => $fieldUpload,
                 'table_name' => $tableNameOriginal,
                 'studly_caps' => Str::ucfirst(Str::camel($tableName)),
                 'customContent' => $customContent
@@ -319,6 +350,7 @@ class GenerateModel extends Command
                 }
 
                 $params = [
+                    'fileRoot' => $fileRoot,
                     'list' => $classModel::IS_LIST,
                     'add' => $classModel::IS_ADD,
                     'edit' => $classModel::IS_EDIT,
@@ -338,6 +370,7 @@ class GenerateModel extends Command
                     'fieldValidation' => $fieldValidation,
                     'fieldRelation' => $fieldRelation,
                     'fieldDefaultValue' => $fieldDefaultValue,
+                    'fieldUpload' => $fieldUpload,
                     'table_name' => $tableNameOriginal,
                     'studly_caps' => Str::ucfirst(Str::camel($tableName)),
                     'customContent' => $customContent

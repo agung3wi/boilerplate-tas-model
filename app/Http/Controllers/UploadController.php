@@ -24,7 +24,8 @@ class UploadController extends Controller
         }
         $path = $file->storeAs('tmp', $originalname);
         $result = [
-            "path" => $path
+            "path" => $path,
+            "originalname" =>$originalname
         ];
         return CoreResponse::ok($result);
     }

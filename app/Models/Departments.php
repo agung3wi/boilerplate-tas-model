@@ -24,6 +24,7 @@ class Departments extends Model
     const FIELD_SEARCHABLE = ["name"];
     const FIELD_SORTABLE = ["id", "name", "active", "created_by", "updated_by", "created_at", "updated_at"];
     const FIELD_UNIQUE = [["name"]];
+    const FIELD_UPLOAD = [];
     const FIELD_TYPE = [
         "id" => "bigint",
         "name" => "character varying",

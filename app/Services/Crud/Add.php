@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class Add extends CoreService
 {
@@ -45,7 +46,7 @@ class Add extends CoreService
                 };
                 $isi = $query->first();
                 if (!is_null($isi)) {
-                    throw new CoreException(__("message.alreadyExist", [ 'field' => implode(",",$fieldTrans)]));
+                    throw new CoreException(__("message.alreadyExist", ['field' => implode(",", $fieldTrans)]));
                 }
             }
         }
@@ -70,11 +71,39 @@ class Add extends CoreService
             $object->{$item} = $input[$item] ?? $classModel::FIELD_DEFAULT_VALUE[$item];
         }
 
-        //MOVE FILE
+        //VALIDASI FILE EXIST & MOVE FILE
+        foreach ($classModel::FIELD_UPLOAD as $item) {
+            $tmpPath = $input["temp_" . $item] ?? "";
+            $tmpName = $input[$item];
+            $newPath = $classModel::FILEROOT . "/" . $input[$item];
+            if (!is_null($tmpName) and Storage::exists($tmpPath)) {
+                //START MOVE FILE
+                if (Storage::exists($newPath)) {
+                    $id = 1;
+                    $filename = pathinfo(storage_path($newPath), PATHINFO_FILENAME);
+                    $ext = pathinfo(storage_path($newPath), PATHINFO_EXTENSION);
+                    while (true) {
+                        $originalname = $filename . "($id)." . $ext;
+                        if (!Storage::exists($classModel::FILEROOT . "/" . $originalname))
+                            break;
+                        $id++;
+                    }
+                    $newPath = $classModel::FILEROOT . "/" . $originalname;
+                    $object->{$item} = $originalname;
+                }
 
-        //
+                Storage::move($tmpPath, $newPath);
+                //END MOVE FILE
+            } else if (is_null($tmpName)) {
+                //DO NOTHING
+            } else {
+                throw new CoreException(__("message.fileNotExist", ['field' => $item]));
+            }
+        }
+        // END VALIDASI FILE EXIST & MOVE FILE
 
         $object->save();
+
         $classModel::afterInsert($object, $input);
 
         return $object;

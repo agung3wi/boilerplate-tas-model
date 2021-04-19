@@ -24,6 +24,7 @@ class MasterMaterials extends Model
     const FIELD_SEARCHABLE = ["category_materials_id", "name", "uom"];
     const FIELD_SORTABLE = ["id", "category_materials_id", "name", "uom", "active", "created_by", "updated_by", "created_at", "updated_at"];
     const FIELD_UNIQUE = [["name"], ["uom"]];
+    const FIELD_UPLOAD = [];
     const FIELD_TYPE = [
         "id" => "bigint",
         "category_materials_id" => "character varying",

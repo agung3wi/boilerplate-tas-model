@@ -24,6 +24,7 @@ class CutOffPeriod extends Model
     const FIELD_SEARCHABLE = [];
     const FIELD_SORTABLE = ["id", "year", "months_id", "start_date", "end_date", "created_by", "updated_by", "created_at", "updated_at"];
     const FIELD_UNIQUE = [["year", "months_id"]];
+    const FIELD_UPLOAD = [];
     const FIELD_TYPE = [
         "id" => "bigint",
         "year" => "integer",

@@ -9,6 +9,7 @@ class {{ $studly_caps }} extends Model
 {
     protected $table = '{{ $table_name }}';
     const TABLE = "{{ $table_name }}";
+    const FILEROOT = "{{ $fileRoot }}";
     const IS_LIST = {{ $list? "true" : "false" }};
     const IS_ADD = {{ $add? "true" : "false" }};
     const IS_EDIT = {{ $edit? "true" : "false" }};
@@ -23,6 +24,7 @@ class {{ $studly_caps }} extends Model
     const FIELD_SEARCHABLE = {!! arrayToString($fieldSearchable) !!};
     const FIELD_SORTABLE = {!! arrayToString($fieldSortable) !!};
     const FIELD_UNIQUE = {!! arrayToString($fieldUnique) !!};
+    const FIELD_UPLOAD = {!! arrayToString($fieldUpload) !!};
     const FIELD_TYPE = [
 @foreach($fieldType as $key => $type)
         "{{ $key }}" => "{{ $type }}",

@@ -24,6 +24,7 @@ class ProblemClassification extends Model
     const FIELD_SEARCHABLE = ["problem_identification", "description", "disposition_id"];
     const FIELD_SORTABLE = ["id", "problem_catogorys_id", "problem_identification", "description", "disposition_id", "active", "created_by", "updated_by", "created_at", "updated_at"];
     const FIELD_UNIQUE = [["problem_catogorys_id", "problem_identification"]];
+    const FIELD_UPLOAD = [];
     const FIELD_TYPE = [
         "id" => "bigint",
         "problem_catogorys_id" => "bigint",
