@@ -125,7 +125,7 @@ class GenerateModel extends Command
                         AND cols.table_name   = '$tableNameOriginal'
                 ) SELECT A.column_name, A.data_type, A.character_maximum_length, 
                 B.primary_table AS ref_table, B.pk_column AS ref_column, C.column_comment, 
-                A.is_nullable
+                A.is_nullable, A.column_default
                 FROM information_schema.columns A 
                 LEFT JOIN summary_fk B ON B.foreign_table = A.table_name AND 
                     B.fk_column = A.column_name 
@@ -159,7 +159,7 @@ class GenerateModel extends Command
                 ";
             } elseif (env("DB_CONNECTION") == "mysql") {
                 $sql = "SELECT A.column_name, A.data_type, A.character_maximum_length, B.ref_table, B.ref_column, A.column_comment,
-                A.is_nullable
+                A.is_nullable, A.column_default
                 FROM information_schema.columns A
             LEFT JOIN (
                 SELECT table_name,column_name, REFERENCED_TABLE_NAME AS ref_table, REFERENCED_COLUMN_NAME AS ref_column
@@ -191,7 +191,7 @@ class GenerateModel extends Command
             $fieldValidation = [];
             $fieldRelation = [];
             $parentChild = [];
-
+            $fieldDefaultValue = [];
             foreach ($uniques as $unique) {
                 array_push($fieldUnique, explode(",", $unique->column_list));
             }
@@ -224,6 +224,9 @@ class GenerateModel extends Command
 
                 array_push($fieldFilterable, $field->column_name);
                 $fieldType[$field->column_name] = $field->data_type;
+                
+                if($field->column_name !== 'id') $fieldDefaultValue[$field->column_name] = $field->column_default;
+
 
                 if ($field->column_name !== 'id') {
                     $fieldValidation[$field->column_name] = ($field->is_nullable == "YES") ? "nullable" : "required";
@@ -281,6 +284,7 @@ class GenerateModel extends Command
                 'parentChild' => $parentChild,
                 'fieldValidation' => $fieldValidation,
                 'fieldRelation' => $fieldRelation,
+                'fieldDefaultValue' => $fieldDefaultValue,
                 'table_name' => $tableNameOriginal,
                 'studly_caps' => Str::ucfirst(Str::camel($tableName)),
                 'customContent' => $customContent
@@ -333,6 +337,7 @@ class GenerateModel extends Command
                     'parentChild' => $classModel::PARENT_CHILD,
                     'fieldValidation' => $fieldValidation,
                     'fieldRelation' => $fieldRelation,
+                    'fieldDefaultValue' => $fieldDefaultValue,
                     'table_name' => $tableNameOriginal,
                     'studly_caps' => Str::ucfirst(Str::camel($tableName)),
                     'customContent' => $customContent

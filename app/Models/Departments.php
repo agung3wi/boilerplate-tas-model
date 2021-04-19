@@ -33,6 +33,15 @@ class Departments extends Model
         "created_at" => "timestamp with time zone",
         "updated_at" => "timestamp with time zone",
     ];
+
+    const FIELD_DEFAULT_VALUE = [
+        "name" => "",
+        "active" => "1",
+        "created_by" => "",
+        "updated_by" => "",
+        "created_at" => "",
+        "updated_at" => "",
+    ];
     const FIELD_RELATION = [
     ];
     const FIELD_VALIDATION = [

@@ -19,6 +19,6 @@ return [
     '405' => 'Method Not Allowed',
     '419' => 'Page Expired',
     '500' => 'Internal Server Error',
-    'alreadyExist' => 'Data :field sudah ada'
-
+    'alreadyExist' => 'Data :field sudah ada',
+    'forbiddenDelete' => 'Data Tidak Boleh Dihapus'
 ];

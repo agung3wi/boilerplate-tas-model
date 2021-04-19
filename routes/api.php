@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CrudController;
+use App\Http\Controllers\UploadController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -28,6 +29,8 @@ Route::group([
     Route::put('/{model}/remove', [CrudController::class, 'remove']);
     Route::put('/{model}/restore', [CrudController::class, 'restore']);
     Route::get('/{model}/{id}/show', [CrudController::class, 'show']);
+
+    Route::post('upload', [UploadController::class, 'upload'])->name("upload")->middleware('auth.rest');
 });
 
 

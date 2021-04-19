@@ -37,6 +37,19 @@ class ProductionPlans extends Model
         "created_at" => "timestamp with time zone",
         "updated_at" => "timestamp with time zone",
     ];
+
+    const FIELD_DEFAULT_VALUE = [
+        "plants_id" => "",
+        "year" => "",
+        "months_id" => "",
+        "consumers_id" => "",
+        "materials_id" => "",
+        "volume" => "",
+        "created_by" => "",
+        "updated_by" => "",
+        "created_at" => "",
+        "updated_at" => "",
+    ];
     const FIELD_RELATION = [
     ];
     const FIELD_VALIDATION = [

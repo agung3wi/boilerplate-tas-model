@@ -28,6 +28,12 @@ class {{ $studly_caps }} extends Model
         "{{ $key }}" => "{{ $type }}",
 @endforeach
     ];
+
+    const FIELD_DEFAULT_VALUE = [
+@foreach($fieldDefaultValue as $key => $value)
+        "{{ $key }}" => "{{ $value }}",
+@endforeach
+    ];
     const FIELD_RELATION = [
 @foreach($fieldRelation as $key => $relation)
         "{{ $key }}" => [

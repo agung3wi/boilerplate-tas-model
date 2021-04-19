@@ -4,6 +4,7 @@ namespace App\Services\Crud;
 
 use App\CoreService\CoreException;
 use App\CoreService\CoreService;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -43,7 +44,12 @@ class Delete extends CoreService
         }
 
         $object = $classModel::find($input["id"]);
-        $object->delete();
+        try {
+            $object->delete();
+        } catch(QueryException $ex) {
+            throw new CoreException(__("message.forbiddenDelete"));
+        }
+
 
         return [
             "message" => __("message.successfullyDelete")

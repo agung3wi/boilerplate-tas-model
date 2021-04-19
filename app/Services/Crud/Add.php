@@ -67,8 +67,12 @@ class Add extends CoreService
             if ($item == "updated_by") {
                 $input[$item] = Auth::id();
             }
-            $object->{$item} = $input[$item];
+            $object->{$item} = $input[$item] ?? $classModel::FIELD_DEFAULT_VALUE[$item];
         }
+
+        //MOVE FILE
+
+        //
 
         $object->save();
         $classModel::afterInsert($object, $input);

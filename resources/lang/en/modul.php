@@ -2,6 +2,7 @@
 
 return [
     "plants" => "Plants",
+    "departments" => "Departments",
     "projects" => "Projects",
     "master_materials" => "Master Materials",
     "category_materials" => "Category Materials",
@@ -9,7 +10,6 @@ return [
     "months" => "Months",
     "vendors" => "Vendors",
     "production_plans" => "Production Plans",
-    "departments" => "Departments",
     "problem_categorys" => "Problem Categorys",
     "problem_classification" => "Problem Classification",
 ];
