@@ -35,7 +35,6 @@ class Months extends Model
     const FIELD_RELATION = [
     ];
     const FIELD_VALIDATION = [
-        "id" => "required|integer",
         "name" => "required|string|max:255",
         "created_by" => "nullable|integer",
         "updated_by" => "nullable|integer",

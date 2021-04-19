@@ -18,6 +18,7 @@ return [
     '404' => 'Not Found',
     '405' => 'Method Not Allowed',
     '419' => 'Page Expired',
-    '500' => 'Internal Server Error'
+    '500' => 'Internal Server Error',
+    'alreadyExist' => 'Data :field sudah ada'
 
 ];

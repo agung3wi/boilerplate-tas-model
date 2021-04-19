@@ -43,7 +43,6 @@ class Plants extends Model
     const FIELD_RELATION = [
     ];
     const FIELD_VALIDATION = [
-        "id" => "required|integer",
         "plant_sso_id" => "required|string|max:255",
         "name" => "required|string|max:255",
         "telepon" => "nullable|string|max:30",

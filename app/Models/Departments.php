@@ -15,7 +15,6 @@ class Departments extends Model
     const IS_EDIT = true;
     const IS_DELETE = true;
     const IS_VIEW = true;
-    const FIELDS = [];
     const FIELD_LIST = ["id", "name", "active", "created_by", "updated_by", "created_at", "updated_at"];
     const FIELD_ADD = ["name", "active", "created_by", "updated_by"];
     const FIELD_EDIT = ["name", "active", "updated_by"];
@@ -37,7 +36,6 @@ class Departments extends Model
     const FIELD_RELATION = [
     ];
     const FIELD_VALIDATION = [
-        "id" => "required|integer",
         "name" => "required|string|max:255",
         "active" => "nullable|integer",
         "created_by" => "nullable|integer",

@@ -42,13 +42,13 @@ class GenerateModel extends Command
     {
         $this->info("Generating Model");
         $tableArgument = $this->argument('table');
-        if(env("DB_CONNECTION") == "pgsql") {
+        if (env("DB_CONNECTION") == "pgsql") {
             $tables = DB::select("
             SELECT table_name FROM information_schema.tables 
             WHERE table_catalog = '" .  env("DB_DATABASE")  . "' AND table_schema='public'
             AND table_name NOT IN ('users', 'roles', 'tasks', 'role_task', 'jobs',
                 'migrations', 'password_resets', 'failed_jobs')");
-        } else if(env("DB_CONNECTION") == "mysql") {
+        } else if (env("DB_CONNECTION") == "mysql") {
             $tables = DB::select("
             SELECT table_name FROM information_schema.tables 
             WHERE table_schema = '" .  env("DB_DATABASE")  . "' AND table_name NOT IN ('users', 'roles', 'tasks', 'role_task', 'jobs',
@@ -62,7 +62,7 @@ class GenerateModel extends Command
         $modulLeanguageEN = [];
         $modulLeanguage = [];
         foreach ($tables as $table) {
-            if(!is_null($tableArgument) && $table->table_name != $tableArgument) continue;
+            if (!is_null($tableArgument) && $table->table_name != $tableArgument) continue;
             $tableNameOriginal = $table->table_name;
             $tableName = $table->table_name;
             foreach ($prefix as $pre) {
@@ -71,17 +71,17 @@ class GenerateModel extends Command
                 }
             }
             $modulLeanguage = ucwords(str_replace("_", " ", $tableName));
-            $modulLeanguageID[$tableName] = 
-                __("modul.".$tableName, [], "id") == "modul.".$tableName ? 
-                $modulLeanguage : __("modul.".$tableName, [], "id");
+            $modulLeanguageID[$tableName] =
+                __("modul." . $tableName, [], "id") == "modul." . $tableName ?
+                $modulLeanguage : __("modul." . $tableName, [], "id");
 
-            $modulLeanguageEN[$tableName] = 
-                __("modul.".$tableName, [], "en") == "modul.".$tableName ? 
-                $modulLeanguage : __("modul.".$tableName, [], "en");
+            $modulLeanguageEN[$tableName] =
+                __("modul." . $tableName, [], "en") == "modul." . $tableName ?
+                $modulLeanguage : __("modul." . $tableName, [], "en");
 
             $modelName = Str::ucfirst(Str::camel($tableName));
             $fileName = base_path("app/Models/" . $modelName . ".php");
-            if(env("DB_CONNECTION") == "pgsql") {
+            if (env("DB_CONNECTION") == "pgsql") {
                 $sql = "
                 WITH summary_fk AS (
                     select kcu.table_name as foreign_table,
@@ -102,7 +102,7 @@ class GenerateModel extends Command
                         and rco.unique_constraint_name = rel_kcu.constraint_name
                         and kcu.ordinal_position = rel_kcu.ordinal_position
                 join pg_constraint pgc ON pgc.conname = kcu.constraint_name
-                where tco.constraint_type = 'FOREIGN KEY' AND kcu.constraint_catalog='".env("DB_DATABASE")."'
+                where tco.constraint_type = 'FOREIGN KEY' AND kcu.constraint_catalog='" . env("DB_DATABASE") . "'
                     AND kcu.table_name = '$tableNameOriginal'
                 order by kcu.table_schema,
                         kcu.table_name,
@@ -131,7 +131,7 @@ class GenerateModel extends Command
                     B.fk_column = A.column_name 
                 LEFT JOIN summary_comment C ON C.table_name = A.table_name AND C.column_name = A.column_name 
                 WHERE A.table_catalog = '" . env("DB_DATABASE") . "' AND A.table_name = '$tableNameOriginal'";
-                
+
                 $sqlIndex = "select
                     i.relname as index_name,
                     string_agg(a.attname, ',') as column_list
@@ -150,14 +150,13 @@ class GenerateModel extends Command
                     and ix.indisprimary = false
                     and t.relkind = 'r'
                     and n.nspname = 'public'
-                    and t.relname = '".$tableNameOriginal."'
+                    and t.relname = '" . $tableNameOriginal . "'
                 group by 
                     i.relname, t.relname
                 order by
                     t.relname,
                     i.relname
                 ";
-
             } elseif (env("DB_CONNECTION") == "mysql") {
                 $sql = "SELECT A.column_name, A.data_type, A.character_maximum_length, B.ref_table, B.ref_column, A.column_comment,
                 A.is_nullable
@@ -165,20 +164,19 @@ class GenerateModel extends Command
             LEFT JOIN (
                 SELECT table_name,column_name, REFERENCED_TABLE_NAME AS ref_table, REFERENCED_COLUMN_NAME AS ref_column
                   FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
-                  WHERE table_schema='". env("DB_DATABASE") ."' AND table_name = '$tableNameOriginal' AND REFERENCED_TABLE_NAME IS NOT NULL
+                  WHERE table_schema='" . env("DB_DATABASE") . "' AND table_name = '$tableNameOriginal' AND REFERENCED_TABLE_NAME IS NOT NULL
             ) B ON B.table_name = A.table_name AND B.column_name = A.column_name
-            WHERE A.table_name = '$tableNameOriginal' AND A.table_schema = '". env("DB_DATABASE") ."'";
+            WHERE A.table_name = '$tableNameOriginal' AND A.table_schema = '" . env("DB_DATABASE") . "'";
 
                 $sqlIndex = "select index_name,
                     group_concat(column_name order by seq_in_index) as column_list
                 from information_schema.statistics
-                    where index_schema = '". env("DB_DATABASE") ."' AND non_unique = 0 AND index_name <> 'PRIMARY' AND table_name = '$tableNameOriginal'
+                    where index_schema = '" . env("DB_DATABASE") . "' AND non_unique = 0 AND index_name <> 'PRIMARY' AND table_name = '$tableNameOriginal'
                 group by index_name";
-                
             }
 
             $fields = DB::select($sql);
-            $uniques = DB::select($sqlIndex); 
+            $uniques = DB::select($sqlIndex);
             $fillableBackList = ["id", "created_at", "updated_at"];
             $fieldList = [];
             $fieldAdd = [];
@@ -197,61 +195,64 @@ class GenerateModel extends Command
             foreach ($uniques as $unique) {
                 array_push($fieldUnique, explode(",", $unique->column_list));
             }
-            
-            foreach ($fields as $field) {    
 
-                $fieldLeanguageID[$field->column_name] = 
-                    __("field.".$field->column_name, [], "id") == "field.".$field->column_name ? 
-                    ucwords(str_replace("_", " ", $field->column_name)) : __("field.".$field->column_name, [], "id");
+            foreach ($fields as $field) {
 
-                $fieldLeanguageEN[$field->column_name] = 
-                    __("field.".$field->column_name, [], "en") == "field.".$field->column_name ? 
-                    ucwords(str_replace("_", " ", $field->column_name)) : __("field.".$field->column_name, [], "en");
+                $fieldLeanguageID[$field->column_name] =
+                    __("field." . $field->column_name, [], "id") == "field." . $field->column_name ?
+                    ucwords(str_replace("_", " ", $field->column_name)) : __("field." . $field->column_name, [], "id");
+
+                $fieldLeanguageEN[$field->column_name] =
+                    __("field." . $field->column_name, [], "en") == "field." . $field->column_name ?
+                    ucwords(str_replace("_", " ", $field->column_name)) : __("field." . $field->column_name, [], "en");
 
                 array_push($fieldList, $field->column_name);
-                if(!in_array($field->column_name, $fillableBackList))
+                if (!in_array($field->column_name, $fillableBackList))
                     array_push($fieldAdd, $field->column_name);
 
-                if(!in_array($field->column_name, $fillableBackList) && $field->column_name != "created_by")
+                if (!in_array($field->column_name, $fillableBackList) && $field->column_name != "created_by")
                     array_push($fieldEdit, $field->column_name);
 
                 array_push($fieldView, $field->column_name);
                 array_push($fieldSortable, $field->column_name);
 
-                if($field->data_type == "character varying" || $field->data_type == "text")
+                if ($field->data_type == "character varying" || $field->data_type == "text")
                     array_push($fieldSearchable, $field->column_name);
 
-                if($field->data_type == "bigint" && !in_array($field->column_name, $fillableBackList))
+                if ($field->data_type == "bigint" && !in_array($field->column_name, $fillableBackList))
                     array_push($fieldFilterable, $field->column_name);
 
                 array_push($fieldFilterable, $field->column_name);
                 $fieldType[$field->column_name] = $field->data_type;
-                $fieldValidation[$field->column_name] = ($field->is_nullable == "YES") ? "nullable" : "required";
 
-                if($field->data_type == "bigint" || $field->data_type == "integer")
-                $fieldValidation[$field->column_name] .= "|integer";
+                if ($field->column_name !== 'id') {
+                    $fieldValidation[$field->column_name] = ($field->is_nullable == "YES") ? "nullable" : "required";
 
-                if($field->data_type == "timestamp with time zone" || $field->data_type == "timestamp")
-                $fieldValidation[$field->column_name] .= "|date";
+                    if ($field->data_type == "bigint" || $field->data_type == "integer")
+                        $fieldValidation[$field->column_name] .= "|integer";
 
-                if($field->data_type == "character varying" || $field->data_type == "text")
-                $fieldValidation[$field->column_name] .= "|string";
+                    if ($field->data_type == "timestamp with time zone" || $field->data_type == "timestamp")
+                        $fieldValidation[$field->column_name] .= "|date";
 
-                if($field->character_maximum_length != null )
-                $fieldValidation[$field->column_name] .= "|max:".$field->character_maximum_length;
+                    if ($field->data_type == "character varying" || $field->data_type == "text")
+                        $fieldValidation[$field->column_name] .= "|string";
 
-                if($field->ref_table != null) {
+                    if ($field->character_maximum_length != null)
+                        $fieldValidation[$field->column_name] .= "|max:" . $field->character_maximum_length;
+                }
+
+                if ($field->ref_table != null) {
                     $fieldRelation[$field->column_name] =  [
                         "linkTable" => $field->ref_table,
                         "linkField" => $field->ref_column,
                         "selectValue" => "*"
                     ];
 
-                    if($field->column_name == "created_by") {
+                    if ($field->column_name == "created_by") {
                         $fieldRelation[$field->column_name]["selectValue"] = "username AS created_username";
                     }
 
-                    if($field->column_name == "updated_by") {
+                    if ($field->column_name == "updated_by") {
                         $fieldRelation[$field->column_name]["selectValue"] = "username AS updated_username";
                     }
                 }
@@ -260,7 +261,7 @@ class GenerateModel extends Command
             $beforeUpdate = "\n        return \$input;\n    ";
             $afterInsert = "\n    ";
             $afterUpdate = "\n    ";
-            $customContent = "\n    ".view("generate.custom");
+            $customContent = "\n    " . view("generate.custom");
             $params = [
                 'list' => true,
                 'add' => true,
@@ -286,7 +287,7 @@ class GenerateModel extends Command
             ];
 
             if (!is_file($fileName)) {
-   
+
                 $fileContent = view('generate.model', $params);
                 file_put_contents($fileName, "<?php \n\n" . $fileContent);
 
@@ -295,7 +296,7 @@ class GenerateModel extends Command
                 $contents = file_get_contents($fileName);
                 // echo $contents;
                 $classModel = "\\App\\Models\\" . $modelName;
-                $customContent = get_string_between($contents, "// start custom","// end custom");
+                $customContent = get_string_between($contents, "// start custom", "// end custom");
 
                 preg_match_all("/public static function beforeInsert\([\$]input\)\n    {([^}]*)}/", $contents, $matches);
                 // $beforeInsert = $matches[1][0];
@@ -308,7 +309,7 @@ class GenerateModel extends Command
 
                 // Berubah Select Value Field Relation by coding
                 foreach ($fieldRelation as $key => $relation) {
-                    if(isset($classModel::FIELD_RELATION[$key]["selectValue"])) {
+                    if (isset($classModel::FIELD_RELATION[$key]["selectValue"])) {
                         $fieldRelation[$key]["selectValue"] = $classModel::FIELD_RELATION[$key]["selectValue"];
                     }
                 }

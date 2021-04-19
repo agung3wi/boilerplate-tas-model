@@ -41,7 +41,6 @@ class Projects extends Model
     const FIELD_RELATION = [
     ];
     const FIELD_VALIDATION = [
-        "id" => "required|integer",
         "plants_id" => "nullable|integer",
         "name" => "required|string|max:255",
         "address" => "nullable|string",

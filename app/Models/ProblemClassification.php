@@ -39,7 +39,6 @@ class ProblemClassification extends Model
     const FIELD_RELATION = [
     ];
     const FIELD_VALIDATION = [
-        "id" => "required|integer",
         "problem_catogorys_id" => "nullable|integer",
         "problem_identification" => "required|string|max:255",
         "description" => "nullable|string",

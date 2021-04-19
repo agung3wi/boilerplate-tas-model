@@ -40,7 +40,6 @@ class ProductionPlans extends Model
     const FIELD_RELATION = [
     ];
     const FIELD_VALIDATION = [
-        "id" => "required|integer",
         "plants_id" => "nullable|integer",
         "year" => "nullable|integer",
         "months_id" => "nullable|integer",

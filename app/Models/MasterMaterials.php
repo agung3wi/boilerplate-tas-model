@@ -38,7 +38,6 @@ class MasterMaterials extends Model
     const FIELD_RELATION = [
     ];
     const FIELD_VALIDATION = [
-        "id" => "required|integer",
         "category_materials_id" => "required|string|max:255",
         "name" => "required|string|max:255",
         "uom" => "required|string|max:255",

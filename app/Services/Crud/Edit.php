@@ -43,10 +43,41 @@ class Edit extends CoreService
             throw new CoreException($validator->errors()->first());
         }
 
-        $input = $classModel::beforeUpdate($input);
+        ///
+        $validator = Validator::make($input, $classModel::FIELD_VALIDATION);
+
+        if ($validator->fails()) {
+            throw new CoreException($validator->errors()->first());
+        }
 
         $object = $classModel::find($input["id"]);
 
+        if ($classModel::FIELD_UNIQUE) {
+            foreach ($classModel::FIELD_UNIQUE as $search) {
+                $query = $classModel::whereRaw("true");
+                $fieldTrans = [];
+                $uniqueChange = false;
+                foreach ($search as $key) {
+                    if($input[$key] != $object->{$key}) {
+                        $uniqueChange = true;
+                    }
+                    $fieldTrans[] = __("field.$key");
+                    $query->where($key, $input[$key]);
+                };
+
+                if($uniqueChange) {
+                    $isi = $query->first();
+                    if (!is_null($isi)) {
+                        throw new CoreException(__("message.alreadyExist", [ 'field' => implode(",",$fieldTrans)]));
+                    }
+                }
+            }
+        }
+        //
+
+        $input = $classModel::beforeUpdate($input);
+
+        
         foreach ($classModel::FIELD_EDIT as $item) {
             if($item == "updated_by") {
                 $input[$item] = Auth::id();

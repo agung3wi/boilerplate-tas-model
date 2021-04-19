@@ -38,7 +38,6 @@ class CutOffPeriod extends Model
     const FIELD_RELATION = [
     ];
     const FIELD_VALIDATION = [
-        "id" => "required|integer",
         "year" => "required|integer",
         "months_id" => "required|integer",
         "start_date" => "required",

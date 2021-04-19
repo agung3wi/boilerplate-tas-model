@@ -20,36 +20,51 @@ class Add extends CoreService
         $model = $input["model"];
         $classModel = "\\App\\Models\\" . Str::upper(Str::camel($model));
         if (!class_exists($classModel))
-            throw New CoreException("Not found", 404);
+            throw new CoreException("Not found", 404);
 
         if (!$classModel::IS_ADD)
-            throw New CoreException("Not found", 404);
+            throw new CoreException("Not found", 404);
 
         if (!hasPermission("add-" . $model))
-            throw New CoreException("Forbidden", 403);
+            throw new CoreException("Forbidden", 403);
         $input["class_model"] = $classModel;
+
         $validator = Validator::make($input, $classModel::FIELD_VALIDATION);
 
         if ($validator->fails()) {
             throw new CoreException($validator->errors()->first());
         }
-        
+
+        if ($classModel::FIELD_UNIQUE) {
+            foreach ($classModel::FIELD_UNIQUE as $search) {
+                $query = $classModel::whereRaw("true");
+                $fieldTrans = [];
+                foreach ($search as $key) {
+                    $fieldTrans[] = __("field.$key");
+                    $query->where($key, $input[$key]);
+                };
+                $isi = $query->first();
+                if (!is_null($isi)) {
+                    throw new CoreException(__("message.alreadyExist", [ 'field' => implode(",",$fieldTrans)]));
+                }
+            }
+        }
         return $input;
     }
 
     public function process($input, $originalInput)
     {
-        $classModel = $input["class_model"];        
+        $classModel = $input["class_model"];
 
 
         $input = $classModel::beforeInsert($input);
 
         $object = new $classModel;
         foreach ($classModel::FIELD_ADD as $item) {
-            if($item == "created_by") {
+            if ($item == "created_by") {
                 $input[$item] = Auth::id();
             }
-            if($item == "updated_by") {
+            if ($item == "updated_by") {
                 $input[$item] = Auth::id();
             }
             $object->{$item} = $input[$item];

@@ -147,6 +147,6 @@ return [
     |
     */
 
-    'attributes' => [],
+    'attributes' => __("field"),
 
 ];
