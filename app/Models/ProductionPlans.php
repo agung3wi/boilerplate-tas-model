@@ -31,11 +31,11 @@ class ProductionPlans extends Model
         "months_id" => "bigint",
         "consumers_id" => "bigint",
         "materials_id" => "bigint",
-        "volume" => "double",
+        "volume" => "double precision",
         "created_by" => "bigint",
         "updated_by" => "bigint",
-        "created_at" => "timestamp",
-        "updated_at" => "timestamp",
+        "created_at" => "timestamp with time zone",
+        "updated_at" => "timestamp with time zone",
     ];
     const FIELD_RELATION = [
     ];
@@ -54,6 +54,7 @@ class ProductionPlans extends Model
     ];
     const PARENT_CHILD = [];
 
+    // start custom
     public static function beforeInsert($input)
     {
         return $input;
@@ -61,7 +62,7 @@ class ProductionPlans extends Model
 
     public static function afterInsert($object, $input)
     {
-        }
+    }
     
     public static function beforeUpdate($input)
     {
@@ -70,5 +71,6 @@ class ProductionPlans extends Model
     
     public static function afterUpdate($object, $input)
     {
-        }
+    }
+    // end custom
 }

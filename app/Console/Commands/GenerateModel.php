@@ -260,6 +260,7 @@ class GenerateModel extends Command
             $beforeUpdate = "\n        return \$input;\n    ";
             $afterInsert = "\n    ";
             $afterUpdate = "\n    ";
+            $customContent = "\n    ".view("generate.custom");
             $params = [
                 'list' => true,
                 'add' => true,
@@ -281,10 +282,7 @@ class GenerateModel extends Command
                 'fieldRelation' => $fieldRelation,
                 'table_name' => $tableNameOriginal,
                 'studly_caps' => Str::ucfirst(Str::camel($tableName)),
-                'before_insert' => "{" . $beforeInsert . "}",
-                'after_insert' => "{" . $afterInsert . "}",
-                'before_update' => "{" . $beforeUpdate . "}",
-                'after_update' => "{" . $afterUpdate . "}"
+                'customContent' => $customContent
             ];
 
             if (!is_file($fileName)) {
@@ -297,15 +295,16 @@ class GenerateModel extends Command
                 $contents = file_get_contents($fileName);
                 // echo $contents;
                 $classModel = "\\App\\Models\\" . $modelName;
+                $customContent = get_string_between($contents, "// start custom","// end custom");
 
                 preg_match_all("/public static function beforeInsert\([\$]input\)\n    {([^}]*)}/", $contents, $matches);
-                $beforeInsert = $matches[1][0];
+                // $beforeInsert = $matches[1][0];
                 preg_match_all("/public static function afterInsert\([\$]object, [\$]input\)\n    {([^}]*)}/", $contents, $matches);
-                $afterInsert = $matches[1][0];
+                // $afterInsert = $matches[1][0];
                 preg_match_all("/public static function beforeUpdate\([\$]input\)\n    {([^}]*)}/", $contents, $matches);
-                $beforeUpdate = $matches[1][0];
+                // $beforeUpdate = $matches[1][0];
                 preg_match_all("/public static function afterUpdate\([\$]object, [\$]input\)\n    {([^}]*)}/", $contents, $matches);
-                $afterUpdate = $matches[1][0];
+                // $afterUpdate = $matches[1][0];
 
                 // Berubah Select Value Field Relation by coding
                 foreach ($fieldRelation as $key => $relation) {
@@ -335,10 +334,7 @@ class GenerateModel extends Command
                     'fieldRelation' => $fieldRelation,
                     'table_name' => $tableNameOriginal,
                     'studly_caps' => Str::ucfirst(Str::camel($tableName)),
-                    'before_insert' => "{" . $beforeInsert . "}",
-                    'after_insert' => "{" . $afterInsert . "}",
-                    'before_update' => "{" . $beforeUpdate . "}",
-                    'after_update' => "{" . $afterUpdate . "}"
+                    'customContent' => $customContent
                 ];
 
                 $fileContent = view('generate.model', $params);

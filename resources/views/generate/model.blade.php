@@ -44,15 +44,5 @@ class {{ $studly_caps }} extends Model
     ];
     const PARENT_CHILD = {!! arrayToString($parentChild) !!};
 
-    public static function beforeInsert($input)
-    {!! $before_insert !!}
-
-    public static function afterInsert($object, $input)
-    {!! $after_insert !!}
-    
-    public static function beforeUpdate($input)
-    {!! $before_update !!}
-    
-    public static function afterUpdate($object, $input)
-    {!! $after_update !!}
+    // start custom{!! $customContent !!}// end custom
 }

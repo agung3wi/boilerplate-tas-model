@@ -28,6 +28,12 @@ class Add extends CoreService
         if (!hasPermission("add-" . $model))
             throw New CoreException("Forbidden", 403);
         $input["class_model"] = $classModel;
+        $validator = Validator::make($input, $classModel::FIELD_VALIDATION);
+
+        if ($validator->fails()) {
+            throw new CoreException($validator->errors()->first());
+        }
+        
         return $input;
     }
 
@@ -35,11 +41,6 @@ class Add extends CoreService
     {
         $classModel = $input["class_model"];        
 
-        $validator = Validator::make($input, $classModel::FIELD_VALIDATION);
-
-        if ($validator->fails()) {
-            throw new CoreException($validator->errors()->first());
-        }
 
         $input = $classModel::beforeInsert($input);
 

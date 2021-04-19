@@ -26,21 +26,21 @@ class CutOffPeriod extends Model
     const FIELD_UNIQUE = [["year", "months_id"]];
     const FIELD_TYPE = [
         "id" => "bigint",
-        "year" => "int",
-        "months_id" => "int",
+        "year" => "integer",
+        "months_id" => "integer",
         "start_date" => "date",
         "end_date" => "date",
         "created_by" => "bigint",
         "updated_by" => "bigint",
-        "created_at" => "timestamp",
-        "updated_at" => "timestamp",
+        "created_at" => "timestamp with time zone",
+        "updated_at" => "timestamp with time zone",
     ];
     const FIELD_RELATION = [
     ];
     const FIELD_VALIDATION = [
         "id" => "required|integer",
-        "year" => "required",
-        "months_id" => "required",
+        "year" => "required|integer",
+        "months_id" => "required|integer",
         "start_date" => "required",
         "end_date" => "required",
         "created_by" => "nullable|integer",
@@ -50,6 +50,7 @@ class CutOffPeriod extends Model
     ];
     const PARENT_CHILD = [];
 
+    // start custom
     public static function beforeInsert($input)
     {
         return $input;
@@ -57,7 +58,7 @@ class CutOffPeriod extends Model
 
     public static function afterInsert($object, $input)
     {
-        }
+    }
     
     public static function beforeUpdate($input)
     {
@@ -66,5 +67,6 @@ class CutOffPeriod extends Model
     
     public static function afterUpdate($object, $input)
     {
-        }
+    }
+    // end custom
 }

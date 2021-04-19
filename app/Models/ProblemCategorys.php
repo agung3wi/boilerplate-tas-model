@@ -6,10 +6,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 
-class Userlevels extends Model
+class ProblemCategorys extends Model
 {
-    protected $table = 'userlevels';
-    const TABLE = "userlevels";
+    protected $table = 'problem_categorys';
+    const TABLE = "problem_categorys";
     const IS_LIST = true;
     const IS_ADD = true;
     const IS_EDIT = true;
@@ -23,6 +23,7 @@ class Userlevels extends Model
     const FIELD_FILTERABLE = ["id", "name", "active", "created_by", "created_by", "updated_by", "updated_by", "created_at", "updated_at"];
     const FIELD_SEARCHABLE = ["name"];
     const FIELD_SORTABLE = ["id", "name", "active", "created_by", "updated_by", "created_at", "updated_at"];
+    const FIELD_UNIQUE = [["name"]];
     const FIELD_TYPE = [
         "id" => "bigint",
         "name" => "character varying",
@@ -35,16 +36,17 @@ class Userlevels extends Model
     const FIELD_RELATION = [
     ];
     const FIELD_VALIDATION = [
-        "id" => "",
-        "name" => "",
-        "active" => "",
-        "created_by" => "",
-        "updated_by" => "",
-        "created_at" => "",
-        "updated_at" => "",
+        "id" => "required|integer",
+        "name" => "required|string|max:255",
+        "active" => "nullable|integer",
+        "created_by" => "nullable|integer",
+        "updated_by" => "nullable|integer",
+        "created_at" => "nullable|date",
+        "updated_at" => "nullable|date",
     ];
     const PARENT_CHILD = [];
 
+    // start custom
     public static function beforeInsert($input)
     {
         return $input;
@@ -52,7 +54,7 @@ class Userlevels extends Model
 
     public static function afterInsert($object, $input)
     {
-        }
+    }
     
     public static function beforeUpdate($input)
     {
@@ -61,5 +63,6 @@ class Userlevels extends Model
     
     public static function afterUpdate($object, $input)
     {
-        }
+    }
+    // end custom
 }

@@ -21,34 +21,34 @@ class Projects extends Model
     const FIELD_VIEW = ["id", "plants_id", "name", "address", "singlef_photo", "latitude", "longitude", "active", "created_by", "updated_by", "created_at", "updated_at"];
     const FIELD_READONLY = [];
     const FIELD_FILTERABLE = ["id", "plants_id", "plants_id", "name", "address", "singlef_photo", "latitude", "longitude", "active", "created_by", "created_by", "updated_by", "updated_by", "created_at", "updated_at"];
-    const FIELD_SEARCHABLE = ["address", "singlef_photo", "latitude", "longitude"];
+    const FIELD_SEARCHABLE = ["name", "address", "singlef_photo", "latitude", "longitude"];
     const FIELD_SORTABLE = ["id", "plants_id", "name", "address", "singlef_photo", "latitude", "longitude", "active", "created_by", "updated_by", "created_at", "updated_at"];
     const FIELD_UNIQUE = [["name"]];
     const FIELD_TYPE = [
         "id" => "bigint",
         "plants_id" => "bigint",
-        "name" => "varchar",
+        "name" => "character varying",
         "address" => "text",
         "singlef_photo" => "text",
         "latitude" => "text",
         "longitude" => "text",
-        "active" => "int",
+        "active" => "integer",
         "created_by" => "bigint",
         "updated_by" => "bigint",
-        "created_at" => "timestamp",
-        "updated_at" => "timestamp",
+        "created_at" => "timestamp with time zone",
+        "updated_at" => "timestamp with time zone",
     ];
     const FIELD_RELATION = [
     ];
     const FIELD_VALIDATION = [
         "id" => "required|integer",
         "plants_id" => "nullable|integer",
-        "name" => "required|max:255",
-        "address" => "nullable|string|max:65535",
-        "singlef_photo" => "nullable|string|max:65535",
-        "latitude" => "nullable|string|max:65535",
-        "longitude" => "nullable|string|max:65535",
-        "active" => "nullable",
+        "name" => "required|string|max:255",
+        "address" => "nullable|string",
+        "singlef_photo" => "nullable|string",
+        "latitude" => "nullable|string",
+        "longitude" => "nullable|string",
+        "active" => "nullable|integer",
         "created_by" => "nullable|integer",
         "updated_by" => "nullable|integer",
         "created_at" => "nullable|date",
@@ -56,6 +56,7 @@ class Projects extends Model
     ];
     const PARENT_CHILD = [];
 
+    // start custom
     public static function beforeInsert($input)
     {
         return $input;
@@ -63,7 +64,7 @@ class Projects extends Model
 
     public static function afterInsert($object, $input)
     {
-        }
+    }
     
     public static function beforeUpdate($input)
     {
@@ -72,5 +73,6 @@ class Projects extends Model
     
     public static function afterUpdate($object, $input)
     {
-        }
+    }
+    // end custom
 }
