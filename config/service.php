@@ -51,11 +51,7 @@ return [
         "end_point" => "/login",
         "class" => "App\Services\Auth\DoLogin"
     ],
-    [
-        "type" => "GET",
-        "end_point" => "/role",
-        "class" => "App\Services\User\GetRole"
-    ],
+    
     [
         "type" => "GET",
         "end_point" => "/user/find",
@@ -102,12 +98,17 @@ return [
         "class" => "App\Services\User\SavePermission"
     ],
     [
+        "type" => "GET",
+        "end_point" => "/role",
+        "class" => "App\Services\User\GetRole"
+    ],
+    [
         "type" => "POST",
         "end_point" => "/role/add",
         "class" => "App\Services\User\AddRole"
     ],
     [
-        "type" => "POST",
+        "type" => "PUT",
         "end_point" => "/role/edit",
         "class" => "App\Services\User\EditRole"
     ],

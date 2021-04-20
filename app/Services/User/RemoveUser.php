@@ -28,7 +28,7 @@ class RemoveUser extends CoreService
     public function process($input, $originalInput)
     {
 
-        $input["user"]->active = "N";
+        $input["user"]->active = "0";
         $input["user"]->updated_at = $input["session"]["datetime"];
         $input["user"]->save();
 

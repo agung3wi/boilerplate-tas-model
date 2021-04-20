@@ -73,7 +73,7 @@ class Add extends CoreService
 
         //VALIDASI FILE EXIST & MOVE FILE
         foreach ($classModel::FIELD_UPLOAD as $item) {
-            $tmpPath = $input["temp_" . $item] ?? "";
+            $tmpPath = $input["path_" . $item] ?? "";
             $tmpName = $input[$item];
             $newPath = $classModel::FILEROOT . "/" . $input[$item];
             if (!is_null($tmpName) and Storage::exists($tmpPath)) {
