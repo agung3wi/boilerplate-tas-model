@@ -73,10 +73,11 @@ class Add extends CoreService
 
         // MOVE FILE
         foreach ($classModel::FIELD_UPLOAD as $item) {
-            $tmpPath = $input["path_" . $item] ?? null;
-            $tmpName = $input[$item];
-            $newPath = $classModel::FILEROOT . "/" . $input[$item];
-            if (!is_null($tmpName) and Storage::exists($tmpPath)) {
+            $tmpName = $input[$item] ?? null;
+
+            if (!is_null($tmpName)) {
+                $tmpPath = "tmp/".$tmpName;
+                $newPath = $classModel::FILEROOT . "/" . $input[$item];
                 //START MOVE FILE
                 if (Storage::exists($newPath)) {
                     $id = 1;

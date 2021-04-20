@@ -28,14 +28,14 @@ class CutOffPeriod extends Model
     const FIELD_UPLOAD = [];
     const FIELD_TYPE = [
         "id" => "bigint",
-        "year" => "int",
-        "months_id" => "int",
+        "year" => "integer",
+        "months_id" => "integer",
         "start_date" => "date",
         "end_date" => "date",
         "created_by" => "bigint",
         "updated_by" => "bigint",
-        "created_at" => "timestamp",
-        "updated_at" => "timestamp",
+        "created_at" => "timestamp with time zone",
+        "updated_at" => "timestamp with time zone",
     ];
 
     const FIELD_DEFAULT_VALUE = [
@@ -50,9 +50,10 @@ class CutOffPeriod extends Model
     ];
     const FIELD_RELATION = [
     ];
+    const CUSTOM_SELECT = "";
     const FIELD_VALIDATION = [
-        "year" => "required",
-        "months_id" => "required",
+        "year" => "required|integer",
+        "months_id" => "required|integer",
         "start_date" => "required",
         "end_date" => "required",
         "created_by" => "nullable|integer",

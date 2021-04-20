@@ -45,6 +45,7 @@ class {{ $studly_caps }} extends Model
         ],
 @endforeach
     ];
+    const CUSTOM_SELECT = "{!! $customSelect !!}";
     const FIELD_VALIDATION = [
 @foreach($fieldValidation as $key => $validation)
         "{{ $key }}" => "{{ $validation }}",

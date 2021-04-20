@@ -22,20 +22,20 @@ class MasterMaterials extends Model
     const FIELD_VIEW = ["id", "category_materials_id", "name", "uom", "active", "created_by", "updated_by", "created_at", "updated_at"];
     const FIELD_READONLY = [];
     const FIELD_FILTERABLE = ["id", "category_materials_id", "name", "uom", "active", "created_by", "created_by", "updated_by", "updated_by", "created_at", "updated_at"];
-    const FIELD_SEARCHABLE = [];
+    const FIELD_SEARCHABLE = ["category_materials_id", "name", "uom"];
     const FIELD_SORTABLE = ["id", "category_materials_id", "name", "uom", "active", "created_by", "updated_by", "created_at", "updated_at"];
     const FIELD_UNIQUE = [["name"], ["uom"]];
     const FIELD_UPLOAD = [];
     const FIELD_TYPE = [
         "id" => "bigint",
-        "category_materials_id" => "varchar",
-        "name" => "varchar",
-        "uom" => "varchar",
-        "active" => "int",
+        "category_materials_id" => "character varying",
+        "name" => "character varying",
+        "uom" => "character varying",
+        "active" => "integer",
         "created_by" => "bigint",
         "updated_by" => "bigint",
-        "created_at" => "timestamp",
-        "updated_at" => "timestamp",
+        "created_at" => "timestamp with time zone",
+        "updated_at" => "timestamp with time zone",
     ];
 
     const FIELD_DEFAULT_VALUE = [
@@ -50,11 +50,12 @@ class MasterMaterials extends Model
     ];
     const FIELD_RELATION = [
     ];
+    const CUSTOM_SELECT = "";
     const FIELD_VALIDATION = [
-        "category_materials_id" => "required|max:255",
-        "name" => "required|max:255",
-        "uom" => "required|max:255",
-        "active" => "nullable",
+        "category_materials_id" => "required|string|max:255",
+        "name" => "required|string|max:255",
+        "uom" => "required|string|max:255",
+        "active" => "nullable|integer",
         "created_by" => "nullable|integer",
         "updated_by" => "nullable|integer",
         "created_at" => "nullable|date",

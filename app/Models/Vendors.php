@@ -22,25 +22,25 @@ class Vendors extends Model
     const FIELD_VIEW = ["id", "vendor_sso_id", "name", "telepon", "address", "description", "singlef_photo", "latitude", "longitude", "active", "created_by", "updated_by", "created_at", "updated_at"];
     const FIELD_READONLY = [];
     const FIELD_FILTERABLE = ["id", "vendor_sso_id", "name", "telepon", "address", "description", "singlef_photo", "latitude", "longitude", "active", "created_by", "created_by", "updated_by", "updated_by", "created_at", "updated_at"];
-    const FIELD_SEARCHABLE = ["address", "description", "singlef_photo", "latitude", "longitude"];
+    const FIELD_SEARCHABLE = ["vendor_sso_id", "name", "telepon", "address", "description", "singlef_photo", "latitude", "longitude"];
     const FIELD_SORTABLE = ["id", "vendor_sso_id", "name", "telepon", "address", "description", "singlef_photo", "latitude", "longitude", "active", "created_by", "updated_by", "created_at", "updated_at"];
     const FIELD_UNIQUE = [["name"], ["vendor_sso_id"]];
     const FIELD_UPLOAD = ["singlef_photo"];
     const FIELD_TYPE = [
         "id" => "bigint",
-        "vendor_sso_id" => "varchar",
-        "name" => "varchar",
-        "telepon" => "varchar",
+        "vendor_sso_id" => "character varying",
+        "name" => "character varying",
+        "telepon" => "character varying",
         "address" => "text",
         "description" => "text",
         "singlef_photo" => "text",
         "latitude" => "text",
         "longitude" => "text",
-        "active" => "int",
+        "active" => "integer",
         "created_by" => "bigint",
         "updated_by" => "bigint",
-        "created_at" => "timestamp",
-        "updated_at" => "timestamp",
+        "created_at" => "timestamp with time zone",
+        "updated_at" => "timestamp with time zone",
     ];
 
     const FIELD_DEFAULT_VALUE = [
@@ -60,16 +60,17 @@ class Vendors extends Model
     ];
     const FIELD_RELATION = [
     ];
+    const CUSTOM_SELECT = "";
     const FIELD_VALIDATION = [
-        "vendor_sso_id" => "required|max:255",
-        "name" => "required|max:255",
-        "telepon" => "nullable|max:30",
-        "address" => "nullable|string|max:65535",
-        "description" => "nullable|string|max:65535",
-        "singlef_photo" => "nullable|string|max:65535|exists_file",
-        "latitude" => "nullable|string|max:65535",
-        "longitude" => "nullable|string|max:65535",
-        "active" => "nullable",
+        "vendor_sso_id" => "required|string|max:255",
+        "name" => "required|string|max:255",
+        "telepon" => "nullable|string|max:30",
+        "address" => "nullable|string",
+        "description" => "nullable|string",
+        "singlef_photo" => "nullable|string|exists_file",
+        "latitude" => "nullable|string",
+        "longitude" => "nullable|string",
+        "active" => "nullable|integer",
         "created_by" => "nullable|integer",
         "updated_by" => "nullable|integer",
         "created_at" => "nullable|date",

@@ -33,11 +33,11 @@ class ProductionPlans extends Model
         "months_id" => "bigint",
         "consumers_id" => "bigint",
         "materials_id" => "bigint",
-        "volume" => "double",
+        "volume" => "double precision",
         "created_by" => "bigint",
         "updated_by" => "bigint",
-        "created_at" => "timestamp",
-        "updated_at" => "timestamp",
+        "created_at" => "timestamp with time zone",
+        "updated_at" => "timestamp with time zone",
     ];
 
     const FIELD_DEFAULT_VALUE = [
@@ -54,6 +54,7 @@ class ProductionPlans extends Model
     ];
     const FIELD_RELATION = [
     ];
+    const CUSTOM_SELECT = "";
     const FIELD_VALIDATION = [
         "plants_id" => "nullable|integer",
         "year" => "nullable|integer",

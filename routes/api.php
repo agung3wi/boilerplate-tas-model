@@ -21,6 +21,10 @@ use Illuminate\Support\Facades\Route;
 Route::group([
     'middleware' => 'setguard:api'
 ], function () {
+    // START CUSTOM ROUTE
+
+    // END CUSTOM ROUTE
+
     Route::get('/{model}/list', [CrudController::class, 'index']);
     Route::get('/{model}/dataset', [CrudController::class, 'dataset']);
     Route::post('/{model}/create', [CrudController::class, 'create']);

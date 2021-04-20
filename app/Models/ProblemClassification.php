@@ -10,6 +10,7 @@ class ProblemClassification extends Model
 {
     protected $table = 'problem_classification';
     const TABLE = "problem_classification";
+    const FILEROOT = "/problem_classification";
     const IS_LIST = true;
     const IS_ADD = true;
     const IS_EDIT = true;
@@ -51,6 +52,7 @@ class ProblemClassification extends Model
     ];
     const FIELD_RELATION = [
     ];
+    const CUSTOM_SELECT = "";
     const FIELD_VALIDATION = [
         "problem_catogorys_id" => "nullable|integer",
         "problem_identification" => "required|string|max:255",

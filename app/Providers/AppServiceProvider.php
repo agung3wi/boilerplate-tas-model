@@ -28,7 +28,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         Validator::extend('exists_file', function ($attribute, $value, $parameters, $validator) {
-            return Storage::exists($value);
+            return Storage::exists("tmp/".$value);
         });
 
         Route::middleware(['web', 'setguard:web'])->group(function () {
@@ -46,6 +46,16 @@ class AppServiceProvider extends ServiceProvider
                     });
                 } else if ($route["type"] == "GET") {
                     Route::get($route["end_point"], function () use ($serviceName) {
+                        $input = request()->all();
+                        return CallService::execute($serviceName, $input);
+                    });
+                } else if ($route["type"] == "PUT") {
+                    Route::put($route["end_point"], function () use ($serviceName) {
+                        $input = request()->all();
+                        return CallService::execute($serviceName, $input);
+                    });
+                } else if ($route["type"] == "DELETE") {
+                    Route::delete($route["end_point"], function () use ($serviceName) {
                         $input = request()->all();
                         return CallService::execute($serviceName, $input);
                     });
@@ -68,6 +78,16 @@ class AppServiceProvider extends ServiceProvider
                     });
                 } else if ($route["type"] == "GET") {
                     Route::get($route["end_point"], function () use ($serviceName) {
+                        $input = request()->all();
+                        return CallService::execute($serviceName, $input);
+                    });
+                } else if ($route["type"] == "PUT") {
+                    Route::put($route["end_point"], function () use ($serviceName) {
+                        $input = request()->all();
+                        return CallService::execute($serviceName, $input);
+                    });
+                } else if ($route["type"] == "DELETE") {
+                    Route::delete($route["end_point"], function () use ($serviceName) {
                         $input = request()->all();
                         return CallService::execute($serviceName, $input);
                     });

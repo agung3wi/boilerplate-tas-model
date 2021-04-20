@@ -113,6 +113,11 @@ return [
         "class" => "App\Services\User\EditRole"
     ],
     [
+        "type" => "DELETE",
+        "end_point" => "/role/delete",
+        "class" => "App\Services\User\DeleteRole"
+    ],
+    [
         "type" => "GET",
         "end_point" => "/role/find",
         "class" => "App\Services\User\FindRoleById"

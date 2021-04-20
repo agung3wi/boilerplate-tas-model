@@ -19,13 +19,13 @@ class Get extends CoreService
         $model = $input["model"];
         $classModel = "\\App\\Models\\" . Str::upper(Str::camel($model));
         if (!class_exists($classModel))
-            throw New CoreException("Not found", 404);
+            throw New CoreException(__("message.404"), 404);
 
         if (!$classModel::IS_LIST)
-            throw New CoreException("Not found", 404);
+            throw New CoreException(__("message.404"), 404);
 
         if (!hasPermission("view-" . $model))
-            throw New CoreException(Auth(), 403);
+            throw New CoreException(__("message.403"), 403);
 
         $input["class_model"] = $classModel;
         return $input;
@@ -36,7 +36,7 @@ class Get extends CoreService
         $classModel = $input["class_model"];        
 
         $selectableList = [];
-        $sortBy = "A.id";
+        $sortBy = $classModel::TABLE.".id";
         $sort = strtoupper($input["sort"] ?? "DESC") == "ASC" ? "ASC" : "DESC";
 
         $sortableList = $classModel::FIELD_SORTABLE;
@@ -50,24 +50,27 @@ class Get extends CoreService
         $params = [];
 
         foreach ($classModel::FIELD_LIST as $list) {
-            $selectableList[] = "A." . $list;
+            $selectableList[] = $classModel::TABLE."." . $list;
         }
 
         foreach ($classModel::FIELD_FILTERABLE as $filter) {      
             if(!is_blank($input, $filter)) {     
-                $filterList[] = " AND A." . $filter .  " = :$filter";
+                $filterList[] = " AND ".$classModel::TABLE."." . $filter .  " = :$filter";
                 $params[$filter] = $input[$filter];
             }
         }
         $i = 0;
         foreach ($classModel::FIELD_RELATION as $key => $relation) {
-            $alias = toAlpha($i + 1);
+            // $alias = toAlpha($i + 1);
+            $alias = $relation["linkTable"];
             $selectableList[] = $alias . "." . $relation["selectValue"];
 
             $tableJoinList[] = "LEFT JOIN " . $relation["linkTable"] . " " . $alias . " ON " .
-                "A." . $key . " = " .  $alias . "." . $relation["linkField"];
+                $classModel::TABLE."." . $key . " = " .  $alias . "." . $relation["linkField"];
             $i++;
         }
+
+        $selectableList[] = $classModel::CUSTOM_SELECT;
         $condition = " WHERE true";
 
         if(!is_blank($input, "search")) {
@@ -94,12 +97,12 @@ class Get extends CoreService
         }
         
 
-        $sql = "SELECT " . implode(", ", $selectableList) . " FROM " . $classModel::TABLE . " A " .
+        $sql = "SELECT " . implode(", ", $selectableList) . " FROM " . $classModel::TABLE . " " .
             implode(" ", $tableJoinList) . $condition .
             (count($searchableList) > 0 ? " AND (" . implode(" OR ", $searchableList) . ")" : "").
             implode("\n", $filterList) . " ORDER BY " . $sortBy . " " . $sort . " LIMIT $limit OFFSET $offset ";
 
-        $sqlForCount = "SELECT COUNT(1) AS total FROM " . $classModel::TABLE . " A " .
+        $sqlForCount = "SELECT COUNT(1) AS total FROM " . $classModel::TABLE . " " .
             implode(" ", $tableJoinList) . $condition .
             (count($searchableList) > 0 ? " AND (" . implode(" OR ", $searchableList) . ")" : "").
             implode("\n", $filterList);
@@ -108,6 +111,8 @@ class Get extends CoreService
         $total = DB::selectOne($sqlForCount, $params)->total;
         return [
             "data" => $productList,
+            "sql" => $sql,
+            "params" => $params,
             "total" => $total
         ];
     }

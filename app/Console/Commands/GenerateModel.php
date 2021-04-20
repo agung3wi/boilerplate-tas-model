@@ -200,6 +200,7 @@ class GenerateModel extends Command
             $fieldUpload = [];
             $parentChild = [];
             $fieldDefaultValue = [];
+            $customSelect = "";
             foreach ($uniques as $unique) {
                 array_push($fieldUnique, explode(",", $unique->column_list));
             }
@@ -280,7 +281,7 @@ class GenerateModel extends Command
                     $fieldRelation[$field->column_name] =  [
                         "linkTable" => $field->ref_table,
                         "linkField" => $field->ref_column,
-                        "selectValue" => "*"
+                        "selectValue" => "id AS ".$field->column_name
                     ];
 
                     if ($field->column_name == "created_by") {
@@ -321,7 +322,8 @@ class GenerateModel extends Command
                 'fieldUpload' => $fieldUpload,
                 'table_name' => $tableNameOriginal,
                 'studly_caps' => Str::ucfirst(Str::camel($tableName)),
-                'customContent' => $customContent
+                'customContent' => $customContent,
+                'customSelect' => $customSelect
             ];
 
             if (!is_file($fileName)) {
@@ -352,6 +354,8 @@ class GenerateModel extends Command
                     }
                 }
 
+                $customSelect = defined("$classModel::CUSTOM_SELECT") ? $classModel::CUSTOM_SELECT : $customSelect;
+
                 $params = [
                     'fileRoot' => $fileRoot,
                     'list' => $classModel::IS_LIST,
@@ -376,7 +380,8 @@ class GenerateModel extends Command
                     'fieldUpload' => $fieldUpload,
                     'table_name' => $tableNameOriginal,
                     'studly_caps' => Str::ucfirst(Str::camel($tableName)),
-                    'customContent' => $customContent
+                    'customContent' => $customContent,
+                    'customSelect' => $customSelect
                 ];
 
                 $fileContent = view('generate.model', $params);
