@@ -71,9 +71,9 @@ class Add extends CoreService
             $object->{$item} = $input[$item] ?? $classModel::FIELD_DEFAULT_VALUE[$item];
         }
 
-        //VALIDASI FILE EXIST & MOVE FILE
+        // MOVE FILE
         foreach ($classModel::FIELD_UPLOAD as $item) {
-            $tmpPath = $input["path_" . $item] ?? "";
+            $tmpPath = $input["path_" . $item] ?? null;
             $tmpName = $input[$item];
             $newPath = $classModel::FILEROOT . "/" . $input[$item];
             if (!is_null($tmpName) and Storage::exists($tmpPath)) {
@@ -94,13 +94,9 @@ class Add extends CoreService
 
                 Storage::move($tmpPath, $newPath);
                 //END MOVE FILE
-            } else if (is_null($tmpName)) {
-                //DO NOTHING
-            } else {
-                throw new CoreException(__("message.fileNotExist", ['field' => $item]));
             }
         }
-        // END VALIDASI FILE EXIST & MOVE FILE
+        // END MOVE FILE
 
         $object->save();
 

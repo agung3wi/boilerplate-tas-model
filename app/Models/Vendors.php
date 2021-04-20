@@ -10,6 +10,7 @@ class Vendors extends Model
 {
     protected $table = 'vendors';
     const TABLE = "vendors";
+    const FILEROOT = "/vendors";
     const IS_LIST = true;
     const IS_ADD = true;
     const IS_EDIT = true;
@@ -21,25 +22,25 @@ class Vendors extends Model
     const FIELD_VIEW = ["id", "vendor_sso_id", "name", "telepon", "address", "description", "singlef_photo", "latitude", "longitude", "active", "created_by", "updated_by", "created_at", "updated_at"];
     const FIELD_READONLY = [];
     const FIELD_FILTERABLE = ["id", "vendor_sso_id", "name", "telepon", "address", "description", "singlef_photo", "latitude", "longitude", "active", "created_by", "created_by", "updated_by", "updated_by", "created_at", "updated_at"];
-    const FIELD_SEARCHABLE = ["vendor_sso_id", "name", "telepon", "address", "description", "singlef_photo", "latitude", "longitude"];
+    const FIELD_SEARCHABLE = ["address", "description", "singlef_photo", "latitude", "longitude"];
     const FIELD_SORTABLE = ["id", "vendor_sso_id", "name", "telepon", "address", "description", "singlef_photo", "latitude", "longitude", "active", "created_by", "updated_by", "created_at", "updated_at"];
     const FIELD_UNIQUE = [["name"], ["vendor_sso_id"]];
-    const FIELD_UPLOAD = [];
+    const FIELD_UPLOAD = ["singlef_photo"];
     const FIELD_TYPE = [
         "id" => "bigint",
-        "vendor_sso_id" => "character varying",
-        "name" => "character varying",
-        "telepon" => "character varying",
+        "vendor_sso_id" => "varchar",
+        "name" => "varchar",
+        "telepon" => "varchar",
         "address" => "text",
         "description" => "text",
         "singlef_photo" => "text",
         "latitude" => "text",
         "longitude" => "text",
-        "active" => "integer",
+        "active" => "int",
         "created_by" => "bigint",
         "updated_by" => "bigint",
-        "created_at" => "timestamp with time zone",
-        "updated_at" => "timestamp with time zone",
+        "created_at" => "timestamp",
+        "updated_at" => "timestamp",
     ];
 
     const FIELD_DEFAULT_VALUE = [
@@ -60,15 +61,15 @@ class Vendors extends Model
     const FIELD_RELATION = [
     ];
     const FIELD_VALIDATION = [
-        "vendor_sso_id" => "required|string|max:255",
-        "name" => "required|string|max:255",
-        "telepon" => "nullable|string|max:30",
-        "address" => "nullable|string",
-        "description" => "nullable|string",
-        "singlef_photo" => "nullable|string",
-        "latitude" => "nullable|string",
-        "longitude" => "nullable|string",
-        "active" => "nullable|integer",
+        "vendor_sso_id" => "required|max:255",
+        "name" => "required|max:255",
+        "telepon" => "nullable|max:30",
+        "address" => "nullable|string|max:65535",
+        "description" => "nullable|string|max:65535",
+        "singlef_photo" => "nullable|string|max:65535|exists_file",
+        "latitude" => "nullable|string|max:65535",
+        "longitude" => "nullable|string|max:65535",
+        "active" => "nullable",
         "created_by" => "nullable|integer",
         "updated_by" => "nullable|integer",
         "created_at" => "nullable|date",

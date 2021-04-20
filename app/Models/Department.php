@@ -6,30 +6,29 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 
-class CategoryMaterials extends Model
+class Department extends Model
 {
-    protected $table = 'category_materials';
-    const TABLE = "category_materials";
-    const FILEROOT = "/category_materials";
+    protected $table = 'm_department';
+    const TABLE = "m_department";
+    const FILEROOT = "/department";
     const IS_LIST = true;
     const IS_ADD = true;
     const IS_EDIT = true;
     const IS_DELETE = true;
     const IS_VIEW = true;
-    const FIELD_LIST = ["id", "name", "active", "created_by", "updated_by", "created_at", "updated_at"];
-    const FIELD_ADD = ["name", "active", "created_by", "updated_by"];
-    const FIELD_EDIT = ["name", "active", "updated_by"];
-    const FIELD_VIEW = ["id", "name", "active", "created_by", "updated_by", "created_at", "updated_at"];
+    const FIELD_LIST = ["id", "department_name", "created_by", "updated_by", "created_at", "updated_at"];
+    const FIELD_ADD = ["department_name", "created_by", "updated_by"];
+    const FIELD_EDIT = ["department_name", "updated_by"];
+    const FIELD_VIEW = ["id", "department_name", "created_by", "updated_by", "created_at", "updated_at"];
     const FIELD_READONLY = [];
-    const FIELD_FILTERABLE = ["id", "name", "active", "created_by", "created_by", "updated_by", "updated_by", "created_at", "updated_at"];
+    const FIELD_FILTERABLE = ["id", "department_name", "created_by", "created_by", "updated_by", "updated_by", "created_at", "updated_at"];
     const FIELD_SEARCHABLE = [];
-    const FIELD_SORTABLE = ["id", "name", "active", "created_by", "updated_by", "created_at", "updated_at"];
-    const FIELD_UNIQUE = [["name"]];
+    const FIELD_SORTABLE = ["id", "department_name", "created_by", "updated_by", "created_at", "updated_at"];
+    const FIELD_UNIQUE = [];
     const FIELD_UPLOAD = [];
     const FIELD_TYPE = [
         "id" => "bigint",
-        "name" => "varchar",
-        "active" => "int",
+        "department_name" => "varchar",
         "created_by" => "bigint",
         "updated_by" => "bigint",
         "created_at" => "timestamp",
@@ -37,8 +36,7 @@ class CategoryMaterials extends Model
     ];
 
     const FIELD_DEFAULT_VALUE = [
-        "name" => "",
-        "active" => "1",
+        "department_name" => "",
         "created_by" => "",
         "updated_by" => "",
         "created_at" => "",
@@ -47,10 +45,9 @@ class CategoryMaterials extends Model
     const FIELD_RELATION = [
     ];
     const FIELD_VALIDATION = [
-        "name" => "required|max:255",
-        "active" => "nullable",
-        "created_by" => "nullable|integer",
-        "updated_by" => "nullable|integer",
+        "department_name" => "required|max:100",
+        "created_by" => "required|integer",
+        "updated_by" => "required|integer",
         "created_at" => "nullable|date",
         "updated_at" => "nullable|date",
     ];

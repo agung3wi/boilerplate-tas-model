@@ -180,7 +180,7 @@ class GenerateModel extends Command
             $uniques = DB::select($sqlIndex);
             $fillableBackList = ["id", "created_at", "updated_at"];
             $filedUploadPattern = [
-                'imgField' => 'img_',
+                'imgField' => 'photo',
                 'docField' => 'doc_',
                 'fileField' => 'file_'
             ];
@@ -259,12 +259,15 @@ class GenerateModel extends Command
                         switch ($c) {
                             case 'imgField':
                                 $fieldUpload[] = $field->column_name;
+                                $fieldValidation[$field->column_name] .= "|exists_file";
                                 break;
                             case 'docField':
                                 $fieldUpload[] = $field->column_name;
+                                $fieldValidation[$field->column_name] .= "|exists_file";
                                 break;
                             case 'fileField':
                                 $fieldUpload[] = $field->column_name;
+                                $fieldValidation[$field->column_name] .= "|exists_file";
                                 break;
                         }
                     }
