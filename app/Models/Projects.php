@@ -65,7 +65,7 @@ class Projects extends Model
             "selectValue" => "id AS departments_id"
         ],
     ];
-    const CUSTOM_SELECT = "CONCAT(departments.name, departments.active::text) AS department_detail, CONCAT(projects.name,projects.address) as testing";
+    const CUSTOM_SELECT = "CONCAT(departments.name, departments.active::text) AS name_dept";
     const FIELD_VALIDATION = [
         "departments_id" => "required|integer",
         "name" => "required|string|max:255",

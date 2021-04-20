@@ -15,4 +15,5 @@ return [
     "updated_by" => "Updated By",
     "created_at" => "Created At",
     "updated_at" => "Updated At",
+    "name_departments" => "Nama Departemen"
 ];

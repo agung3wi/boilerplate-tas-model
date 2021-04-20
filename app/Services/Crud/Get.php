@@ -70,7 +70,8 @@ class Get extends CoreService
             $i++;
         }
 
-        $selectableList[] = $classModel::CUSTOM_SELECT;
+        if(!empty($classModel::CUSTOM_SELECT)) $selectableList[] = $classModel::CUSTOM_SELECT;
+
         $condition = " WHERE true";
 
         if(!is_blank($input, "search")) {
@@ -111,8 +112,6 @@ class Get extends CoreService
         $total = DB::selectOne($sqlForCount, $params)->total;
         return [
             "data" => $productList,
-            "sql" => $sql,
-            "params" => $params,
             "total" => $total
         ];
     }
