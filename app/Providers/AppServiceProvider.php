@@ -5,6 +5,8 @@ namespace App\Providers;
 use App\CoreService\CallService;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -25,6 +27,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        Validator::extend('exists_file', function ($attribute, $value, $parameters, $validator) {
+            return Storage::exists($value);
+        });
 
         Route::middleware(['web', 'setguard:web'])->group(function () {
 

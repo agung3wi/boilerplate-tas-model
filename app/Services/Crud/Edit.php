@@ -6,6 +6,7 @@ use App\CoreService\CoreException;
 use App\CoreService\CoreService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
@@ -73,7 +74,6 @@ class Edit extends CoreService
                 }
             }
         }
-        //
 
         $input = $classModel::beforeUpdate($input);
 
@@ -86,6 +86,34 @@ class Edit extends CoreService
         }
 
         $object->save();
+
+        // MOVE FILE
+        foreach ($classModel::FIELD_UPLOAD as $item) {
+            $tmpPath = $input["temp_" . $item] ?? null;
+            $tmpName = $input[$item] ?? null;
+            $newPath = $classModel::FILEROOT . "/" . $input[$item];
+            if (!is_null($tmpName) and Storage::exists($tmpPath)) {
+                //START MOVE FILE
+                if (Storage::exists($newPath)) {
+                    $id = 1;
+                    $filename = pathinfo(storage_path($newPath), PATHINFO_FILENAME);
+                    $ext = pathinfo(storage_path($newPath), PATHINFO_EXTENSION);
+                    while (true) {
+                        $originalname = $filename . "($id)." . $ext;
+                        if (!Storage::exists($classModel::FILEROOT . "/" . $originalname))
+                            break;
+                        $id++;
+                    }
+                    $newPath = $classModel::FILEROOT . "/" . $originalname;
+                    $object->{$item} = $originalname;
+                }
+
+                Storage::move($tmpPath, $newPath);
+                //END MOVE FILE
+            }
+        }
+        // END MOVE FILE
+
         $classModel::afterUpdate($object, $input);
 
         return $object;

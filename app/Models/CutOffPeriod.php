@@ -10,6 +10,7 @@ class CutOffPeriod extends Model
 {
     protected $table = 'cut_off_period';
     const TABLE = "cut_off_period";
+    const FILEROOT = "/cut_off_period";
     const IS_LIST = true;
     const IS_ADD = true;
     const IS_EDIT = true;
@@ -27,14 +28,14 @@ class CutOffPeriod extends Model
     const FIELD_UPLOAD = [];
     const FIELD_TYPE = [
         "id" => "bigint",
-        "year" => "integer",
-        "months_id" => "integer",
+        "year" => "int",
+        "months_id" => "int",
         "start_date" => "date",
         "end_date" => "date",
         "created_by" => "bigint",
         "updated_by" => "bigint",
-        "created_at" => "timestamp with time zone",
-        "updated_at" => "timestamp with time zone",
+        "created_at" => "timestamp",
+        "updated_at" => "timestamp",
     ];
 
     const FIELD_DEFAULT_VALUE = [
@@ -50,8 +51,8 @@ class CutOffPeriod extends Model
     const FIELD_RELATION = [
     ];
     const FIELD_VALIDATION = [
-        "year" => "required|integer",
-        "months_id" => "required|integer",
+        "year" => "required",
+        "months_id" => "required",
         "start_date" => "required",
         "end_date" => "required",
         "created_by" => "nullable|integer",
