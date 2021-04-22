@@ -62,7 +62,7 @@ class Get extends CoreService
         $i = 0;
         foreach ($classModel::FIELD_RELATION as $key => $relation) {
             // $alias = toAlpha($i + 1);
-            $alias = $relation["linkTable"];
+            $alias = $relation["aliasTable"];
             $selectableList[] = $alias . "." . $relation["selectValue"];
 
             $tableJoinList[] = "LEFT JOIN " . $relation["linkTable"] . " " . $alias . " ON " .
