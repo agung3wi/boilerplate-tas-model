@@ -204,7 +204,8 @@ class GenerateModel extends Command
             foreach ($uniques as $unique) {
                 array_push($fieldUnique, explode(",", $unique->column_list));
             }
-
+            
+            $aTincrement = 0;
             foreach ($fields as $field) {
 
                 $fieldLeanguageID[$field->column_name] =
@@ -278,8 +279,10 @@ class GenerateModel extends Command
 
                 // END FIELD UPLOAD
                 if ($field->ref_table != null) {
+                    $aliasTable = toAlpha($aTincrement + 1);
                     $fieldRelation[$field->column_name] =  [
                         "linkTable" => $field->ref_table,
+                        "aliasTable" => $aliasTable,
                         "linkField" => $field->ref_column,
                         "selectValue" => "id AS ".$field->column_name
                     ];

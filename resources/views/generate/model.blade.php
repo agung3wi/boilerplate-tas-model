@@ -40,6 +40,7 @@ class {{ $studly_caps }} extends Model
 @foreach($fieldRelation as $key => $relation)
         "{{ $key }}" => [
             "linkTable" => "{{ $relation["linkTable"] }}",
+            "aliasTable" => "{{ $relation["aliasTable"] }}",
             "linkField" => "{{ $relation["linkField"] }}",
             "selectValue" => "{{ $relation["selectValue"] }}"
         ],
