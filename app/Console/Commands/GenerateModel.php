@@ -180,7 +180,7 @@ class GenerateModel extends Command
             $uniques = DB::select($sqlIndex);
             $fillableBackList = ["id", "created_at", "updated_at"];
             $filedUploadPattern = [
-                'imgField' => 'photo',
+                'imgField' => 'img_',
                 'docField' => 'doc_',
                 'fileField' => 'file_'
             ];

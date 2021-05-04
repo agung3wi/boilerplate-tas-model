@@ -22,17 +22,17 @@ class Department extends Model
     const FIELD_VIEW = ["id", "department_name", "created_by", "updated_by", "created_at", "updated_at"];
     const FIELD_READONLY = [];
     const FIELD_FILTERABLE = ["id", "department_name", "created_by", "created_by", "updated_by", "updated_by", "created_at", "updated_at"];
-    const FIELD_SEARCHABLE = [];
+    const FIELD_SEARCHABLE = ["department_name"];
     const FIELD_SORTABLE = ["id", "department_name", "created_by", "updated_by", "created_at", "updated_at"];
     const FIELD_UNIQUE = [];
     const FIELD_UPLOAD = [];
     const FIELD_TYPE = [
         "id" => "bigint",
-        "department_name" => "varchar",
+        "department_name" => "character varying",
         "created_by" => "bigint",
         "updated_by" => "bigint",
-        "created_at" => "timestamp",
-        "updated_at" => "timestamp",
+        "created_at" => "timestamp without time zone",
+        "updated_at" => "timestamp without time zone",
     ];
 
     const FIELD_DEFAULT_VALUE = [
@@ -44,12 +44,13 @@ class Department extends Model
     ];
     const FIELD_RELATION = [
     ];
+    const CUSTOM_SELECT = "";
     const FIELD_VALIDATION = [
-        "department_name" => "required|max:100",
+        "department_name" => "required|string|max:100",
         "created_by" => "required|integer",
         "updated_by" => "required|integer",
-        "created_at" => "nullable|date",
-        "updated_at" => "nullable|date",
+        "created_at" => "nullable",
+        "updated_at" => "nullable",
     ];
     const PARENT_CHILD = [];
 

@@ -25,7 +25,7 @@ class Plants extends Model
     const FIELD_SEARCHABLE = ["plant_sso_id", "name", "telepon", "address", "description", "singlef_photo", "latitude", "longitude"];
     const FIELD_SORTABLE = ["id", "plant_sso_id", "name", "telepon", "address", "description", "singlef_photo", "latitude", "longitude", "active", "created_by", "updated_by", "created_at", "updated_at"];
     const FIELD_UNIQUE = [["name"], ["plant_sso_id"]];
-    const FIELD_UPLOAD = ["singlef_photo"];
+    const FIELD_UPLOAD = [];
     const FIELD_TYPE = [
         "id" => "bigint",
         "plant_sso_id" => "character varying",
@@ -67,7 +67,7 @@ class Plants extends Model
         "telepon" => "nullable|string|max:30",
         "address" => "nullable|string",
         "description" => "nullable|string",
-        "singlef_photo" => "nullable|string|exists_file",
+        "singlef_photo" => "nullable|string",
         "latitude" => "nullable|string",
         "longitude" => "nullable|string",
         "active" => "nullable|integer",

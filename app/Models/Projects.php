@@ -16,24 +16,22 @@ class Projects extends Model
     const IS_EDIT = true;
     const IS_DELETE = true;
     const IS_VIEW = true;
-    const FIELD_LIST = ["id", "departments_id", "name", "address", "img_photo", "doc_contract", "file_attachments", "latitude", "longitude", "active", "created_by", "updated_by", "created_at", "updated_at"];
-    const FIELD_ADD = ["departments_id", "name", "address", "img_photo", "doc_contract", "file_attachments", "latitude", "longitude", "active", "created_by", "updated_by"];
-    const FIELD_EDIT = ["departments_id", "name", "address", "img_photo", "doc_contract", "file_attachments", "latitude", "longitude", "active", "updated_by"];
-    const FIELD_VIEW = ["id", "departments_id", "name", "address", "img_photo", "doc_contract", "file_attachments", "latitude", "longitude", "active", "created_by", "updated_by", "created_at", "updated_at"];
+    const FIELD_LIST = ["id", "plants_id", "name", "address", "singlef_photo", "latitude", "longitude", "active", "created_by", "updated_by", "created_at", "updated_at"];
+    const FIELD_ADD = ["plants_id", "name", "address", "singlef_photo", "latitude", "longitude", "active", "created_by", "updated_by"];
+    const FIELD_EDIT = ["plants_id", "name", "address", "singlef_photo", "latitude", "longitude", "active", "updated_by"];
+    const FIELD_VIEW = ["id", "plants_id", "name", "address", "singlef_photo", "latitude", "longitude", "active", "created_by", "updated_by", "created_at", "updated_at"];
     const FIELD_READONLY = [];
-    const FIELD_FILTERABLE = ["id", "departments_id", "departments_id", "name", "address", "img_photo", "doc_contract", "file_attachments", "latitude", "longitude", "active", "created_by", "created_by", "updated_by", "updated_by", "created_at", "updated_at"];
-    const FIELD_SEARCHABLE = ["name", "address", "img_photo", "doc_contract", "file_attachments", "latitude", "longitude"];
-    const FIELD_SORTABLE = ["id", "departments_id", "name", "address", "img_photo", "doc_contract", "file_attachments", "latitude", "longitude", "active", "created_by", "updated_by", "created_at", "updated_at"];
+    const FIELD_FILTERABLE = ["id", "plants_id", "plants_id", "name", "address", "singlef_photo", "latitude", "longitude", "active", "created_by", "created_by", "updated_by", "updated_by", "created_at", "updated_at"];
+    const FIELD_SEARCHABLE = ["name", "address", "singlef_photo", "latitude", "longitude"];
+    const FIELD_SORTABLE = ["id", "plants_id", "name", "address", "singlef_photo", "latitude", "longitude", "active", "created_by", "updated_by", "created_at", "updated_at"];
     const FIELD_UNIQUE = [["name"]];
-    const FIELD_UPLOAD = ["img_photo", "doc_contract", "file_attachments"];
+    const FIELD_UPLOAD = [];
     const FIELD_TYPE = [
         "id" => "bigint",
-        "departments_id" => "bigint",
+        "plants_id" => "bigint",
         "name" => "character varying",
         "address" => "text",
-        "img_photo" => "text",
-        "doc_contract" => "text",
-        "file_attachments" => "text",
+        "singlef_photo" => "text",
         "latitude" => "text",
         "longitude" => "text",
         "active" => "integer",
@@ -44,12 +42,10 @@ class Projects extends Model
     ];
 
     const FIELD_DEFAULT_VALUE = [
-        "departments_id" => "",
+        "plants_id" => "",
         "name" => "",
         "address" => "",
-        "img_photo" => "",
-        "doc_contract" => "",
-        "file_attachments" => "",
+        "singlef_photo" => "",
         "latitude" => "",
         "longitude" => "",
         "active" => "1",
@@ -59,20 +55,13 @@ class Projects extends Model
         "updated_at" => "",
     ];
     const FIELD_RELATION = [
-        "departments_id" => [
-            "linkTable" => "departments",
-            "linkField" => "id",
-            "selectValue" => "id AS departments_id"
-        ],
     ];
     const CUSTOM_SELECT = "CONCAT(departments.name, departments.active::text) AS name_dept";
     const FIELD_VALIDATION = [
-        "departments_id" => "required|integer",
+        "plants_id" => "nullable|integer",
         "name" => "required|string|max:255",
         "address" => "nullable|string",
-        "img_photo" => "nullable|string|exists_file",
-        "doc_contract" => "nullable|string|exists_file",
-        "file_attachments" => "nullable|string|exists_file",
+        "singlef_photo" => "nullable|string",
         "latitude" => "nullable|string",
         "longitude" => "nullable|string",
         "active" => "nullable|integer",
