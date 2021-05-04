@@ -22,6 +22,9 @@ class FindRoleById extends CoreService
     public function process($input, $originalInput)
     {
         $user = Role::find($input["id"]);
+        if (empty($user))
+            throw New CoreException(__("message.dataNotFound"), 404);
+
         return $user;
     }
 

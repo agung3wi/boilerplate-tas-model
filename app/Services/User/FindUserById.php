@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\CoreService\CoreException;
 use App\CoreService\CoreService;
-
+use Illuminate\Support\Facades\URL;
 
 class FindUserById extends CoreService
 {
@@ -22,8 +22,21 @@ class FindUserById extends CoreService
 
     public function process($input, $originalInput)
     {
-        $user = User::find($input["id"]);
-        $user->password = "";
+        $user = User::select("users.*","roles.role_name")->leftjoin('roles', 'roles.id', 'users.role_id')->find($input["id"]);
+        $fileUpload = ["img_photo_users"];
+        if (!empty($user)) {
+            $user->password = "";
+            if (!empty($fileUpload))
+                foreach ($fileUpload as $item) {
+                    if ($user->$item) {
+                        $url = URL::to('api/file/user/' . $item . '/' . $input["id"] . '/' . $user->$item);
+                        $user->{$item} = (object)[
+                            "url" => $url,
+                            "filename" => $user->$item
+                        ];
+                    }
+                }
+        }
         return $user;
     }
 

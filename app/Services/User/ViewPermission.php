@@ -23,18 +23,27 @@ class ViewPermission extends CoreService
     {
         $condition = "WHERE true";
         $params = [];
-        if (!is_null($input["src"] ?? null)) {
-            $condition .= " AND (
-                UPPER(task_code) LIKE ?
-                OR UPPER(task_name) LIKE ?
-                OR UPPER(description) LIKE ?
-            )";
-            $params[] = "%" . $input["src"] . "%";
-            $params[] = "%" . $input["src"] . "%";
-            $params[] = "%" . $input["src"] . "%";
-        }
+     
+        if(!is_blank($input, "search")) {
+            
+            $searchableList = ["task_code","task_name","description"];
+            
+            $searchableList = array_map(function ($item) {
+                return "UPPER($item) ILIKE :search";
+            }, $searchableList);
 
-        $tasks = DB::select("SELECT * FROM tasks $condition", $params);
+        } else {
+            $searchableList = [];
+        }
+       
+
+
+        if(count($searchableList)>0 && !is_blank($input, "search"))
+            $params["search"] = "%" . strtoupper($input["search"] ?? "") . "%";
+
+        $sql = "SELECT * FROM tasks " . $condition ." ".(count($searchableList) > 0 ? " AND (" . implode(" OR ", $searchableList) . ")" : "");
+
+        $tasks = DB::select($sql, $params);
         $roles = DB::select("SELECT * FROM roles");
         $roleTaskList = [];
         foreach (DB::select("SELECT * FROM role_task") as $roleTask) {
@@ -42,6 +51,7 @@ class ViewPermission extends CoreService
         }
         $result = [];
         $i = 0;
+
         foreach ($tasks as $task) {
             $result[$i] = [
                 "task_id" => $task->id,

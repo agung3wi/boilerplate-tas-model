@@ -29,7 +29,7 @@ class InitUserAndAddRoleId extends Migration
         ]);
 
         DB::table("users")->insert([
-            "name" => "Super Admin",
+            "fullname" => "Super Admin",
             "username" => "admin",
             "password" => bcrypt("admin"),
             "role_id" => -1

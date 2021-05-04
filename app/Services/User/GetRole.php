@@ -13,7 +13,7 @@ class GetRole extends CoreService
 {
 
     public $transaction = false;
-    public $task = "super-admin";
+    public $task = "view-user-roles";
 
     public function prepare($input)
     {
@@ -31,10 +31,10 @@ class GetRole extends CoreService
             $input["sort"] = "ASC";
 
         if (in_array($input["order"], $orderList))
-            $input["order"] = "A.id";
+            $input["order"] = "A.".$input["order"];
 
         if (in_array(strtoupper($input["sort"]), $sortList))
-            $input["sort"] = "ASC";
+            $input["sort"] = strtoupper($input["sort"]);
 
         return $input;
     }
@@ -44,12 +44,12 @@ class GetRole extends CoreService
         $params = [];
         $condition = "WHERE true";
 
-        if (!is_blank($input, "src")) {
+        if (!is_blank($input, "search")) {
             $condition = $condition . " AND (";
-            $condition = $condition . " A.role_name ILIKE :src";
-            $condition = $condition . " OR A.role_code ILIKE :src";
+            $condition = $condition . " A.role_name ILIKE :search";
+            $condition = $condition . " OR A.role_code ILIKE :search";
             $condition = $condition . ")";
-            $params["src"] = "%" . $input['src'] . "%";
+            $params["search"] = "%" . $input['search'] . "%";
         }
 
         $total = DB::selectOne("SELECT COUNT(1) AS total
@@ -57,18 +57,15 @@ class GetRole extends CoreService
             $condition, $params)->total;
 
 
-        $sql = "SELECT A.*
-                FROM roles A
-            $condition
-            ORDER BY " . $input['order'] . " " . $input['sort'] . " LIMIT :limit OFFSET :offset";
+        $sql = "SELECT A.* FROM roles A $condition ORDER BY " . $input['order'] . " " . $input['sort'] . " LIMIT :limit OFFSET :offset";
         $params["limit"] = $input["limit"];
         $params["offset"] = $input["offset"];
 
         $roleList = DB::select($sql, $params);
 
         return [
-            "items" => $roleList,
-            "total" => $total
+            "data" => $roleList,
+            "total" => $total,
         ];
     }
 

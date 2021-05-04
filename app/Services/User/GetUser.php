@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\CoreService\CoreException;
 use App\CoreService\CoreService;
-
+use Illuminate\Support\Facades\URL;
 
 class GetUser extends CoreService
 {
@@ -34,7 +34,7 @@ class GetUser extends CoreService
             $input["order"] = "A.updated_at";
 
         if (in_array(strtoupper($input["sort"]), $sortList))
-            $input["sort"] = "DESC";
+            $input["sort"] = $input["sort"];
 
         return $input;
     }
@@ -42,15 +42,16 @@ class GetUser extends CoreService
     public function process($input, $originalInput)
     {
         $params = [];
-        $condition = "WHERE true";
+        $condition = "WHERE true AND A.id != 1 ";
 
-        if (!is_blank($input, "src")) {
+        if (!is_blank($input, "search")) {
             $condition = $condition . " AND (";
-            $condition = $condition . " A.username ILIKE :src";
-            $condition = $condition . " OR A.name ILIKE :src";
-            $condition = $condition . " OR A.email ILIKE :src";
+            $condition = $condition . " A.username ILIKE :search";
+            $condition = $condition . " OR A.fullname ILIKE :search";
+            $condition = $condition . " OR A.email ILIKE :search";
+            $condition = $condition . " OR A.telephone ILIKE :search";
             $condition = $condition . ")";
-            $params["src"] = "%" . $input['src'] . "%";
+            $params["search"] = "%" . $input['search'] . "%";
         }
 
         if (!is_blank($input, "active")) {
@@ -58,10 +59,13 @@ class GetUser extends CoreService
             $params["active"] = $input["active"];
         };
 
+        if (!is_blank($input, "role_id")) {
+            $condition = $condition . " AND A.role_id = :role_id";
+            $params["role_id"] = $input["role_id"];
+        };
         $total = DB::selectOne("SELECT COUNT(1) AS total
             FROM users A " .
             $condition, $params)->total;
-
 
         $sql = "SELECT A.*, null AS password, B.role_name
                 FROM users A
@@ -73,10 +77,29 @@ class GetUser extends CoreService
         $params["offset"] = $input["offset"];
 
         $userList = DB::select($sql, $params);
-
+        array_map(function ($key) {
+            foreach ($key as $field => $value) {
+                if (preg_match("/file_/i", $field) or preg_match("/img_/i", $field)) {
+                    if (!is_null($value)) {
+                        $url = URL::to('api/file/user/' . $field . '/' . $key->id . '/' . $key->$field);
+                        $ext = pathinfo($url, PATHINFO_EXTENSION);
+                    }else{
+                        $url = null;
+                        $ext = null;
+                    }
+                    $key->$field = (object) [
+                        "ext" => $ext,
+                        "url" => $url,
+                        "filename" => $key->$field
+                    ];
+                }
+            }
+            return $key;
+        }, $userList);
         return [
-            "items" => $userList,
-            "total" => $total
+            "data" => $userList,
+            "total" => $total,
+            "sort" => $input['sort']
         ];
     }
 

@@ -12,7 +12,7 @@ class AddRole extends CoreService
 {
 
     public $transaction = true;
-    public $task = 'super-admin';
+    public $task = 'create-user-roles';
 
     public function prepare($input)
     {
@@ -30,11 +30,13 @@ class AddRole extends CoreService
         $user->role_code = $input["role_code"];
         $user->role_name = $input["role_name"];
         $user->description = isset($input["description"]) ? $input["description"] : "";
-        // $user->created_at = $input["session"]["datetime"];
-        // $user->updated_at = $input["session"]["datetime"];
+        
         $user->save();
 
-        return $user;
+        return [
+            "data" =>$user,
+            "message" => __("message.successfullyAdd")
+        ];
     }
 
     protected function validation()

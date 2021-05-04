@@ -32,7 +32,10 @@ class RemoveUser extends CoreService
         $input["user"]->updated_at = $input["session"]["datetime"];
         $input["user"]->save();
 
-        return $input["user"];
+        return [
+            "data" => $input["user"],
+            "message" => "Data Berhasil Dinonaktifkan"
+        ];
     }
 
     protected function validation()

@@ -9,7 +9,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 class User extends Authenticatable implements JWTSubject
 {
     use Notifiable;
-
+    const TABLE = "users";
+    const FILEROOT = "/user";
     // Rest omitted for brevity
 
     /**
