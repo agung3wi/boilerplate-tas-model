@@ -21,5 +21,8 @@ return [
     '500' => 'Internal Server Error',
     'alreadyExist' => 'Data :field sudah ada',
     'forbiddenDelete' => 'Data Tidak Boleh Dihapus',
-    'fileNotExist' => 'File :field Tidak Ditemukan'
+    'fileNotExist' => 'File :field Tidak Ditemukan',
+    'dataNotFound' => 'Dengan dengan ID :id Tidak Ditemukan',
+    'succesfullyUpdate' => 'Berhasil Mengubah Data',
+    'successfullyAdd' => 'Berhasil Menyimpan Data'
 ];

@@ -34,7 +34,12 @@ class Edit extends CoreService
 
     public function process($input, $originalInput)
     {
-        $classModel = $input["class_model"];       
+        
+        $classModel = $input["class_model"];  
+        $object = $classModel::find($input["id"]);
+        if (!$object) {
+            throw new CoreException(__("message.dataNotFound", [ 'id' =>$input["id"]] ));
+        }
         $rules = $classModel::FIELD_VALIDATION;
         $rules["id"] = "required|integer"; 
 
@@ -51,7 +56,6 @@ class Edit extends CoreService
             throw new CoreException($validator->errors()->first());
         }
 
-        $object = $classModel::find($input["id"]);
 
         if ($classModel::FIELD_UNIQUE) {
             foreach ($classModel::FIELD_UNIQUE as $search) {
@@ -116,7 +120,10 @@ class Edit extends CoreService
 
         $classModel::afterUpdate($object, $input);
 
-        return $object;
+        return [
+            "data" => $object,
+            "message" => __("message.succesfullyUpdate")
+        ];
     }
 
     protected function validation()

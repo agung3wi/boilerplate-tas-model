@@ -34,7 +34,11 @@ class Delete extends CoreService
 
     public function process($input, $originalInput)
     {
-        $classModel = $input["class_model"];     
+        $classModel = $input["class_model"];  
+        $object = $classModel::find($input["id"]);
+        if (!$object) {
+            throw new CoreException(__("message.dataNotFound", [ 'id' =>$input["id"]] ));
+        }
         $rules = ["id" => "required|integer" ]; 
 
         $validator = Validator::make($input, $rules);
@@ -43,7 +47,6 @@ class Delete extends CoreService
             throw new CoreException($validator->errors()->first());
         }
 
-        $object = $classModel::find($input["id"]);
         try {
             $object->delete();
         } catch(QueryException $ex) {

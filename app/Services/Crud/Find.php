@@ -61,7 +61,7 @@ class Find extends CoreService
         
         $detail =  DB::selectOne($sql, $params);
         if(is_null($detail)) {
-            throw new CoreException(__("message.notFound"));
+            throw new CoreException(__("message.dataNotFound", [ 'id' =>$input["id"]] ));
         }
 
         return $detail;

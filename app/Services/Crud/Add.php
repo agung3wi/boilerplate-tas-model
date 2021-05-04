@@ -103,7 +103,10 @@ class Add extends CoreService
 
         $classModel::afterInsert($object, $input);
 
-        return $object;
+        return [
+            "data" =>$object,
+            "message" => __("message.successfullyAdd")
+        ];
     }
 
     protected function validation()
