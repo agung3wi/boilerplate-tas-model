@@ -180,7 +180,7 @@ class GenerateModel extends Command
             $uniques = DB::select($sqlIndex);
             $fillableBackList = ["id", "created_at", "updated_at"];
             $filedUploadPattern = [
-                'imgField' => 'img_',
+                'imgField' => 'photo',
                 'docField' => 'doc_',
                 'fileField' => 'file_'
             ];
@@ -204,7 +204,6 @@ class GenerateModel extends Command
             foreach ($uniques as $unique) {
                 array_push($fieldUnique, explode(",", $unique->column_list));
             }
-            
             $aTincrement = 0;
             foreach ($fields as $field) {
 
@@ -294,6 +293,7 @@ class GenerateModel extends Command
                     if ($field->column_name == "updated_by") {
                         $fieldRelation[$field->column_name]["selectValue"] = "username AS updated_username";
                     }
+                    $aTincrement ++;
                 }
             }
             $beforeInsert = "\n        return \$input;\n    ";
