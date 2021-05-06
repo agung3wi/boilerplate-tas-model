@@ -35,6 +35,7 @@ Route::group([
     Route::get('/{model}/{id}/show', [CrudController::class, 'show']);
 
     Route::post('upload', [UploadController::class, 'upload'])->name("upload")->middleware('auth.rest');
+    Route::get('file/{model}/{field}/{id}/{filename}', [UploadController::class, 'getFile']);
 });
 
 
