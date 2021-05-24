@@ -20,6 +20,13 @@ class CrudController extends Controller
         return CallService::run("Get", $input);
     }
 
+    public function dataset($model)
+    {
+        $input = request()->all();
+        $input["model"] = $model;
+        return CallService::run("Dataset", $input);
+    }
+
     public function show($model, $id)
     {
         $input = request()->all();
@@ -102,24 +109,22 @@ class CrudController extends Controller
         ], 404);
     }
 
-    public function generate($model) {
+    public function generate($model)
+    {
         $classModel = "\\App\\Models\\" . Str::upper(Str::camel($model));
-        foreach ($classModel::FIELD_LIST as $list) {
-            
-        }
         return [
-            "table" => $classModel::TABLE,                                      
-            "primaryKey" => "id",                                        
-            "isList" => $classModel::IS_LIST,
-            "isView" => $classModel::IS_VIEW,
-            "isEdit" => $classModel::IS_EDIT,
-            "isAdd" => $classModel::IS_ADD,
-            "isDelete" => $classModel::IS_DELETE,
+            "table" => $classModel::TABLE,
+            "primaryKey" => "id",
+            "isList" => hasPermission("view-" . $model),
+            "isView" => hasPermission("view-" . $model),
+            "isEdit" => hasPermission("edit-" . $model),
+            "isAdd" => hasPermission("add-" . $model),
+            "isDelete" => hasPermission("delete-" . $model),
             "fieldList" => $classModel::FIELD_LIST,
             "fieldView" => $classModel::FIELD_VIEW,
             "fieldEdit" => $classModel::FIELD_EDIT,
             "fieldAdd" => $classModel::FIELD_ADD,
-            "fieldReadonly" => $classModel::FIELD_READONLY,                      
+            "fieldReadonly" => $classModel::FIELD_READONLY,
             "fieldFilterable" => $classModel::FIELD_FILTERABLE,
             "fieldSearchable" => $classModel::FIELD_SEARCHABLE,
             "fieldType" => $classModel::FIELD_TYPE,
@@ -129,7 +134,15 @@ class CrudController extends Controller
         ];
     }
 
-    public function lang() {
+    public function listModule()
+    {
+        return [
+            __("modul")
+        ];
+    }
+
+    public function lang()
+    {
         return [
             "ID" => [
                 "modul" => __("modul", [], "id"),
@@ -139,8 +152,6 @@ class CrudController extends Controller
                 "modul" => __("modul", [], "en"),
                 "field" => __("field", [], "en")
             ]
-            ];
+        ];
     }
-
-    
 }

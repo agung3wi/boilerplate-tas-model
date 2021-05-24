@@ -39,3 +39,5 @@ Route::group([
 
 Route::get('/generate/lang', [CrudController::class, 'lang']);
 Route::get('/generate/{model}', [CrudController::class, 'generate']);
+Route::get('/gen-modul/modullist', [CrudController::class, 'listModul']);
+

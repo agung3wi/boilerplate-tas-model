@@ -36,6 +36,11 @@ Route::group([
 
     Route::post('upload', [UploadController::class, 'upload'])->name("upload")->middleware('auth.rest');
     Route::get('file/{model}/{field}/{id}/{filename}', [UploadController::class, 'getFile']);
+
+    Route::get('/gen-lang/lang', [CrudController::class, 'lang']);
+    Route::get('/gen-model/{model}', [CrudController::class, 'generate']);
+    Route::get('/gen-module/listmodule', [CrudController::class, 'listModule']);
+
 });
 
 
