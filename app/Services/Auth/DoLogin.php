@@ -28,8 +28,9 @@ class DoLogin extends CoreService
             "password" => $input["password"]
         ];
 
-        $user = User::where("username", $input["username"])->first();
-        if ($user->active == "N")
+        $user = User::select("users.*","roles.role_name")->leftjoin('roles', 'roles.id', 'users.role_id')->where("username", $input["username"])->first();
+        if (empty($user)) throw new CoreException("Pengguna tidak ditemukan");
+        if ($user->active == 0)
             throw new CoreException("Pengguna tidak aktif, Silahkan Hubungi Administrator");
 
         if (Config::get("auth.defaults.guard") == "web") {
