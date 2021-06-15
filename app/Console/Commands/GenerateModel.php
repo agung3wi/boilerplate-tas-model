@@ -283,7 +283,7 @@ class GenerateModel extends Command
                         "linkTable" => $field->ref_table,
                         "aliasTable" => $aliasTable,
                         "linkField" => $field->ref_column,
-                        "selectValue" => "id AS ".$field->column_name
+                        "selectValue" => "id AS " . $field->column_name
                     ];
 
                     if ($field->column_name == "created_by") {
@@ -293,7 +293,7 @@ class GenerateModel extends Command
                     if ($field->column_name == "updated_by") {
                         $fieldRelation[$field->column_name]["selectValue"] = "username AS updated_username";
                     }
-                    $aTincrement ++;
+                    $aTincrement++;
                 }
             }
             $beforeInsert = "\n        return \$input;\n    ";
@@ -317,7 +317,7 @@ class GenerateModel extends Command
                 'fieldSearchable' => $fieldSearchable,
                 'fieldUnique' => $fieldUnique,
                 'fieldSortable' => $fieldSortable,
-                'fieldType' => $fieldType,
+                'fieldType' => str_replace(" ", "_", $fieldType),
                 'parentChild' => $parentChild,
                 'fieldValidation' => $fieldValidation,
                 'fieldRelation' => $fieldRelation,
@@ -375,7 +375,7 @@ class GenerateModel extends Command
                     'fieldSearchable' => $fieldSearchable,
                     'fieldSortable' => $fieldSortable,
                     'fieldUnique' => $fieldUnique,
-                    'fieldType' => $fieldType,
+                    'fieldType' => str_replace(" ", "_", $fieldType),
                     'parentChild' => $classModel::PARENT_CHILD,
                     'fieldValidation' => $fieldValidation,
                     'fieldRelation' => $fieldRelation,

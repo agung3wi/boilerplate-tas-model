@@ -136,9 +136,8 @@ class CrudController extends Controller
 
     public function listModule()
     {
-        return [
-            __("modul")
-        ];
+        return
+            __("modul");
     }
 
     public function lang()

@@ -55,7 +55,7 @@ return [
     [
         "type" => "GET",
         "end_point" => "/user/find",
-        "class" => "App\Services\User\FinduserById"
+        "class" => "App\Services\User\FindUserById"
     ],
     [
         "type" => "GET",
