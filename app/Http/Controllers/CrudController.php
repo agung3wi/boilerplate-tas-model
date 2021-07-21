@@ -13,6 +13,9 @@ use Illuminate\Support\Str;
 
 class CrudController extends Controller
 {
+    public function test(){
+        return "test";
+    }
     public function index($model)
     {
         $input = request()->all();
@@ -51,7 +54,7 @@ class CrudController extends Controller
 
     public function remove($model)
     {
-        $classModel = "\\App\\Models\\" . Str::upper(Str::camel($model));
+        $classModel = "\\App\\Models\\" . Str::ucfirst(Str::camel($model));
         if (!class_exists($classModel))
             return $this->notFound();
         if (!$classModel::REMOVE)
@@ -70,7 +73,7 @@ class CrudController extends Controller
 
     public function restore($model)
     {
-        $classModel = "\\App\\Models\\" . Str::upper(Str::camel($model));
+        $classModel = "\\App\\Models\\" . Str::ucfirst(Str::camel($model));
         if (!class_exists($classModel))
             return $this->notFound();
 
@@ -111,7 +114,7 @@ class CrudController extends Controller
 
     public function generate($model)
     {
-        $classModel = "\\App\\Models\\" . Str::upper(Str::camel($model));
+        $classModel = "\\App\\Models\\" . Str::ucfirst(Str::camel($model));
         return [
             "table" => $classModel::TABLE,
             "primaryKey" => "id",
@@ -143,11 +146,11 @@ class CrudController extends Controller
     public function lang()
     {
         return [
-            "ID" => [
+            "id" => [
                 "modul" => __("modul", [], "id"),
                 "field" => __("field", [], "id")
             ],
-            "EN" => [
+            "en" => [
                 "modul" => __("modul", [], "en"),
                 "field" => __("field", [], "en")
             ]

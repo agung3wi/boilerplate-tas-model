@@ -2,7 +2,7 @@
 
 namespace App\Services\User;
 
-use App\Models\User;
+use App\Models\Users;
 use Illuminate\Support\Facades\DB;
 use App\CoreService\CoreException;
 use App\CoreService\CoreService;
@@ -16,7 +16,7 @@ class RestoreUser extends CoreService
 
     public function prepare($input)
     {
-        $user = User::find($input["id"]);
+        $user = Users::find($input["id"]);
         if (is_null($user)) {
             throw new CoreException("Pengguna tidak ditemukan");
         }
@@ -28,11 +28,14 @@ class RestoreUser extends CoreService
     public function process($input, $originalInput)
     {
 
-        $input["user"]->active = "N";
+        $input["user"]->active = "1";
         $input["user"]->updated_at = $input["session"]["datetime"];
         $input["user"]->save();
 
-        return $input["user"];
+        return [
+            "data" => $input["user"],
+            "message" => __("message.successfullyRestoreUser")
+        ];
     }
 
     protected function validation()

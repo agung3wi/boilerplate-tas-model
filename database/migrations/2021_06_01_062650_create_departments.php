@@ -15,10 +15,11 @@ class CreateDepartments extends Migration
     {
         Schema::create('departments', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('name')->nullable(false)->unique();
+            $table->string('department_name')->unique();
+            $table->text('array_contact_pic')->nullable(true);
             $table->integer('active')->nullable(true)->default('1');
-            $table->bigInteger('created_by')->nullable(true);
-            $table->bigInteger('updated_by')->nullable(true);
+            $table->foreignId('created_by')->nullable()->constrained('users');
+            $table->foreignId('updated_by')->nullable()->constrained('users');
             $table->timestampsTz($precision = 0);
         });
     }

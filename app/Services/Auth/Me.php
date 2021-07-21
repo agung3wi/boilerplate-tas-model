@@ -26,7 +26,7 @@ class Me extends CoreService
         if (is_null($user)) {
             throw new CoreException(__("message.403"), 403);
         }
-        $sql = "SELECT B.task_code FROM role_task A
+        $sql = "SELECT B.task_code FROM mapping_roles_tasks A
             INNER JOIN tasks B ON B.id = A.task_id
             INNER JOIN users C ON C.role_id = A.role_id AND C.id = ?";
 

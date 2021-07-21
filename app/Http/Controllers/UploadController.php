@@ -9,7 +9,9 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use App\CoreService\CoreException;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\URL;
+use Intervention\Image\Facades\Image;
 
 class UploadController extends Controller
 {
@@ -31,16 +33,43 @@ class UploadController extends Controller
             }
         }
         $path = $file->storeAs('tmp', $originalname);
+        $ext = pathinfo(storage_path($path), PATHINFO_EXTENSION);
+
+        $url = URL::to('api/temp-file/' . $originalname);
         $result = [
+            "url" => $url,
+            "originalname" => $originalname,
             "path" => $path,
-            "originalname" => $originalname
+            "ext" => $ext
         ];
         return CoreResponse::ok($result);
     }
 
-    public function getFile($model, $field, $id, $fileName)
+    public function getTempFile($originalname){
+        $data = "tmp/".$originalname;
+        if (Storage::exists($data)) {
+            $file = Storage::get($data);
+            $type = Storage::mimeType($data);
+
+            $response = Response::make($file, 200);
+            $response->header("Content-Type", $type);
+
+            return $response;
+        } else {
+            $path = "default/notfound.png";
+            $file = Storage::get($path);
+            $type = Storage::mimeType($path);
+
+            $response = Response::make($file, 200);
+            $response->header("Content-Type", $type);
+
+            return $response;
+        }
+    }
+
+    public function getFile($model, $field, $id)
     {
-        $classModel = "\\App\\Models\\" . Str::upper(Str::camel($model));
+        $classModel = "\\App\\Models\\" . Str::ucfirst(Str::camel($model));
         if (!class_exists($classModel))
             throw new CoreException("Not found", 404);
 
@@ -51,15 +80,58 @@ class UploadController extends Controller
         $params = ["id" => $id];
 
         $fileName =  DB::selectOne($sql, $params)->$field;
+
         $path  = $classModel::FILEROOT . '/';
-        $data = $path.$fileName;
+        $data = $fileName;
         if (Storage::exists($data)) {
-            return Storage::download($data);
-            // return Storage::path($data);
-        }else{
-            return [
-                "message" => "File Not Found"
-            ];
+            $file = Storage::get($data);
+            $type = Storage::mimeType($data);
+
+            $response = Response::make($file, 200);
+            $response->header("Content-Type", $type);
+
+            return $response;
+        } else {
+            $path = "default/notfound.png";
+            $file = Storage::get($path);
+            $type = Storage::mimeType($path);
+
+            $response = Response::make($file, 200);
+            $response->header("Content-Type", $type);
+
+            return $response;
+        }
+    }
+
+    public function getTumbnailFile($model, $field, $id)
+    {
+        $classModel = "\\App\\Models\\" . Str::ucfirst(Str::camel($model));
+        if (!class_exists($classModel))
+            throw new CoreException("Not found", 404);
+
+        if (!$classModel::FILEROOT)
+            throw new CoreException("Not found", 404);
+
+        $sql = "SELECT A." . $field . " FROM " . $classModel::TABLE . " A WHERE A.id = :id";
+        $params = ["id" => $id];
+
+        $fileName =  DB::selectOne($sql, $params)->$field;
+
+        $path  = $classModel::FILEROOT . '/';
+        $data = $fileName;
+        if (Storage::exists($data)) {
+            $file = Storage::get($data);
+            $type = Storage::mimeType($data);
+            
+            $response = Image::make($file, 200)->resize(70, 70);
+            return $response->response($type);
+        } else {
+            $path = "default/notfound.png";
+            $file = Storage::get($path);
+            $type = Storage::mimeType($path);
+
+            $response = Image::make($file, 200)->resize(70, 70);
+            return $response->response($type);
         }
     }
 }

@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 class CreateUsersTable extends Migration
@@ -17,15 +18,25 @@ class CreateUsersTable extends Migration
             $table->bigIncrements('id');
             $table->string('fullname');
             $table->string('username')->unique();
+            $table->text('password');
             $table->string('email')->nullable();
             $table->string('telephone')->nullable();
-            $table->text('img_photo_users')->nullable();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
+            $table->text('img_photo_user')->nullable();
+            $table->foreignId('role_id')->constrained('roles');
+            $table->timestampTz('email_verified_at')->nullable();
+            $table->string('status_code');
             $table->string('api_token')->nullable(true);
-            $table->integer('active')->default('1');
-            $table->timestampsTz();
+            $table->timestampsTz($precision = 0);
         });
+
+        DB::table("users")->insert([
+            "fullname" => "Super Admin",
+            "username" => "admin",
+            "password" => bcrypt("admin"),
+            "role_id" => -1,
+            "status_code" => 'user_active'
+        ]);
+        
     }
 
     /**

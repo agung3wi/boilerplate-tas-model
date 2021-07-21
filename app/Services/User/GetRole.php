@@ -13,7 +13,7 @@ class GetRole extends CoreService
 {
 
     public $transaction = false;
-    public $task = "view-user-roles";
+    public $task = "super-admin";
 
     public function prepare($input)
     {
@@ -43,7 +43,6 @@ class GetRole extends CoreService
     {
         $params = [];
         $condition = "WHERE true";
-
         if (!is_blank($input, "search")) {
             $condition = $condition . " AND (";
             $condition = $condition . " A.role_name ILIKE :search";

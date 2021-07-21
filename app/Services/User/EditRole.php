@@ -53,8 +53,6 @@ class EditRole extends CoreService
         $role->role_code = $input["role_code"];
         $role->role_name = $input["role_name"];
         $role->description = isset($input["description"]) ? $input["description"] : "";
-        // $role->created_at = $input["session"]["datetime"];
-        // $role->updated_at = $input["session"]["datetime"];
         $role->save();
 
         return [

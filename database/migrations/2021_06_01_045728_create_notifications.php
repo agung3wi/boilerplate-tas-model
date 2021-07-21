@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateMonths extends Migration
+class CreateNotifications extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,13 @@ class CreateMonths extends Migration
      */
     public function up()
     {
-        Schema::create('months', function (Blueprint $table) {
+        Schema::create('notifications', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('name', 255)->nullable(false)->unique();
-            $table->bigInteger('created_by')->nullable(true);
-            $table->bigInteger('updated_by')->nullable(true);
+            $table->bigInteger('user_id')->nullable(true);
+            $table->string('title');
+            $table->text('content');
+            $table->string('stattus_code');
+            $table->text('data');
             $table->timestampsTz($precision = 0);
         });
     }
@@ -29,6 +31,6 @@ class CreateMonths extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('months');
+        Schema::dropIfExists('notifications');
     }
 }

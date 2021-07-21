@@ -19,11 +19,12 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::group([
-    'middleware' => 'setguard:api'
+    'middleware' => ['setguard:api', 'auth.rest']
 ], function () {
     // START CUSTOM ROUTE
 
     // END CUSTOM ROUTE
+    Route::get('/test', [CrudController::class, 'test']);
 
     Route::get('/{model}/list', [CrudController::class, 'index']);
     Route::get('/{model}/dataset', [CrudController::class, 'dataset']);
@@ -35,12 +36,17 @@ Route::group([
     Route::get('/{model}/{id}/show', [CrudController::class, 'show']);
 
     Route::post('upload', [UploadController::class, 'upload'])->name("upload")->middleware('auth.rest');
-    Route::get('file/{model}/{field}/{id}/{filename}', [UploadController::class, 'getFile']);
+
 
     Route::get('/gen-lang/lang', [CrudController::class, 'lang']);
     Route::get('/gen-model/{model}', [CrudController::class, 'generate']);
     Route::get('/gen-module/listmodule', [CrudController::class, 'listModule']);
-
 });
 
-
+Route::group([
+    'middleware' => ['setguard:api']
+], function () {
+    Route::get('file/{model}/{field}/{id}', [UploadController::class, 'getFile']);
+    Route::get('tumb-file/{model}/{field}/{id}', [UploadController::class, 'getTumbnailFile']);
+    Route::get('temp-file/{path}', [UploadController::class, 'getTempFile']);
+});

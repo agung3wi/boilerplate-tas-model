@@ -11,6 +11,8 @@ class User extends Authenticatable implements JWTSubject
     use Notifiable;
     const TABLE = "users";
     const FILEROOT = "/user";
+    const FIELD_UPLOAD = ["img_photo_user"];
+
     // Rest omitted for brevity
 
     /**

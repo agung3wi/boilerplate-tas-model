@@ -8,9 +8,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
-use Illuminate\Support\Carbon;
 
-class Get extends CoreService
+class Dataset extends CoreService
 {
 
     public $transaction = false;
@@ -21,7 +20,7 @@ class Get extends CoreService
         $model = $input["model"];
         $classModel = "\\App\\Models\\" . Str::ucfirst(Str::camel($model));
         if (!class_exists($classModel))
-            throw new CoreException(__("message.model404", ['model' => $model]), 404);
+            throw new CoreException(__("message.model404", [ 'model' =>$model]), 404);
 
         if (!$classModel::IS_LIST)
             throw new CoreException(__("message.404"), 404);
@@ -55,15 +54,10 @@ class Get extends CoreService
             $selectableList[] = $classModel::TABLE . "." . $list;
         }
 
-        foreach ($classModel::FIELD_FILTERABLE as $filter => $operator) {
+        foreach ($classModel::FIELD_FILTERABLE as $filter) {
             if (!is_blank($input, $filter)) {
-                if ($operator["operator"] == 'between') {
-                    $filterValue = json_decode($input[$filter]);
-                    $filterList[] = " AND " . $classModel::TABLE . "." . $filter .  " " . $operator["operator"] . " '" . $filterValue[0] . "' AND '" . $filterValue[1] . "'";
-                } else {
-                    $filterList[] = " AND " . $classModel::TABLE . "." . $filter .  " " . $operator["operator"] . " :$filter";
-                    $params[$filter] = $input[$filter];
-                }
+                $filterList[] = " AND " . $classModel::TABLE . "." . $filter .  " = :$filter";
+                $params[$filter] = $input[$filter];
             }
         }
         $i = 0;
@@ -81,11 +75,6 @@ class Get extends CoreService
 
         $condition = " WHERE true";
 
-        if (!empty($classModel::CUSTOM_LIST_FILTER)) {
-            foreach ($classModel::CUSTOM_LIST_FILTER as $customListFilter) {
-                $condition .= " AND ".$customListFilter;
-            }
-        }
         if (!is_blank($input, "search")) {
 
             $searchableList = $classModel::FIELD_SEARCHABLE;
@@ -96,6 +85,7 @@ class Get extends CoreService
         } else {
             $searchableList = [];
         }
+
 
 
         if (count($searchableList) > 0 && !is_blank($input, "search"))
@@ -118,39 +108,24 @@ class Get extends CoreService
             (count($searchableList) > 0 ? " AND (" . implode(" OR ", $searchableList) . ")" : "") .
             implode("\n", $filterList);
 
-        $object =  DB::select($sql, $params);
-
-        foreach ($classModel::FIELD_ARRAY as $item) {
-        }
-
+        $productList =  DB::select($sql, $params);
         array_map(function ($key) use ($classModel) {
             foreach ($key as $field => $value) {
-                if ((preg_match("/file_/i", $field) or preg_match("/img_/i", $field)) AND !is_null($key->$field)) {
-                    $url = URL::to('api/file/' . $classModel::TABLE . '/' . $field . '/' . $key->id);
-                    $tumbnailUrl = URL::to('api/tumb-file/' . $classModel::TABLE . '/' . $field . '/' . $key->id);
-                    $ext = pathinfo($key->$field, PATHINFO_EXTENSION);
-                    $filename = pathinfo(storage_path($key->$field), PATHINFO_BASENAME);
-
+                if (preg_match("/file_/i", $field) or preg_match("/img_/i", $field)) {
+                    $url = URL::to('api/file/' . $classModel::TABLE . '/' . $field . '/' . $key->id . '/' . $key->$field);
+                    $ext = pathinfo($url, PATHINFO_EXTENSION);
                     $key->$field = (object) [
-                        "ext" => (is_null($key->$field)) ? null : $ext,
+                        "ext" => $ext,
                         "url" => $url,
-                        "tumbnail_url" => $tumbnailUrl,
-                        "filename" => (is_null($key->$field)) ? null : $filename,
-                        "field_value" => $key->$field
+                        "filename" => $key->$field
                     ];
-                }
-                if (preg_match("/array_/i", $field)) {
-                    $key->$field = unserialize($key->$field);
-                    if (!$key->$field) {
-                        $key->$field = null;
-                    }
                 }
             }
             return $key;
-        }, $object);
+        }, $productList);
         $total = DB::selectOne($sqlForCount, $params)->total;
         return [
-            "data" => $object,
+            "data" => $productList,
             "total" => $total
         ];
     }

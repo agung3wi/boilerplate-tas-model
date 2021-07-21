@@ -2,7 +2,7 @@
 
 namespace App\Services\User;
 
-use App\Models\User;
+use App\Models\Users;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\CoreService\CoreException;
@@ -22,14 +22,15 @@ class FindUserById extends CoreService
 
     public function process($input, $originalInput)
     {
-        $user = User::select("users.*","roles.role_name")->leftjoin('roles', 'roles.id', 'users.role_id')->find($input["id"]);
-        $fileUpload = ["img_photo_users"];
+        return $input;
+        $user = Users::select("users.*","roles.role_name")->leftjoin('roles', 'roles.id', 'users.role_id')->find($input["id"]);
+        $fileUpload = ["img_photo_user"];
         if (!empty($user)) {
             $user->password = "";
             if (!empty($fileUpload))
                 foreach ($fileUpload as $item) {
                     if ($user->$item) {
-                        $url = URL::to('api/file/user/' . $item . '/' . $input["id"] . '/' . $user->$item);
+                        $url = URL::to('api/file/user/' . $item . '/' . $input["id"]);
                         $user->{$item} = (object)[
                             "url" => $url,
                             "filename" => $user->$item

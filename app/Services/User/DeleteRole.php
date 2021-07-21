@@ -17,7 +17,9 @@ class DeleteRole extends CoreService
     public function prepare($input)
     {
         $role = Role::find($input["id"]);
-
+        if (is_null($role)) {
+            throw new CoreException("Role dengan id " . $input["id"] . " tidak ditemukan");
+        }
         $input["role"] = $role;
         return $input;
     }
@@ -36,7 +38,7 @@ class DeleteRole extends CoreService
     protected function validation()
     {
         return [
-            "id" => "required|integer|exists:roles"
+            "id" => "required|integer"
         ];
     }
 }

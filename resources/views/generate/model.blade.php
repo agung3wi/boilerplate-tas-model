@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Log;
 class {{ $studly_caps }} extends Model
 {
     protected $table = '{{ $table_name }}';
+    protected $dateFormat = 'c';
     const TABLE = "{{ $table_name }}";
     const FILEROOT = "{{ $fileRoot }}";
     const IS_LIST = {{ $list? "true" : "false" }};
@@ -20,8 +21,15 @@ class {{ $studly_caps }} extends Model
     const FIELD_EDIT = {!! arrayToString($fieldEdit) !!};
     const FIELD_VIEW = {!! arrayToString($fieldView) !!};
     const FIELD_READONLY = {!! arrayToString($fieldReadonly) !!};
-    const FIELD_FILTERABLE = {!! arrayToString($fieldFilterable) !!};
+    const FIELD_FILTERABLE = [
+@foreach($fieldFilterable as $key => $value)
+        "{{ $key }}" => [
+            "operator" => "{{ $value["operator"] }}",
+        ],
+@endforeach
+    ];
     const FIELD_SEARCHABLE = {!! arrayToString($fieldSearchable) !!};
+    const FIELD_ARRAY = {!! arrayToString($fieldArray) !!};
     const FIELD_SORTABLE = {!! arrayToString($fieldSortable) !!};
     const FIELD_UNIQUE = {!! arrayToString($fieldUnique) !!};
     const FIELD_UPLOAD = {!! arrayToString($fieldUpload) !!};
@@ -42,6 +50,7 @@ class {{ $studly_caps }} extends Model
             "linkTable" => "{{ $relation["linkTable"] }}",
             "aliasTable" => "{{ $relation["aliasTable"] }}",
             "linkField" => "{{ $relation["linkField"] }}",
+            "displayName" => "{{ $relation["displayName"] }}",
             "selectValue" => "{{ $relation["selectValue"] }}"
         ],
 @endforeach
@@ -53,6 +62,5 @@ class {{ $studly_caps }} extends Model
 @endforeach
     ];
     const PARENT_CHILD = {!! arrayToString($parentChild) !!};
-
     // start custom{!! $customContent !!}// end custom
 }

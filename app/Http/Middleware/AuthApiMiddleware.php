@@ -18,7 +18,7 @@ class AuthApiMiddleware
     public function handle(Request $request, Closure $next)
     {
         if (!Auth::guard("api")->check()) {
-            return response()->json(["message" => "Forbidden"], 403);
+            return response()->json(["message" => "Not Authorized Coy. Please Relogin"], 401);
         }
         return $next($request);
     }

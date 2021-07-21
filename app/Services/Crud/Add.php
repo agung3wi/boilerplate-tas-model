@@ -2,6 +2,7 @@
 
 namespace App\Services\Crud;
 
+use App\CoreService\CallService;
 use App\CoreService\CoreException;
 use App\CoreService\CoreService;
 use Illuminate\Support\Facades\Auth;
@@ -9,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 
 class Add extends CoreService
 {
@@ -19,16 +21,22 @@ class Add extends CoreService
     public function prepare($input)
     {
         $model = $input["model"];
-        $classModel = "\\App\\Models\\" . Str::upper(Str::camel($model));
+        $classModel = "\\App\\Models\\" . Str::ucfirst(Str::camel($model));
         if (!class_exists($classModel))
-            throw new CoreException("Not found", 404);
+            throw new CoreException(__("message.model404", ['model' => $model]), 404);
 
         if (!$classModel::IS_ADD)
             throw new CoreException("Not found", 404);
 
-        if (!hasPermission("add-" . $model))
+        if (!hasPermission("create-" . $model))
             throw new CoreException("Forbidden", 403);
         $input["class_model"] = $classModel;
+
+        if ($classModel::FIELD_ARRAY) {
+            foreach ($classModel::FIELD_ARRAY as $item) {
+                $input[$item] = serialize($input[$item]);
+            }
+        }
 
         $validator = Validator::make($input, $classModel::FIELD_VALIDATION);
 
@@ -55,6 +63,7 @@ class Add extends CoreService
 
     public function process($input, $originalInput)
     {
+        $response = [];
         $classModel = $input["class_model"];
 
 
@@ -68,18 +77,32 @@ class Add extends CoreService
             if ($item == "updated_by") {
                 $input[$item] = Auth::id();
             }
-            $object->{$item} = $input[$item] ?? $classModel::FIELD_DEFAULT_VALUE[$item];
+            if (isset($input[$item])) {
+                $inputValue = $input[$item] ?? $classModel::FIELD_DEFAULT_VALUE[$item];
+                $object->{$item} = ($inputValue != '') ? $inputValue : null;
+            }
         }
 
+        $object->save();
+        
+
+        
         // MOVE FILE
         foreach ($classModel::FIELD_UPLOAD as $item) {
-            $tmpName = $input[$item] ?? null;
+            $tmpPath = $input[$item] ?? null;
 
-            if (!is_null($tmpName)) {
-                $tmpPath = "tmp/".$tmpName;
-                $newPath = $classModel::FILEROOT . "/" . $input[$item];
+            if (!is_null($tmpPath)) {
+                if (!Storage::exists($tmpPath)) {
+                    throw new CoreException(__("message.tempFileNotFound", ['field' => $item]));
+                }
+                $tmpPath = $input[$item];
+                $originalname = pathinfo(storage_path($tmpPath), PATHINFO_FILENAME);
+                $ext = pathinfo(storage_path($tmpPath), PATHINFO_EXTENSION);
+
+                $newPath = $classModel::FILEROOT . "/" . $originalname . "." . $ext;
                 //START MOVE FILE
                 if (Storage::exists($newPath)) {
+
                     $id = 1;
                     $filename = pathinfo(storage_path($newPath), PATHINFO_FILENAME);
                     $ext = pathinfo(storage_path($newPath), PATHINFO_EXTENSION);
@@ -90,23 +113,30 @@ class Add extends CoreService
                         $id++;
                     }
                     $newPath = $classModel::FILEROOT . "/" . $originalname;
-                    $object->{$item} = $originalname;
                 }
 
+                $ext = pathinfo(storage_path($newPath), PATHINFO_EXTENSION);
+                $object->{$item} = $newPath;
                 Storage::move($tmpPath, $newPath);
-                //END MOVE FILE
             }
         }
-        // END MOVE FILE
+        //END MOVE FILE
 
         $object->save();
 
-        $classModel::afterInsert($object, $input);
+        $displayedDataAfterInsert["id"] = $object->id;
+        $displayedDataAfterInsert["model"] = $classModel::TABLE;
+        $displayedDataAfterInsert = CallService::run("Find", $displayedDataAfterInsert);
 
-        return [
-            "data" =>$object,
-            "message" => __("message.successfullyAdd")
-        ];
+        $displayedDataAfterInsert = $displayedDataAfterInsert->original["data"];
+        //AFTER INSERT
+        $classModel::afterInsert($displayedDataAfterInsert, $input);
+
+
+        $response["data"] = $displayedDataAfterInsert;
+        $response["message"] = __("message.successfullyAdd");
+
+        return $response;
     }
 
     protected function validation()

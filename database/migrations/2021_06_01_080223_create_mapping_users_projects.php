@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateCategoryMaterials extends Migration
+class CreateMappingUsersProjects extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,11 @@ class CreateCategoryMaterials extends Migration
      */
     public function up()
     {
-        Schema::create('category_materials', function (Blueprint $table) {
+        Schema::create('mapping_users_projects', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('name', 255)->nullable(false)->unique();
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('project_id')->constrained('projects')->onDelete('cascade');
             $table->integer('active')->nullable(true)->default('1');
-            $table->bigInteger('created_by')->nullable(true);
-            $table->bigInteger('updated_by')->nullable(true);
             $table->timestampsTz($precision = 0);
         });
     }
@@ -30,6 +29,6 @@ class CreateCategoryMaterials extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('category_materials');
+        Schema::dropIfExists('mapping_users_projects');
     }
 }

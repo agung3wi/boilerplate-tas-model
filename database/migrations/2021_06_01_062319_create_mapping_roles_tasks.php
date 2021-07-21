@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateMasterMaterials extends Migration
+class CreateMappingRolesTasks extends Migration
 {
     /**
      * Run the migrations.
@@ -13,17 +13,12 @@ class CreateMasterMaterials extends Migration
      */
     public function up()
     {
-        Schema::create('master_materials', function (Blueprint $table) {
+        Schema::create('mapping_roles_tasks', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('category_materials_id', 255)->nullable(false);
-            $table->string('name', 255)->nullable(false)->unique();
-            $table->string('uom', 255)->nullable(false)->unique();
+            $table->foreignId('role_id')->constrained('roles');
+            $table->foreignId('task_id')->constrained('tasks');
             $table->integer('active')->nullable(true)->default('1');
-            $table->bigInteger('created_by')->nullable(true);
-            $table->bigInteger('updated_by')->nullable(true);
             $table->timestampsTz($precision = 0);
-
-
         });
     }
 
@@ -34,6 +29,6 @@ class CreateMasterMaterials extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('master_materials');
+        Schema::dropIfExists('mapping_roles_tasks');
     }
 }

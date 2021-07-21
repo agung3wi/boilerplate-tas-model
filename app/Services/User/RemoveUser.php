@@ -2,7 +2,7 @@
 
 namespace App\Services\User;
 
-use App\Models\User;
+use App\Models\Users;
 use Illuminate\Support\Facades\DB;
 use App\CoreService\CoreException;
 use App\CoreService\CoreService;
@@ -16,7 +16,7 @@ class RemoveUser extends CoreService
 
     public function prepare($input)
     {
-        $user = User::find($input["id"]);
+        $user = Users::find($input["id"]);
         if (is_null($user)) {
             throw new CoreException("Pengguna tidak ditemukan");
         }
@@ -29,12 +29,11 @@ class RemoveUser extends CoreService
     {
 
         $input["user"]->active = "0";
-        $input["user"]->updated_at = $input["session"]["datetime"];
         $input["user"]->save();
 
         return [
             "data" => $input["user"],
-            "message" => "Data Berhasil Dinonaktifkan"
+            "message" => __("message.successfullyRemoveUser")
         ];
     }
 

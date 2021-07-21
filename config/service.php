@@ -7,6 +7,11 @@ return [
         "class" => "App\Services\Crud\Get"
     ],
     [
+        "type" => "GET",
+        "end_point" => "/dataset",
+        "class" => "App\Services\Crud\Dataset"
+    ],
+    [
         "type" => "POST",
         "end_point" => "/create",
         "class" => "App\Services\Crud\Add"
@@ -51,35 +56,54 @@ return [
         "end_point" => "/login",
         "class" => "App\Services\Auth\DoLogin"
     ],
-    
+    [
+        "type" => "POST",
+        "end_point" => "/register",
+        "class" => "App\Services\Auth\DoRegister"
+    ],
+    [
+        "type" => "POST",
+        "end_point" => "/request_forgot_password",
+        "class" => "App\Services\Auth\DoRequestForgotPassword"
+    ],
+    [
+        "type" => "POST",
+        "end_point" => "/change_password",
+        "class" => "App\Services\Auth\DoChangePassword"
+    ],
+    // [
+    //     "type" => "GET",
+    //     "end_point" => "/users/show",
+    //     "class" => "App\Services\User\FindUserById"
+    // ],
     [
         "type" => "GET",
-        "end_point" => "/user/find",
-        "class" => "App\Services\User\FindUserById"
+        "end_point" => "/custom/users/findusername",
+        "class" => "App\Services\User\FindUserByUsername"
     ],
     [
         "type" => "GET",
-        "end_point" => "/user",
+        "end_point" => "/users/list",
         "class" => "App\Services\User\GetUser"
     ],
     [
         "type" => "POST",
-        "end_point" => "/user/add",
+        "end_point" => "/users/create",
         "class" => "App\Services\User\AddUser"
     ],
     [
-        "type" => "POST",
-        "end_point" => "/user/edit",
+        "type" => "PUT",
+        "end_point" => "/users/update",
         "class" => "App\Services\User\EditUser"
     ],
     [
         "type" => "POST",
-        "end_point" => "/user/remove",
+        "end_point" => "/users/remove",
         "class" => "App\Services\User\RemoveUser"
     ],
     [
         "type" => "POST",
-        "end_point" => "/user/restore",
+        "end_point" => "/users/restore",
         "class" => "App\Services\User\RestoreUser"
     ],
     [
@@ -99,22 +123,22 @@ return [
     ],
     [
         "type" => "GET",
-        "end_point" => "/role",
+        "end_point" => "/roles",
         "class" => "App\Services\User\GetRole"
     ],
     [
         "type" => "POST",
-        "end_point" => "/role/add",
+        "end_point" => "/roles/create",
         "class" => "App\Services\User\AddRole"
     ],
     [
         "type" => "PUT",
-        "end_point" => "/role/edit",
+        "end_point" => "/roles/update",
         "class" => "App\Services\User\EditRole"
     ],
     [
         "type" => "DELETE",
-        "end_point" => "/role/delete",
+        "end_point" => "/roles/delete",
         "class" => "App\Services\User\DeleteRole"
     ],
     [
@@ -122,4 +146,5 @@ return [
         "end_point" => "/role/find",
         "class" => "App\Services\User\FindRoleById"
     ],
+   
 ];

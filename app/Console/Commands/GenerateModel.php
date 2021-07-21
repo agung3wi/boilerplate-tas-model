@@ -47,12 +47,12 @@ class GenerateModel extends Command
             $tables = DB::select("
             SELECT table_name FROM information_schema.tables 
             WHERE table_catalog = '" .  env("DB_DATABASE")  . "' AND table_schema='public'
-            AND table_name NOT IN ('users', 'roles', 'tasks', 'role_task', 'jobs',
+            AND table_name NOT IN ( 'mapping_roles_tasks', 'jobs',
                 'migrations', 'password_resets', 'failed_jobs')");
         } else if (env("DB_CONNECTION") == "mysql") {
             $tables = DB::select("
             SELECT table_name FROM information_schema.tables 
-            WHERE table_schema = '" .  env("DB_DATABASE")  . "' AND table_name NOT IN ('users', 'roles', 'tasks', 'role_task', 'jobs',
+            WHERE table_schema = '" .  env("DB_DATABASE")  . "' AND table_name NOT IN ('mapping_roles_tasks', 'jobs',
                 'migrations', 'password_resets', 'failed_jobs')");
         }
 
@@ -179,10 +179,11 @@ class GenerateModel extends Command
             $fields = DB::select($sql);
             $uniques = DB::select($sqlIndex);
             $fillableBackList = ["id", "created_at", "updated_at"];
-            $filedUploadPattern = [
-                'imgField' => 'photo',
+            $filedPattern = [
+                'imgField' => 'img_',
                 'docField' => 'doc_',
-                'fileField' => 'file_'
+                'fileField' => 'file_',
+                'arrayField' => 'array_'
             ];
             $fileRoot = "/" . $tableName;
             $fieldList = [];
@@ -197,6 +198,7 @@ class GenerateModel extends Command
             $fieldUnique = [];
             $fieldValidation = [];
             $fieldRelation = [];
+            $fieldArray = [];
             $fieldUpload = [];
             $parentChild = [];
             $fieldDefaultValue = [];
@@ -228,10 +230,17 @@ class GenerateModel extends Command
                 if ($field->data_type == "character varying" || $field->data_type == "text")
                     array_push($fieldSearchable, $field->column_name);
 
-                if ($field->data_type == "bigint" && !in_array($field->column_name, $fillableBackList))
-                    array_push($fieldFilterable, $field->column_name);
-
-                array_push($fieldFilterable, $field->column_name);
+                if (!in_array($field->column_name, $fillableBackList)) {
+                }
+                //
+                $operator = "=";
+                if ($field->data_type == "timestamp with time zone" or $field->data_type == "date") {
+                    $operator = "between";
+                }
+                $fieldFilterable[$field->column_name] =  [
+                    "operator" => $operator
+                ];
+                //
                 $fieldType[$field->column_name] = $field->data_type;
 
                 if ($field->column_name !== 'id') $fieldDefaultValue[$field->column_name] = $field->column_default;
@@ -254,8 +263,8 @@ class GenerateModel extends Command
                 }
 
                 // START FIELD UPLOAD
-                // $pattern = array_keys($filedUploadPattern);
-                foreach ($filedUploadPattern as $c => $val) {
+                // $pattern = array_keys($filedPattern);
+                foreach ($filedPattern as $c => $val) {
                     if (preg_match("/" . $val . "/i", $field->column_name)) {
                         switch ($c) {
                             case 'imgField':
@@ -270,28 +279,34 @@ class GenerateModel extends Command
                                 $fieldUpload[] = $field->column_name;
                                 $fieldValidation[$field->column_name] .= "|exists_file";
                                 break;
+                            case 'arrayField':
+                                $fieldArray[] = $field->column_name;
+                                break;
                         }
                     }
                 }
                 // $this->info($fieldUpload);
-
-
                 // END FIELD UPLOAD
+                //
+
+                //
                 if ($field->ref_table != null) {
                     $aliasTable = toAlpha($aTincrement + 1);
+                    $aliasDisplayName = "rel_" . $field->column_name;
                     $fieldRelation[$field->column_name] =  [
                         "linkTable" => $field->ref_table,
                         "aliasTable" => $aliasTable,
                         "linkField" => $field->ref_column,
-                        "selectValue" => "id AS " . $field->column_name
+                        "displayName" => $aliasDisplayName,
+                        "selectValue" => "id AS " . $aliasDisplayName
                     ];
 
                     if ($field->column_name == "created_by") {
-                        $fieldRelation[$field->column_name]["selectValue"] = "username AS created_username";
+                        $fieldRelation[$field->column_name]["selectValue"] = "username AS " . $aliasDisplayName;
                     }
 
                     if ($field->column_name == "updated_by") {
-                        $fieldRelation[$field->column_name]["selectValue"] = "username AS updated_username";
+                        $fieldRelation[$field->column_name]["selectValue"] = "username AS " . $aliasDisplayName;
                     }
                     $aTincrement++;
                 }
@@ -322,6 +337,7 @@ class GenerateModel extends Command
                 'fieldValidation' => $fieldValidation,
                 'fieldRelation' => $fieldRelation,
                 'fieldDefaultValue' => $fieldDefaultValue,
+                'fieldArray' => $fieldArray,
                 'fieldUpload' => $fieldUpload,
                 'table_name' => $tableNameOriginal,
                 'studly_caps' => Str::ucfirst(Str::camel($tableName)),
@@ -380,6 +396,7 @@ class GenerateModel extends Command
                     'fieldValidation' => $fieldValidation,
                     'fieldRelation' => $fieldRelation,
                     'fieldDefaultValue' => $fieldDefaultValue,
+                    'fieldArray' => $fieldArray,
                     'fieldUpload' => $fieldUpload,
                     'table_name' => $tableNameOriginal,
                     'studly_caps' => Str::ucfirst(Str::camel($tableName)),

@@ -67,7 +67,7 @@ class GetUser extends CoreService
             FROM users A " .
             $condition, $params)->total;
 
-        $sql = "SELECT A.*, null AS password, B.role_name
+        $sql = "SELECT A.*, null AS password, B.role_name AS rel_role_id
                 FROM users A
             LEFT JOIN roles B ON B.id = A.role_id
             $condition
@@ -80,17 +80,16 @@ class GetUser extends CoreService
         array_map(function ($key) {
             foreach ($key as $field => $value) {
                 if (preg_match("/file_/i", $field) or preg_match("/img_/i", $field)) {
-                    if (!is_null($value)) {
-                        $url = URL::to('api/file/user/' . $field . '/' . $key->id . '/' . $key->$field);
-                        $ext = pathinfo($url, PATHINFO_EXTENSION);
-                    }else{
-                        $url = null;
-                        $ext = null;
-                    }
+                    $url = URL::to('api/file/users/' . $field . '/' . $key->id);
+                    $tumbnailUrl = URL::to('api/tumb-file/users/' . $field . '/' . $key->id);
+                    $filename = pathinfo(storage_path($value), PATHINFO_FILENAME);
+                    $ext = pathinfo($value, PATHINFO_EXTENSION);
                     $key->$field = (object) [
                         "ext" => $ext,
                         "url" => $url,
-                        "filename" => $key->$field
+                        "tumbnail_url" => $tumbnailUrl,
+                        "filename" => $filename,
+                        "field_value" => $key->$field
                     ];
                 }
             }
@@ -99,7 +98,6 @@ class GetUser extends CoreService
         return [
             "data" => $userList,
             "total" => $total,
-            "sort" => $input['sort']
         ];
     }
 
