@@ -41,21 +41,33 @@ class Find extends CoreService
         $params = ["id" => $input["id"]];
 
         foreach ($classModel::FIELD_VIEW as $list) {
-            $selectableList[] = "A." . $list;
+            $selectableList[] = $classModel::TABLE."." . $list;
         }
 
         $i = 0;
         foreach ($classModel::FIELD_RELATION as $key => $relation) {
             $alias = toAlpha($i + 1);
-            $selectableList[] = $alias . "." . $relation["selectValue"];
+            ///
+            $fieldDisplayed = "CONCAT_WS (' - ',";
+            foreach ($relation["selectFields"] as $keyField) {
+                $fieldDisplayed .= $alias . '.' . $keyField . ",";
+            }
+            $fieldDisplayed = substr($fieldDisplayed, 0, strlen($fieldDisplayed) - 1);
+            $fieldDisplayed .= ") AS " . $relation["displayName"];
+            $selectableList[] = $fieldDisplayed;
+            ///
+            // $selectableList[] = $alias . "." . $relation["selectValue"];
 
             $tableJoinList[] = "LEFT JOIN " . $relation["linkTable"] . " " . $alias . " ON " .
-                "A." . $key . " = " .  $alias . "." . $relation["linkField"];
+            $classModel::TABLE."." . $key . " = " .  $alias . "." . $relation["linkField"];
             $i++;
         }
-        $condition = " WHERE A.id = :id";
+        
+        if (!empty($classModel::CUSTOM_SELECT)) $selectableList[] = $classModel::CUSTOM_SELECT;
 
-        $sql = "SELECT " . implode(", ", $selectableList) . " FROM " . $classModel::TABLE . " A " .
+        $condition = " WHERE ".$classModel::TABLE.".id = :id";
+
+        $sql = "SELECT " . implode(", ", $selectableList) . " FROM " . $classModel::TABLE . " " .
             implode(" ", $tableJoinList) . $condition;
 
 
@@ -67,7 +79,7 @@ class Find extends CoreService
         // FORMAT IMAGE
         if (!empty($classModel::FIELD_UPLOAD)) {
             foreach ($classModel::FIELD_UPLOAD as $item) {
-                if (preg_match("/file_/i", $item) or preg_match("/img_/i", $item)) {
+                if ((preg_match("/file_/i", $item) or preg_match("/img_/i", $item)) and !is_null($object->$item)) {
                     $url = URL::to('api/file/' . $classModel::TABLE . '/' . $item . '/' . $object->id);
                     $tumbnailUrl = URL::to('api/tumb-file/' . $classModel::TABLE . '/' . $item . '/' . $object->id);
                     $ext = pathinfo($object->$item, PATHINFO_EXTENSION);
@@ -82,12 +94,24 @@ class Find extends CoreService
                 }
                 if (preg_match("/array_/i", $item)) {
                     $key->$item = unserialize($key->$item);
-                    if(!$key->$item){
+                    if (!$key->$item) {
                         $key->$item = null;
                     }
                 }
             }
         }
+
+        // FOR IMG PHOTO CREATED BY
+        if (property_exists($object, 'created_by')) {
+            $url = URL::to('api/file/users/img_photo_user/' . $object->created_by);
+            $tumbnailUrl = URL::to('api/tumb-file/users/img_photo_user/' . $object->created_by);
+            $object->img_photo_created_by = (object) [
+                "url" => $url,
+                "tumbnail_url" => $tumbnailUrl,
+            ];
+        }
+
+        // END FOR IMG PHOTO CREATED BY
         return [
             "data" => $object
         ];

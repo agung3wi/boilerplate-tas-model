@@ -26,3 +26,12 @@ const CUSTOM_LIST_FILTER = [];
         return $input;
     }
     
+    public static function beforeDelete($input)
+    {
+        return $input;
+    }
+
+    public static function afterDelete($object, $input)
+    {
+        return $input;
+    }

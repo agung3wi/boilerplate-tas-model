@@ -38,6 +38,16 @@ class Add extends CoreService
             }
         }
 
+        if ($classModel::FIELD_UPLOAD) {
+            foreach ($classModel::FIELD_UPLOAD as $item) {
+                if (isset($input[$item])) {
+                    if (is_array($input[$item])) {
+                        $input[$item] = isset($input[$item]["path"]) ? $input[$item]["path"] : $input[$item]["field_value"];
+                    }
+                }
+            }
+        }
+
         $validator = Validator::make($input, $classModel::FIELD_VALIDATION);
 
         if ($validator->fails()) {
@@ -66,7 +76,6 @@ class Add extends CoreService
         $response = [];
         $classModel = $input["class_model"];
 
-
         $input = $classModel::beforeInsert($input);
 
         $object = new $classModel;
@@ -79,14 +88,15 @@ class Add extends CoreService
             }
             if (isset($input[$item])) {
                 $inputValue = $input[$item] ?? $classModel::FIELD_DEFAULT_VALUE[$item];
-                $object->{$item} = ($inputValue != '') ? $inputValue : null;
+                $object->{$item} = ($inputValue !== '') ? $inputValue : null;
             }
         }
 
-        $object->save();
-        
 
-        
+        $object->save();
+
+
+
         // MOVE FILE
         foreach ($classModel::FIELD_UPLOAD as $item) {
             $tmpPath = $input[$item] ?? null;
@@ -126,14 +136,15 @@ class Add extends CoreService
 
         $displayedDataAfterInsert["id"] = $object->id;
         $displayedDataAfterInsert["model"] = $classModel::TABLE;
+
         $displayedDataAfterInsert = CallService::run("Find", $displayedDataAfterInsert);
 
         $displayedDataAfterInsert = $displayedDataAfterInsert->original["data"];
         //AFTER INSERT
-        $classModel::afterInsert($displayedDataAfterInsert, $input);
-
+        $afterInsertedRespnese = $classModel::afterInsert($displayedDataAfterInsert, $input);
 
         $response["data"] = $displayedDataAfterInsert;
+        $response["after_inserted_response"] = $afterInsertedRespnese;
         $response["message"] = __("message.successfullyAdd");
 
         return $response;

@@ -28,13 +28,14 @@ class Get extends CoreService
 
         if (!hasPermission("view-" . $model))
             throw new CoreException(__("message.403"), 403);
-
+        $input["class_model_name"] = $model;
         $input["class_model"] = $classModel;
         return $input;
     }
 
     public function process($input, $originalInput)
     {
+        $classModelName = $input["class_model_name"];
         $classModel = $input["class_model"];
 
         $selectableList = [];
@@ -55,22 +56,51 @@ class Get extends CoreService
             $selectableList[] = $classModel::TABLE . "." . $list;
         }
 
+
+
         foreach ($classModel::FIELD_FILTERABLE as $filter => $operator) {
             if (!is_blank($input, $filter)) {
-                if ($operator["operator"] == 'between') {
-                    $filterValue = json_decode($input[$filter]);
-                    $filterList[] = " AND " . $classModel::TABLE . "." . $filter .  " " . $operator["operator"] . " '" . $filterValue[0] . "' AND '" . $filterValue[1] . "'";
-                } else {
+
+                $cekTypeInput = json_decode($input[$filter], true);
+                if (!is_array($cekTypeInput)) {
                     $filterList[] = " AND " . $classModel::TABLE . "." . $filter .  " " . $operator["operator"] . " :$filter";
                     $params[$filter] = $input[$filter];
+                } else {
+                    $input[$filter] = json_decode($input[$filter], true);
+                    if ($input[$filter]["operator"] == 'between') {
+
+                        $filterList[] = " AND " . $classModel::TABLE . "." . $filter .  " " . $input[$filter]["operator"] . " '" . $input[$filter]["value"][0] . "' AND '" . $input[$filter]["value"][1] . "'";
+                    } else {
+
+                        $filterList[] = " AND " . $classModel::TABLE . "." . $filter .  " " . $input[$filter]["operator"] . " :$filter";
+                        $params[$filter] = $input[$filter];
+                    }
                 }
+
+                // if ($operator["operator"] == 'between') {
+                //     $filterValue = json_decode($input[$filter]);
+                //     $filterList[] = " AND " . $classModel::TABLE . "." . $filter .  " " . $operator["operator"] . " '" . $filterValue[0] . "' AND '" . $filterValue[1] . "'";
+                // } else {
+                //     $filterList[] = " AND " . $classModel::TABLE . "." . $filter .  " " . $operator["operator"] . " :$filter";
+                //     $params[$filter] = $input[$filter];
+                // }
             }
         }
+
         $i = 0;
         foreach ($classModel::FIELD_RELATION as $key => $relation) {
             // $alias = toAlpha($i + 1);
             $alias = $relation["aliasTable"];
-            $selectableList[] = $alias . "." . $relation["selectValue"];
+            ///
+            $fieldDisplayed = "CONCAT_WS (' - ',";
+            foreach ($relation["selectFields"] as $keyField) {
+                $fieldDisplayed .= $alias . '.' . $keyField . ",";
+            }
+            $fieldDisplayed = substr($fieldDisplayed, 0, strlen($fieldDisplayed) - 1);
+            $fieldDisplayed .= ") AS " . $relation["displayName"];
+            $selectableList[] = $fieldDisplayed;
+            ///
+            // $selectableList[] = $alias . "." . $relation["selectValue"];
 
             $tableJoinList[] = "LEFT JOIN " . $relation["linkTable"] . " " . $alias . " ON " .
                 $classModel::TABLE . "." . $key . " = " .  $alias . "." . $relation["linkField"];
@@ -83,7 +113,7 @@ class Get extends CoreService
 
         if (!empty($classModel::CUSTOM_LIST_FILTER)) {
             foreach ($classModel::CUSTOM_LIST_FILTER as $customListFilter) {
-                $condition .= " AND ".$customListFilter;
+                $condition .= " AND " . $customListFilter;
             }
         }
         if (!is_blank($input, "search")) {
@@ -108,11 +138,37 @@ class Get extends CoreService
         }
 
 
+        // START FILTER MAPPING PROJECT
+        // $roleId = Auth::user()->role_id;
+        // if($roleId == 2 and $classModel::TABLE == 'departments'){
+        //     $tableJoinList[] = "JOIN mapping_users_departments MUD ON " .
+        //         $classModel::TABLE . ".id = MUD.department_id";
+        //     $condition .= " AND MUD.user_id = " . Auth::id() . "AND MUD.active = 1";
+        // }else if ($roleId == 2 and $classModel::TABLE == 'projects') {
+        //     $tableJoinList[] = "JOIN mapping_users_departments MUD ON " .
+        //         $classModel::TABLE . ".department_id = MUD.department_id";
+        //     $condition .= " AND MUD.user_id = " . Auth::id() . "AND MUD.active = 1";
+        // } else if ($roleId == 2 and in_array("project_id", $classModel::FIELD_LIST)) {
+        //     $tableJoinList[] = "JOIN projects PROJ ON " .
+        //         $classModel::TABLE . ".project_id = PROJ.id";
+        //     $tableJoinList[] = "JOIN mapping_users_departments MUD ON PROJ.department_id = MUD.department_id";
+        //     $condition .= " AND MUD.user_id = " . Auth::id() . "AND MUD.active = 1";
+        // } else if ($roleId > 2 and $classModel::TABLE == 'projects') {
+        //     $tableJoinList[] = "JOIN mapping_users_projects MUP ON " .
+        //         $classModel::TABLE . ".id = MUP.project_id";
+        //     $condition .= " AND MUP.user_id = " . Auth::id() . "AND MUP.active = 1";
+        // } else if ($roleId > 2 and in_array("project_id", $classModel::FIELD_LIST)) {
+        //     $tableJoinList[] = "JOIN mapping_users_projects MUP ON " .
+        //         $classModel::TABLE . ".project_id = MUP.project_id";
+        //     $condition .= " AND MUP.user_id = " . Auth::id() . "AND MUP.active = 1";
+        // }
+        // END FILTER MAPPING
+
+
         $sql = "SELECT " . implode(", ", $selectableList) . " FROM " . $classModel::TABLE . " " .
             implode(" ", $tableJoinList) . $condition .
             (count($searchableList) > 0 ? " AND (" . implode(" OR ", $searchableList) . ")" : "") .
             implode("\n", $filterList) . " ORDER BY " . $sortBy . " " . $sort . " LIMIT $limit OFFSET $offset ";
-
         $sqlForCount = "SELECT COUNT(1) AS total FROM " . $classModel::TABLE . " " .
             implode(" ", $tableJoinList) . $condition .
             (count($searchableList) > 0 ? " AND (" . implode(" OR ", $searchableList) . ")" : "") .
@@ -123,9 +179,10 @@ class Get extends CoreService
         foreach ($classModel::FIELD_ARRAY as $item) {
         }
 
-        array_map(function ($key) use ($classModel) {
+        array_map(function ($key) use ($classModel, $classModelName) {
             foreach ($key as $field => $value) {
-                if ((preg_match("/file_/i", $field) or preg_match("/img_/i", $field)) AND !is_null($key->$field)) {
+                $key->class_model_name = $classModelName;
+                if ((preg_match("/file_/i", $field) or preg_match("/img_/i", $field)) and !is_null($key->$field)) {
                     $url = URL::to('api/file/' . $classModel::TABLE . '/' . $field . '/' . $key->id);
                     $tumbnailUrl = URL::to('api/tumb-file/' . $classModel::TABLE . '/' . $field . '/' . $key->id);
                     $ext = pathinfo($key->$field, PATHINFO_EXTENSION);
@@ -148,10 +205,14 @@ class Get extends CoreService
             }
             return $key;
         }, $object);
+
+
         $total = DB::selectOne($sqlForCount, $params)->total;
+        $totalPage = ceil($total / $limit);
         return [
             "data" => $object,
-            "total" => $total
+            "total" => $total,
+            "totalPage" => $totalPage
         ];
     }
 

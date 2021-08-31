@@ -56,7 +56,7 @@ class GenerateModel extends Command
                 'migrations', 'password_resets', 'failed_jobs')");
         }
 
-        $prefix = ["m_", "fi_", "in_", "pu_", "r_", "sl_"];
+        $prefix = ["m_", "fi_", "in_", "pu_", "sl_"];
         $fieldLeanguageID = [];
         $fieldLeanguageEN = [];
         $modulLeanguageID = [];
@@ -227,16 +227,13 @@ class GenerateModel extends Command
                 array_push($fieldView, $field->column_name);
                 array_push($fieldSortable, $field->column_name);
 
-                if ($field->data_type == "character varying" || $field->data_type == "text")
+                if ($field->data_type == "character varying")
                     array_push($fieldSearchable, $field->column_name);
 
                 if (!in_array($field->column_name, $fillableBackList)) {
                 }
                 //
                 $operator = "=";
-                if ($field->data_type == "timestamp with time zone" or $field->data_type == "date") {
-                    $operator = "between";
-                }
                 $fieldFilterable[$field->column_name] =  [
                     "operator" => $operator
                 ];
@@ -290,6 +287,7 @@ class GenerateModel extends Command
                 //
 
                 //
+                $relationSelectedFields = ["id"];
                 if ($field->ref_table != null) {
                     $aliasTable = toAlpha($aTincrement + 1);
                     $aliasDisplayName = "rel_" . $field->column_name;
@@ -298,15 +296,16 @@ class GenerateModel extends Command
                         "aliasTable" => $aliasTable,
                         "linkField" => $field->ref_column,
                         "displayName" => $aliasDisplayName,
+                        "selectFields" => $relationSelectedFields,
                         "selectValue" => "id AS " . $aliasDisplayName
                     ];
 
                     if ($field->column_name == "created_by") {
-                        $fieldRelation[$field->column_name]["selectValue"] = "username AS " . $aliasDisplayName;
+                        $fieldRelation[$field->column_name]["selectFields"] = ["username"];
                     }
 
                     if ($field->column_name == "updated_by") {
-                        $fieldRelation[$field->column_name]["selectValue"] = "username AS " . $aliasDisplayName;
+                        $fieldRelation[$field->column_name]["selectFields"] = ["username"];
                     }
                     $aTincrement++;
                 }
@@ -368,6 +367,10 @@ class GenerateModel extends Command
 
                 // Berubah Select Value Field Relation by coding
                 foreach ($fieldRelation as $key => $relation) {
+                    if (isset($classModel::FIELD_RELATION[$key]["selectFields"])) {
+                        $fieldRelation[$key]["selectFields"] = $classModel::FIELD_RELATION[$key]["selectFields"];
+                    }
+
                     if (isset($classModel::FIELD_RELATION[$key]["selectValue"])) {
                         $fieldRelation[$key]["selectValue"] = $classModel::FIELD_RELATION[$key]["selectValue"];
                     }

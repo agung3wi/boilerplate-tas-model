@@ -23,8 +23,11 @@ class CreateUsersTable extends Migration
             $table->string('telephone')->nullable();
             $table->text('img_photo_user')->nullable();
             $table->foreignId('role_id')->constrained('roles');
+            $table->string('job_position')->nullable();
             $table->timestampTz('email_verified_at')->nullable();
             $table->string('status_code');
+            $table->timestampTz('approval_at')->nullable();
+            $table->foreignId('approval_by')->nullable()->constrained('users');
             $table->string('api_token')->nullable(true);
             $table->timestampsTz($precision = 0);
         });

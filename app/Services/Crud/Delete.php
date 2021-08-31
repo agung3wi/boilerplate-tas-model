@@ -84,6 +84,7 @@ class Delete extends CoreService
             throw new CoreException(__("message.forbiddenDelete"));
         }
 
+        $classModel::afterDelete($object, $input);
 
         return [
             "data" => $object,

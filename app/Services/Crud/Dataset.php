@@ -20,7 +20,7 @@ class Dataset extends CoreService
         $model = $input["model"];
         $classModel = "\\App\\Models\\" . Str::ucfirst(Str::camel($model));
         if (!class_exists($classModel))
-            throw new CoreException(__("message.model404", [ 'model' =>$model]), 404);
+            throw new CoreException(__("message.model404", ['model' => $model]), 404);
 
         if (!$classModel::IS_LIST)
             throw new CoreException(__("message.404"), 404);
@@ -54,17 +54,40 @@ class Dataset extends CoreService
             $selectableList[] = $classModel::TABLE . "." . $list;
         }
 
-        foreach ($classModel::FIELD_FILTERABLE as $filter) {
+        foreach ($classModel::FIELD_FILTERABLE as $filter  => $operator) {
             if (!is_blank($input, $filter)) {
-                $filterList[] = " AND " . $classModel::TABLE . "." . $filter .  " = :$filter";
-                $params[$filter] = $input[$filter];
+
+                $cekTypeInput = json_decode($input[$filter], true);
+                if (!is_array($cekTypeInput)) {
+                    $filterList[] = " AND " . $classModel::TABLE . "." . $filter .  " " . $operator["operator"] . " :$filter";
+                    $params[$filter] = $input[$filter];
+                } else {
+                    $input[$filter] = json_decode($input[$filter], true);
+                    if ($input[$filter]["operator"] == 'between') {
+
+                        $filterList[] = " AND " . $classModel::TABLE . "." . $filter .  " " . $input[$filter]["operator"] . " '" . $input[$filter]["value"][0] . "' AND '" . $input[$filter]["value"][1] . "'";
+                    } else {
+
+                        $filterList[] = " AND " . $classModel::TABLE . "." . $filter .  " " . $input[$filter]["operator"] . " :$filter";
+                        $params[$filter] = $input[$filter];
+                    }
+                }
             }
         }
         $i = 0;
         foreach ($classModel::FIELD_RELATION as $key => $relation) {
             // $alias = toAlpha($i + 1);
             $alias = $relation["aliasTable"];
-            $selectableList[] = $alias . "." . $relation["selectValue"];
+            ///
+            $fieldDisplayed = "CONCAT_WS (' - ',";
+            foreach ($relation["selectFields"] as $keyField) {
+                $fieldDisplayed .= $alias . '.' . $keyField . ",";
+            }
+            $fieldDisplayed = substr($fieldDisplayed, 0, strlen($fieldDisplayed) - 1);
+            $fieldDisplayed .= ") AS " . $relation["displayName"];
+            $selectableList[] = $fieldDisplayed;
+            ///
+            //$selectableList[] = $alias . "." . $relation["selectValue"];
 
             $tableJoinList[] = "LEFT JOIN " . $relation["linkTable"] . " " . $alias . " ON " .
                 $classModel::TABLE . "." . $key . " = " .  $alias . "." . $relation["linkField"];
@@ -73,8 +96,10 @@ class Dataset extends CoreService
 
         if (!empty($classModel::CUSTOM_SELECT)) $selectableList[] = $classModel::CUSTOM_SELECT;
 
-        $condition = " WHERE true";
-
+        $condition = " WHERE true ";
+        if (in_array("active", $classModel::FIELD_LIST)) {
+            $condition .= " AND " . $classModel::TABLE . ".active = 1";
+        }
         if (!is_blank($input, "search")) {
 
             $searchableList = $classModel::FIELD_SEARCHABLE;
@@ -91,12 +116,24 @@ class Dataset extends CoreService
         if (count($searchableList) > 0 && !is_blank($input, "search"))
             $params["search"] = "%" . strtoupper($input["search"] ?? "") . "%";
 
-        $limit = $input["limit"] ?? 10;
+        $limit = $input["limit"] ?? "null";
         $offset = $input["offset"] ?? 0;
         if (!is_null($input["page"] ?? null)) {
             $offset = $limit * ($input["page"] - 1);
         }
 
+        // START FILTER MAPPING PROJECT
+        // $roleId = Auth::user()->role_id;
+        // if ($roleId > 1 and $classModel::TABLE == 'projects') {
+        //     $tableJoinList[] = "JOIN mapping_users_projects MUP ON " .
+        //         $classModel::TABLE . ".id = MUP.project_id";
+
+        //     $condition .= " AND MUP.user_id = " . Auth::id() . "AND MUP.active = 1";
+        // } else if ($roleId > 1 and isset($classModel::FIELD_LIST["project_id"])) {
+        //     $tableJoinList[] = "JOIN mapping_users_projects MUP ON " .
+        //         $classModel::TABLE . ".project_id = MUP.project_id";
+        // }
+        // END FILTER MAPPING
 
         $sql = "SELECT " . implode(", ", $selectableList) . " FROM " . $classModel::TABLE . " " .
             implode(" ", $tableJoinList) . $condition .
@@ -111,22 +148,34 @@ class Dataset extends CoreService
         $productList =  DB::select($sql, $params);
         array_map(function ($key) use ($classModel) {
             foreach ($key as $field => $value) {
-                if (preg_match("/file_/i", $field) or preg_match("/img_/i", $field)) {
-                    $url = URL::to('api/file/' . $classModel::TABLE . '/' . $field . '/' . $key->id . '/' . $key->$field);
-                    $ext = pathinfo($url, PATHINFO_EXTENSION);
+                if ((preg_match("/file_/i", $field) or preg_match("/img_/i", $field)) and !is_null($key->$field)) {
+                    $url = URL::to('api/file/' . $classModel::TABLE . '/' . $field . '/' . $key->id);
+                    $tumbnailUrl = URL::to('api/tumb-file/' . $classModel::TABLE . '/' . $field . '/' . $key->id);
+                    $ext = pathinfo($key->$field, PATHINFO_EXTENSION);
+                    $filename = pathinfo(storage_path($key->$field), PATHINFO_BASENAME);
+
                     $key->$field = (object) [
-                        "ext" => $ext,
+                        "ext" => (is_null($key->$field)) ? null : $ext,
                         "url" => $url,
-                        "filename" => $key->$field
+                        "tumbnail_url" => $tumbnailUrl,
+                        "filename" => (is_null($key->$field)) ? null : $filename,
+                        "field_value" => $key->$field
                     ];
                 }
             }
             return $key;
         }, $productList);
         $total = DB::selectOne($sqlForCount, $params)->total;
+
+        if ($limit == 'null') {
+            $totalPage = 1;
+        } else {
+            $totalPage = ceil($total / $limit);
+        }
         return [
             "data" => $productList,
-            "total" => $total
+            "total" => $total,
+            "totalPage" => $totalPage
         ];
     }
 

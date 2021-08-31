@@ -50,6 +50,17 @@ class Edit extends CoreService
             }
         }
 
+        //SEBELUM DIVALIDASI UBAH DULU DATA OBJECT YANG DIKIRMKAN FRONE END JADI STRING,
+        //TERUTAMA KOLOM UPLOAD FILE
+        foreach ($classModel::FIELD_UPLOAD as $item) {
+            if (array_key_exists($item, $input)) {
+                if (is_array($input[$item])) {
+                    $input[$item] = isset($input[$item]["path"]) ? $input[$item]["path"] : $input[$item]["field_value"];
+                }
+            }
+        }
+        // END
+
         $validator = Validator::make($input, $rules);
 
         if ($validator->fails()) {
@@ -57,6 +68,7 @@ class Edit extends CoreService
         }
 
         ///
+
         $validator = Validator::make($input, $classModel::FIELD_VALIDATION);
 
         if ($validator->fails()) {
@@ -91,45 +103,47 @@ class Edit extends CoreService
         // START MOVE FILE
 
         foreach ($classModel::FIELD_UPLOAD as $item) {
-            if (is_null($input[$item])) {
-                $object->{$item} = null;
-            } else if ($object->{$item} !== $input[$item]) {
-                $tmpPath = $input[$item] ?? null;
-                if (!is_null($tmpPath)) {
-                    if (!Storage::exists($tmpPath)) {
-                        throw new CoreException(__("message.tempFileNotFound", ['field' => $item]));
-                    }
+            if (isset($input[$item])) {
+                if (is_null($input[$item])) {
+                    $object->{$item} = null;
+                } else if ($object->{$item} !== $input[$item]) {
                     $tmpPath = $input[$item] ?? null;
-
-                    $originalname = pathinfo(storage_path($tmpPath), PATHINFO_FILENAME);
-                    $ext = pathinfo(storage_path($tmpPath), PATHINFO_EXTENSION);
-
-                    $newPath = $classModel::FILEROOT . "/" . $originalname . "." . $ext;
-
-                    if (Storage::exists($newPath)) {
-                        $id = 1;
-                        $filename = pathinfo(storage_path($newPath), PATHINFO_FILENAME);
-                        $ext = pathinfo(storage_path($newPath), PATHINFO_EXTENSION);
-                        while (true) {
-                            $originalname = $filename . "($id)." . $ext;
-                            if (!Storage::exists($classModel::FILEROOT . "/" . $originalname))
-                                break;
-                            $id++;
+                    if (!is_null($tmpPath)) {
+                        if (!Storage::exists($tmpPath)) {
+                            throw new CoreException(__("message.tempFileNotFound", ['field' => $item]));
                         }
-                        $newPath = $classModel::FILEROOT . "/" . $originalname;
+                        $tmpPath = $input[$item] ?? null;
+
+                        $originalname = pathinfo(storage_path($tmpPath), PATHINFO_FILENAME);
+                        $ext = pathinfo(storage_path($tmpPath), PATHINFO_EXTENSION);
+
+                        $newPath = $classModel::FILEROOT . "/" . $originalname . "." . $ext;
+
+                        if (Storage::exists($newPath)) {
+                            $id = 1;
+                            $filename = pathinfo(storage_path($newPath), PATHINFO_FILENAME);
+                            $ext = pathinfo(storage_path($newPath), PATHINFO_EXTENSION);
+                            while (true) {
+                                $originalname = $filename . "($id)." . $ext;
+                                if (!Storage::exists($classModel::FILEROOT . "/" . $originalname))
+                                    break;
+                                $id++;
+                            }
+                            $newPath = $classModel::FILEROOT . "/" . $originalname;
+                        }
+                        //OLD FILE DELETE
+                        $oldFilePath = $object->{$item};
+                        Storage::delete($oldFilePath);
+                        //END MOVE FILE
+                        $object->{$item} = $newPath;
+                        Storage::move($tmpPath, $newPath);
+                        //END MOVE FILE
+                    } else {
+                        //OLD FILE DELETE
+                        $oldFilePath = $object->{$item};
+                        Storage::delete($oldFilePath);
+                        //END MOVE FILE
                     }
-                    //OLD FILE DELETE
-                    $oldFilePath = $object->{$item};
-                    Storage::delete($oldFilePath);
-                    //END MOVE FILE
-                    $object->{$item} = $newPath;
-                    Storage::move($tmpPath, $newPath);
-                    //END MOVE FILE
-                } else {
-                    //OLD FILE DELETE
-                    $oldFilePath = $object->{$item};
-                    Storage::delete($oldFilePath);
-                    //END MOVE FILE
                 }
             }
         }
@@ -138,16 +152,26 @@ class Edit extends CoreService
             if ($item == "updated_by") {
                 $input[$item] = Auth::id();
             }
-            if (!in_array($item, $classModel::FIELD_UPLOAD)) {
-                $inputValue = $input[$item];
-                $object->{$item} = ($inputValue != '') ? $inputValue : null;
+            if (array_key_exists($item, $input)) {
+                if (!in_array($item, $classModel::FIELD_UPLOAD)) {
+                    $inputValue = $input[$item];
+                    $object->{$item} = ($inputValue !== '') ? $inputValue : null;
+                }
             }
+            // if (isset($input[$item])) {
+            //     if (!in_array($item, $classModel::FIELD_UPLOAD)) {
+            //         $inputValue = $input[$item];
+            //         $object->{$item} = ($inputValue !== '') ? $inputValue : null;
+            //     }
+            // }
         }
+
         $object->save();
+
         // UNTUK FORMAT DATA IMG
         if (!empty($classModel::FIELD_UPLOAD)) {
             foreach ($classModel::FIELD_UPLOAD as $item) {
-                if (preg_match("/file_/i", $item) or preg_match("/img_/i", $item)) {
+                if ((preg_match("/file_/i", $item) or preg_match("/img_/i", $item)) and !is_null($object->$item)) {
                     $url = URL::to('api/file/' . $classModel::TABLE . '/' . $item . '/' . $object->id);
                     $tumbnailUrl = URL::to('api/tumb-file/' . $classModel::TABLE . '/' . $item . '/' . $object->id);
                     $ext = pathinfo($object->$item, PATHINFO_EXTENSION);
@@ -162,10 +186,11 @@ class Edit extends CoreService
                 }
             }
         }
-        $classModel::afterUpdate($object, $input);
+        $afterUpdatedRespnese = $classModel::afterUpdate($object, $input);
 
         return [
             "data" => $object,
+            "after_updated_response" => $afterUpdatedRespnese,
             "message" => __("message.succesfullyUpdate")
         ];
     }

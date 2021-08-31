@@ -38,7 +38,7 @@ class UploadController extends Controller
         $url = URL::to('api/temp-file/' . $originalname);
         $result = [
             "url" => $url,
-            "originalname" => $originalname,
+            "filename" => $originalname,
             "path" => $path,
             "ext" => $ext
         ];

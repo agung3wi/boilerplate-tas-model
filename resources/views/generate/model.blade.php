@@ -1,9 +1,13 @@
 
 namespace App\Models;
 
+use App\CoreService\CallService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+
 
 class {{ $studly_caps }} extends Model
 {
@@ -51,6 +55,7 @@ class {{ $studly_caps }} extends Model
             "aliasTable" => "{{ $relation["aliasTable"] }}",
             "linkField" => "{{ $relation["linkField"] }}",
             "displayName" => "{{ $relation["displayName"] }}",
+            "selectFields" => {!! arrayToString($relation["selectFields"]) !!},
             "selectValue" => "{{ $relation["selectValue"] }}"
         ],
 @endforeach
