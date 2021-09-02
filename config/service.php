@@ -56,31 +56,31 @@ return [
         "end_point" => "/login",
         "class" => "App\Services\Auth\DoLogin"
     ],
-    [
-        "type" => "POST",
-        "end_point" => "/register",
-        "class" => "App\Services\Auth\DoRegister"
-    ],
-    [
-        "type" => "POST",
-        "end_point" => "/request_forgot_password",
-        "class" => "App\Services\Auth\DoRequestForgotPassword"
-    ],
-    [
-        "type" => "POST",
-        "end_point" => "/change_password",
-        "class" => "App\Services\Auth\DoChangePassword"
-    ],
+    // [
+    //     "type" => "POST",
+    //     "end_point" => "/register",
+    //     "class" => "App\Services\Auth\DoRegister"
+    // ],
+    // [
+    //     "type" => "POST",
+    //     "end_point" => "/request_forgot_password",
+    //     "class" => "App\Services\Auth\DoRequestForgotPassword"
+    // ],
+    // [
+    //     "type" => "POST",
+    //     "end_point" => "/change_password",
+    //     "class" => "App\Services\Auth\DoChangePassword"
+    // ],
     // [
     //     "type" => "GET",
     //     "end_point" => "/users/show",
     //     "class" => "App\Services\User\FindUserById"
     // ],
-    [
-        "type" => "GET",
-        "end_point" => "/custom/users/findusername",
-        "class" => "App\Services\User\FindUserByUsername"
-    ],
+    // [
+    //     "type" => "GET",
+    //     "end_point" => "/custom/users/findusername",
+    //     "class" => "App\Services\User\FindUserByUsername"
+    // ],
     [
         "type" => "GET",
         "end_point" => "/users/list",
@@ -146,5 +146,5 @@ return [
         "end_point" => "/role/find",
         "class" => "App\Services\User\FindRoleById"
     ],
-   
+
 ];

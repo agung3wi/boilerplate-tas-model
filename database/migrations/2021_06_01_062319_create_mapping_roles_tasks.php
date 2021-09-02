@@ -13,7 +13,7 @@ class CreateMappingRolesTasks extends Migration
      */
     public function up()
     {
-        Schema::create('mapping_roles_tasks', function (Blueprint $table) {
+        Schema::create('role_task', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->foreignId('role_id')->constrained('roles');
             $table->foreignId('task_id')->constrained('tasks');
