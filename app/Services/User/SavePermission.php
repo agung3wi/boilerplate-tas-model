@@ -31,7 +31,7 @@ class SavePermission extends CoreService
         foreach ($input["permissions"] as $permission) {
 
             $taskId = $permission["task_id"];
-            DB::statement("DELETE FROM mapping_roles_tasks WHERE task_id = ?", [$taskId]);
+            DB::statement("DELETE FROM role_task WHERE task_id = ?", [$taskId]);
             $permissionInput = [];
             foreach ($permission as $key => $value) {
                 if (isset($input["roles"][$key]) && $value == "Y")
@@ -41,7 +41,7 @@ class SavePermission extends CoreService
                     ];
             }
 
-            DB::table("mapping_roles_tasks")->insert($permissionInput);
+            DB::table("role_task")->insert($permissionInput);
         }
         return [
             "d" => $permissionInput,

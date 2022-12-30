@@ -32,14 +32,14 @@ class CreateUsersTable extends Migration
             $table->timestampsTz($precision = 0);
         });
 
+        $role = DB::selectOne("SELECT id FROM roles WHERE role_code = 'super-admin'");
         DB::table("users")->insert([
             "fullname" => "Super Admin",
             "username" => "admin",
             "password" => bcrypt("admin"),
-            "role_id" => -1,
+            "role_id" => $role->id,
             "status_code" => 'user_active'
         ]);
-        
     }
 
     /**

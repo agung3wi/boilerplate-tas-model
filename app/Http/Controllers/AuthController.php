@@ -76,7 +76,7 @@ class AuthController extends Controller
 
         $user->permissions = explode(",", DB::selectOne("SELECT string_agg(C.task_code, ',') AS task_list
         FROM users A
-            INNER JOIN mapping_roles_tasks B ON B.role_id = A.role_id
+            INNER JOIN role_task B ON B.role_id = A.role_id
             INNER JOIN tasks C ON C.id = B.task_id
         WHERE A.id = ?", [$user->id])->task_list);
         return response()->json($user);

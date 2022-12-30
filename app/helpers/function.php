@@ -11,10 +11,10 @@ if (!function_exists('hasPermission')) {
         $user = Auth::user();
         if ($user) {
             $permission = DB::selectOne("SELECT B.role_id FROM users A
-            INNER JOIN mapping_roles_tasks B ON B.role_id = A.role_id
+            INNER JOIN role_task B ON B.role_id = A.role_id
             INNER JOIN tasks C ON B.task_id = C.id AND C.task_code = ?
             WHERE A.id = ?", [$task, $user->id]);
-            return !is_null($permission) ? true : ($user->role_id == -1);
+            return !is_null($permission) ? true : ($user->role_id == 1);
         } else {
             return false;
         }

@@ -73,6 +73,7 @@ class Add extends CoreService
 
     public function process($input, $originalInput)
     {
+
         $response = [];
         $classModel = $input["class_model"];
 
@@ -132,6 +133,8 @@ class Add extends CoreService
         }
         //END MOVE FILE
 
+
+
         $object->save();
 
         $displayedDataAfterInsert["id"] = $object->id;
@@ -139,13 +142,13 @@ class Add extends CoreService
 
         $displayedDataAfterInsert = CallService::run("Find", $displayedDataAfterInsert);
 
-        $displayedDataAfterInsert = $displayedDataAfterInsert->original["data"];
+        // $displayedDataAfterInsert = $displayedDataAfterInsert->original["data"];
         //AFTER INSERT
-        $afterInsertedRespnese = $classModel::afterInsert($displayedDataAfterInsert, $input);
+        // $afterInsertedRespnese = $classModel::afterInsert($displayedDataAfterInsert, $input);
 
-        $response["data"] = $displayedDataAfterInsert;
-        $response["after_inserted_response"] = $afterInsertedRespnese;
-        $response["message"] = __("message.successfullyAdd");
+        $response["data"] = $object;
+        // $response["after_inserted_response"] = $afterInsertedRespnese;
+        // $response["message"] = __("message.successfullyAdd");
 
         return $response;
     }

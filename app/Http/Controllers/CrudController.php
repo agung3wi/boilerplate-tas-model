@@ -13,7 +13,8 @@ use Illuminate\Support\Str;
 
 class CrudController extends Controller
 {
-    public function test(){
+    public function test()
+    {
         return "test";
     }
     public function index($model)

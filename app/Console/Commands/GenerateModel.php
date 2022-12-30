@@ -45,14 +45,14 @@ class GenerateModel extends Command
         $tableArgument = $this->argument('table');
         if (env("DB_CONNECTION") == "pgsql") {
             $tables = DB::select("
-            SELECT table_name FROM information_schema.tables 
+            SELECT table_name FROM information_schema.tables
             WHERE table_catalog = '" .  env("DB_DATABASE")  . "' AND table_schema='public'
-            AND table_name NOT IN ( 'mapping_roles_tasks', 'jobs',
+            AND table_name NOT IN ( 'role_task', 'jobs',
                 'migrations', 'password_resets', 'failed_jobs')");
         } else if (env("DB_CONNECTION") == "mysql") {
             $tables = DB::select("
-            SELECT table_name FROM information_schema.tables 
-            WHERE table_schema = '" .  env("DB_DATABASE")  . "' AND table_name NOT IN ('mapping_roles_tasks', 'jobs',
+            SELECT table_name FROM information_schema.tables
+            WHERE table_schema = '" .  env("DB_DATABASE")  . "' AND table_name NOT IN ('role_task', 'jobs',
                 'migrations', 'password_resets', 'failed_jobs')");
         }
 
@@ -124,13 +124,13 @@ class GenerateModel extends Command
                     WHERE
                         cols.table_catalog    = '" . env("DB_DATABASE") . "'
                         AND cols.table_name   = '$tableNameOriginal'
-                ) SELECT A.column_name, A.data_type, A.character_maximum_length, 
-                B.primary_table AS ref_table, B.pk_column AS ref_column, C.column_comment, 
+                ) SELECT A.column_name, A.data_type, A.character_maximum_length,
+                B.primary_table AS ref_table, B.pk_column AS ref_column, C.column_comment,
                 A.is_nullable, A.column_default
-                FROM information_schema.columns A 
-                LEFT JOIN summary_fk B ON B.foreign_table = A.table_name AND 
-                    B.fk_column = A.column_name 
-                LEFT JOIN summary_comment C ON C.table_name = A.table_name AND C.column_name = A.column_name 
+                FROM information_schema.columns A
+                LEFT JOIN summary_fk B ON B.foreign_table = A.table_name AND
+                    B.fk_column = A.column_name
+                LEFT JOIN summary_comment C ON C.table_name = A.table_name AND C.column_name = A.column_name
                 WHERE A.table_catalog = '" . env("DB_DATABASE") . "' AND A.table_name = '$tableNameOriginal'";
 
                 $sqlIndex = "select
@@ -141,7 +141,7 @@ class GenerateModel extends Command
                     pg_class i,
                     pg_index ix,
                     pg_attribute a,
-                    pg_namespace n 
+                    pg_namespace n
                 where
                     t.oid = ix.indrelid
                     and i.oid = ix.indexrelid
@@ -152,7 +152,7 @@ class GenerateModel extends Command
                     and t.relkind = 'r'
                     and n.nspname = 'public'
                     and t.relname = '" . $tableNameOriginal . "'
-                group by 
+                group by
                     i.relname, t.relname
                 order by
                     t.relname,

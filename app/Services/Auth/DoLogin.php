@@ -60,7 +60,7 @@ class DoLogin extends CoreService
             throw new CoreException(__("message.userNotActive", ['username' => $input["username"]]), 422);
 
 
-        $sql = "SELECT B.task_code FROM mapping_roles_tasks A
+        $sql = "SELECT B.task_code FROM role_task A
             INNER JOIN tasks B ON B.id = A.task_id
             INNER JOIN users C ON C.role_id = A.role_id AND C.id = ?";
 

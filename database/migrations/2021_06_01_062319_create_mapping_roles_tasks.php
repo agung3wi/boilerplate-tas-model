@@ -15,8 +15,8 @@ class CreateMappingRolesTasks extends Migration
     {
         Schema::create('role_task', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->foreignId('role_id')->constrained('roles');
-            $table->foreignId('task_id')->constrained('tasks');
+            $table->foreignId('role_id');
+            $table->foreignId('task_id');
             $table->integer('active')->nullable(true)->default('1');
             $table->timestampsTz($precision = 0);
         });
@@ -29,6 +29,6 @@ class CreateMappingRolesTasks extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('mapping_roles_tasks');
+        Schema::dropIfExists('role_task');
     }
 }

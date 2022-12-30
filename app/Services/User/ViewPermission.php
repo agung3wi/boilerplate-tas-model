@@ -45,7 +45,7 @@ class ViewPermission extends CoreService
         $tasks = DB::select($sql, $params);
         $roles = DB::select("SELECT * FROM roles");
         $roleTaskList = [];
-        foreach (DB::select("SELECT * FROM mapping_roles_tasks") as $roleTask) {
+        foreach (DB::select("SELECT * FROM role_task") as $roleTask) {
             $roleTaskList[$roleTask->role_id][$roleTask->task_id] = true;
         }
         $result = [];
@@ -64,10 +64,10 @@ class ViewPermission extends CoreService
                 //     $role->role_code => isset($roleTaskList[$role->id][$task->id]) ? "Y" : "N"
                 // ];
 
-                
+
                 // array_push($result[$i]["roles"], $d);
                 $result[$i][$role->role_code] =
-                isset($roleTaskList[$role->id][$task->id]) ? "Y" : "N";
+                    isset($roleTaskList[$role->id][$task->id]) ? "Y" : "N";
             }
             $i++;
         }
